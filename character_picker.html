@@ -674,14 +674,23 @@
             document.getElementById('navAvatar').src = savedData && savedData.avatar ? savedData.avatar : "new_user.png";
             initCarousel();
 
-            // Tour Overlay Logic (Show only once)
-            const safeName = userName ? userName.replace(/\s+/g, '_').toLowerCase() : 'default_user';
-            const charTourKey = 'wavumbuzi_char_tour_' + safeName;
+            // Fetch flags to see if we should show the Mwenza Modal
+            fetch(GOOGLE_SHEET_WEB_APP_URL + '?action=getUserData&user=' + encodeURIComponent(userName))
+                .then(res => res.json())
+                .then(data => {
+                    let flags = {};
+                    if (data.success && data.flags) {
+                        try { flags = JSON.parse(data.flags); } catch (e) { }
+                    }
 
-            if (!localStorage.getItem(charTourKey)) {
-                document.getElementById('mwenzaModal').style.display = 'flex';
-                localStorage.setItem(charTourKey, 'true');
-            }
+                    if (!flags.hasSeenCharTour) {
+                        document.getElementById('mwenzaModal').style.display = 'flex';
+                        fetch(GOOGLE_SHEET_WEB_APP_URL, {
+                            method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'saveUserFlags', user: userName, flags: { hasSeenCharTour: true } })
+                        });
+                    }
+                }).catch(e => console.error(e));
         });
 
         // Close Mwenza Modal
@@ -723,16 +732,16 @@
         const avatarFiles = [
             "assets_login/Aminate_Diallo.jpg",
             "assets_login/Adeaze_Okafor.jpg",
-            "assets_login/Ibrahim_Touré.jpg",
+            "assets_login/Ibrahim_Toure.jpg",
             "assets_login/Fatou_Bah.jpg",
-            "assets_login/Aïcha_Sow.jpg",
+            "assets_login/Aicha_Sow.jpg",
             "assets_login/Kojo_Asante.jpg",
             "assets_login/Mariame_Ca....jpg",
             "assets_login/Tunde_Adeba.jpg",
             "assets_login/Hadiza_Yusef.jpg",
             "assets_login/Mary_Ezeno.jpg",
             "assets_login/Ngozi_Okonko.jpg",
-            "assets_login/Salif_Konaté.jpg",
+            "assets_login/Salif_Konate.jpg",
             "assets_login/Yocouba_Sanou.jpg",
             "assets_login/Akira_Nlovu.jpg",
             "assets_login/Manzi_Kalisa.jpg",

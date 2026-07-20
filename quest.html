@@ -1438,15 +1438,23 @@
             window.location.href = dest;
         }
 
+        function saveFlagToSheet(flagObj) {
+            fetch(APP_SCRIPT_URL, {
+                method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'saveUserFlags', user: userName, flags: flagObj })
+            }).catch(e => console.error("Flag save failed", e));
+        }
+
         // --- Content Unlock Notification Infrastructure ---
-        function triggerUnlockNotification(tierName, titleText, elementTargetId, showAfterDelay = 0) {
+        function triggerUnlockNotification(tierName, titleText, elementTargetId, userFlags, showAfterDelay = 0) {
+            const flagKey = `alert_${tierName}_unlocked`;
+
+            // If flag exists on the backend, do nothing
+            if (userFlags[flagKey]) return;
+
             const modal = document.getElementById('unlockNotificationModal');
             const titleLabel = document.getElementById('unlockTitle');
             const targetBtn = document.getElementById('btnTakeMeThere');
-            const lockStorageKey = `wavumbuzi_unlocked_alert_${tierName}_${safeUserKey}`;
-
-            // Check if user has already seen this specific level unlock announcement
-            if (localStorage.getItem(lockStorageKey)) return;
 
             titleLabel.innerText = titleText;
             targetBtn.onclick = () => {
@@ -1464,7 +1472,9 @@
             }, showAfterDelay);
 
             // Log viewing persistence state
-            localStorage.setItem(lockStorageKey, 'true');
+            let newFlag = {};
+            newFlag[flagKey] = true;
+            saveFlagToSheet(newFlag);
         }
 
         function closeUnlockModal() {
@@ -1540,7 +1550,7 @@
 
             // Fetch live submissions and user points concurrently
             Promise.all([
-                fetch(APP_SCRIPT_URL + '?action=getUserData&user=' + encodeURIComponent(userName || "")).then(res => res.json()).catch(() => ({ success: false, points: 0 })),
+                fetch(APP_SCRIPT_URL + '?action=getUserData&user=' + encodeURIComponent(userName || "")).then(res => res.json()).catch(() => ({ success: false, points: 0, flags: "{}" })),
                 fetch(APP_SCRIPT_URL + '?action=getReflections').then(res => res.json()).catch(() => ({ success: false, reflections: [] }))
             ]).then(([userData, reflectData]) => {
 
@@ -1548,6 +1558,11 @@
 
                 const points = userData.success ? (userData.points || 0) : 0;
                 if (pointsVal) pointsVal.innerText = points + " points";
+
+                let flags = {};
+                if (userData.success) {
+                    try { flags = JSON.parse(userData.flags || "{}"); } catch (e) { }
+                }
 
                 const hasCompleted = reflectData.success && reflectData.reflections && reflectData.reflections.find(r => r.user.toLowerCase() === (userName || "").toLowerCase());
 
@@ -1613,12 +1628,12 @@
                     document.getElementById('award-overlay-img').src = "assets_quest/Award%20overlay%20Gold%20badge.png";
 
                     // Only show celebration overlay badge once
-                    if (!localStorage.getItem('wavumbuzi_award_gold_seen_' + safeUserKey)) {
+                    if (!flags.awardGoldSeen) {
                         setTimeout(() => {
                             showAwardLoadingModal();
                             setTimeout(() => hideAwardLoadingModal(), 2500);
                         }, 500);
-                        localStorage.setItem('wavumbuzi_award_gold_seen_' + safeUserKey, 'true');
+                        saveFlagToSheet({ awardGoldSeen: true });
                     }
 
                 } else if (points >= 500) {
@@ -1668,14 +1683,14 @@
                     document.getElementById('award-overlay-img').src = "assets_quest/Award%20overlay%20Silver%20badge.png";
 
                     // Celebrate Reflect card unlock (Waits 3.5s for overlay)
-                    triggerUnlockNotification("reflect_level", "You have unlocked the Reflect content!", "row-reflect", 3500);
+                    triggerUnlockNotification("reflect_level", "You have unlocked the Reflect content!", "row-reflect", flags, 3500);
 
-                    if (!localStorage.getItem('wavumbuzi_award_silver_seen_' + safeUserKey)) {
+                    if (!flags.awardSilverSeen) {
                         setTimeout(() => {
                             showAwardLoadingModal();
                             setTimeout(() => hideAwardLoadingModal(), 2500);
                         }, 500);
-                        localStorage.setItem('wavumbuzi_award_silver_seen_' + safeUserKey, 'true');
+                        saveFlagToSheet({ awardSilverSeen: true });
                     }
 
                 } else if (points >= 300) {
@@ -1714,14 +1729,14 @@
                     document.getElementById('award-overlay-img').src = "assets_quest/Award%20overlay%20Bronze%20badge.png";
 
                     // Celebrate Explore card unlock (Waits 3.5s for overlay)
-                    triggerUnlockNotification("explore_level", "You have unlocked the Explore content!", "row-explore", 3500);
+                    triggerUnlockNotification("explore_level", "You have unlocked the Explore content!", "row-explore", flags, 3500);
 
-                    if (!localStorage.getItem('wavumbuzi_award_bronze_seen_' + safeUserKey)) {
+                    if (!flags.awardBronzeSeen) {
                         setTimeout(() => {
                             showAwardLoadingModal();
                             setTimeout(() => hideAwardLoadingModal(), 2500);
                         }, 500);
-                        localStorage.setItem('wavumbuzi_award_bronze_seen_' + safeUserKey, 'true');
+                        saveFlagToSheet({ awardBronzeSeen: true });
                     }
 
                 } else {
@@ -1729,7 +1744,7 @@
                     // DEFAULT STATE (Under 300 points)
                     // ==========================================
                     // Celebrate Discover card unlock immediately since there is no badge overlay here
-                    triggerUnlockNotification("discover_level", "You have unlocked the Discover content!", "row-discover", 500);
+                    triggerUnlockNotification("discover_level", "You have unlocked the Discover content!", "row-discover", flags, 500);
                 }
 
             }).catch(e => {
