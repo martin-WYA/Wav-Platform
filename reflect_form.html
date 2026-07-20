@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wavumbuzi - Reflect Form</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0e242c 0%, #2b1812 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 24px 80px 24px;
+            position: relative;
+        }
+
+        /* --- HEADER NAVIGATION --- */
+        .top-row {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .header-title-main {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .exit-btn {
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .exit-btn:hover {
+            transform: scale(1.05) translateX(2px);
+            opacity: 0.9;
+        }
+
+        .exit-btn img {
+            width: 32px;
+            height: auto;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        /* --- MAIN WRAPPER --- */
+        .main-card-wrapper {
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+            margin-top: 30px;
+        }
+
+        /* --- CARD STRUCTURE --- */
+        .main-card {
+            background: linear-gradient(135deg, #d3e5e0 0%, #f4ebd9 100%);
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Header / Top Arch Area */
+        .card-header {
+            background-color: #2f3e46;
+            padding: 48px 24px 32px 24px;
+            text-align: center;
+            position: relative;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .icon-cutout {
+            position: absolute;
+            top: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 90px;
+            background-color: #2f3e46;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .icon-cutout::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+        }
+
+        .icon-cutout img {
+            width: 50px;
+            height: auto;
+            position: relative;
+            z-index: 2;
+            transition: opacity 0.3s;
+        }
+
+        #header-icon-preview {
+            display: none;
+            width: 45px;
+        }
+
+        .card-title {
+            color: #ffffff;
+            font-size: 26px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+            margin: 0;
+            transition: all 0.3s;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            display: flex;
+            height: 44px;
+            background-color: #ffffff;
+        }
+
+        .step {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .step-1 {
+            background-color: #fba143;
+            color: #111827;
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%);
+            z-index: 2;
+        }
+
+        .step-2 {
+            background-color: #ffffff;
+            color: #111827;
+            margin-left: -20px;
+            padding-left: 20px;
+            z-index: 1;
+        }
+
+        .progress-bar.step2-active .step-1 {
+            background-color: #e88524;
+            color: #ffffff;
+        }
+
+        .progress-bar.step2-active .step-2 {
+            background-color: #d97706;
+            color: #ffffff;
+        }
+
+        /* Card Body */
+        .card-body {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Dr Ros Chat Bubble */
+        .chat-row {
+            display: flex;
+            align-items: center;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 24px 32px 24px 64px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-left: 24px;
+        }
+
+        .chat-avatar {
+            position: absolute;
+            left: -35px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 4px solid #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background-color: #e8a081;
+            overflow: hidden;
+        }
+
+        .chat-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+        }
+
+        .chat-text {
+            font-size: 13.5px;
+            color: #111827;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .chat-text p {
+            margin-bottom: 12px;
+        }
+
+        .chat-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Form Area */
+        .form-area {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .q-block {
+            margin-bottom: 32px;
+        }
+
+        .q-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .q-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .q-desc {
+            font-size: 13px;
+            color: #374151;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        textarea,
+        input[type="text"] {
+            width: 100%;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 14px;
+            font-size: 13px;
+            color: #111827;
+            background-color: #ffffff;
+            transition: border-color 0.2s;
+            font-weight: 500;
+        }
+
+        textarea:focus,
+        input[type="text"]:focus {
+            border-color: #fba143;
+            outline: none;
+        }
+
+        textarea::placeholder,
+        input[type="text"]::placeholder {
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        input[type="text"] {
+            margin-bottom: 12px;
+        }
+
+        input[type="text"]:last-child {
+            margin-bottom: 0;
+        }
+
+        /* --- STEP 2 SPECIFIC STYLES --- */
+        #step2-container {
+            display: none;
+        }
+
+        .warning-card {
+            background-color: #1a2320;
+            border-radius: 12px;
+            padding: 32px 40px;
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .warning-text h3 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .warning-text p {
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: #d1d5db;
+        }
+
+        .warning-text ul {
+            padding-left: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .warning-text li {
+            margin-bottom: 4px;
+        }
+
+        .warning-robot {
+            width: 120px;
+            height: auto;
+            flex-shrink: 0;
+            z-index: 2;
+            position: relative;
+            bottom: -10px;
+        }
+
+        .preview-box {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .preview-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid #111827;
+            object-fit: cover;
+        }
+
+        .preview-name-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-idea-name {
+            font-size: 16px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 2px;
+        }
+
+        .preview-user-name {
+            font-size: 13px;
+            color: #4b5563;
+            font-weight: 600;
+        }
+
+        .preview-field {
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 12px;
+            font-size: 13.5px;
+            color: #374151;
+            line-height: 1.5;
+        }
+
+        .preview-field b {
+            color: #111827;
+            font-weight: 800;
+            margin-right: 4px;
+        }
+
+        /* Footer */
+        .card-footer {
+            background-color: #d8e4db;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #111827;
+            color: #111827;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline:hover {
+            background: rgba(17, 24, 39, 0.05);
+        }
+
+        .btn-solid {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 12px 32px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-solid:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(232, 133, 36, 0.4);
+        }
+
+        /* Disabled Step 1 Button */
+        .disabled-btn {
+            background: #9ca3af !important;
+            color: #4b5563 !important;
+            box-shadow: none !important;
+            transform: none !important;
+            pointer-events: none;
+        }
+
+        #btn-step1-wrapper {
+            display: inline-block;
+            cursor: not-allowed;
+        }
+
+        /* --- MODAL STYLES --- */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(17, 26, 34, 0.85);
+            /* Dark overlay */
+            z-index: 4000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.show {
+            opacity: 1;
+        }
+
+        .confetti-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 4001;
+        }
+
+        .success-content {
+            position: relative;
+            z-index: 4005;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 650px;
+            padding: 24px;
+        }
+
+        .success-title {
+            color: #ffffff;
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-card {
+            background: linear-gradient(90deg, #d3e5e0 0%, #f4ebd9 100%);
+            border-radius: 16px;
+            padding: 40px 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            width: 100%;
+        }
+
+        /* Specific Loading Styles */
+        .loading-card {
+            max-width: 500px;
+        }
+
+        .loading-card img {
+            width: 100px;
+            height: auto;
+            margin-bottom: 24px;
+            animation: pulse 1.2s infinite alternate ease-in-out;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+        }
+
+        .loading-card p {
+            font-size: 18px;
+            color: #111827;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+            }
+
+            100% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Success Styles */
+        .success-card img {
+            width: 130px;
+            height: auto;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+        }
+
+        .success-card p {
+            font-size: 15px;
+            color: #111827;
+            font-weight: 600;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 850px) {
+            .chat-row {
+                margin-left: 0;
+                padding: 24px;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .chat-avatar {
+                position: relative;
+                left: 0;
+                top: 0;
+                transform: none;
+                margin-bottom: 16px;
+                width: 60px;
+                height: 60px;
+            }
+
+            .warning-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 32px 24px;
+            }
+
+            .warning-text ul {
+                text-align: left;
+                display: inline-block;
+            }
+
+            .card-body {
+                padding: 24px;
+            }
+
+            .form-area,
+            .preview-box {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .card-header {
+                padding: 40px 16px 24px 16px;
+            }
+
+            .card-title {
+                font-size: 20px;
+            }
+
+            .step {
+                font-size: 11px;
+            }
+
+            .card-footer {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .btn-outline,
+            .btn-solid,
+            #btn-step1-wrapper {
+                width: 100%;
+            }
+
+            #btn-step1-submit {
+                width: 100%;
+            }
+
+            .modal-card {
+                padding: 32px 24px;
+            }
+
+            .success-title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header / Exit -->
+    <div class="top-row">
+        <div class="header-title-main">REFLECTION</div>
+        <a href="quest.html" class="exit-btn" title="Exit">
+            <img src="assets_reflect/Exit%20icon.png" alt="Exit">
+        </a>
+    </div>
+
+    <!-- Main Card Wrapper -->
+    <div class="main-card-wrapper">
+        <div class="main-card">
+
+            <!-- Card Header -->
+            <div class="card-header">
+                <div class="icon-cutout">
+                    <img id="header-icon-img" src="assets_reflect/Reflect%20mirror%20copy.png" alt="Mirror">
+                    <img id="header-icon-preview" src="assets_reflect/Post%20preview%20icon.png" alt="Preview">
+                </div>
+                <h1 class="card-title" id="card-main-title">REFLECT ON A PROBLEM IN YOUR OWN COMMUNITY</h1>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-bar" id="progress-bar">
+                <div class="step step-1">STEP 1</div>
+                <div class="step step-2">STEP 2</div>
+            </div>
+
+            <!-- ===================== -->
+            <!-- STEP 1 CONTAINER      -->
+            <!-- ===================== -->
+            <div id="step1-container">
+                <div class="card-body">
+
+                    <!-- Dr Ros Bubble -->
+                    <div class="chat-row">
+                        <div class="chat-avatar"><img src="assets_quest/Dr%20Ros%20illustration.png" alt="Dr Ros"></div>
+                        <div class="chat-text">
+                            <p>You have learned from real entrepreneurs in Discover. You have also practised solving a
+                                problem in Tembeatown.</p>
+                            <p>Now use what you learnt to think about your own community.</p>
+                        </div>
+                    </div>
+
+                    <!-- Form Questions -->
+                    <div class="form-area">
+                        <div class="q-block">
+                            <div class="q-title">Question 1</div>
+                            <div class="q-desc">What problem in your community do you care about? This can be a health
+                                problem, or another problem that affects people around you.</div>
+                            <textarea id="inp-q1" placeholder="Write your answer"></textarea>
+                        </div>
+
+                        <div class="q-block">
+                            <div class="q-title">Question 2</div>
+                            <div class="q-desc">What have you personally seen, heard, or experienced that shows this
+                                problem is a real problem that you can solve?</div>
+                            <textarea id="inp-q2" placeholder="Write your answer"></textarea>
+                        </div>
+
+                        <div class="q-block">
+                            <div class="q-title">Question 3</div>
+                            <div class="q-desc">Now create your own project idea to solve this problem.</div>
+
+                            <input type="text" id="inp-idea" placeholder="My idea is called...">
+                            <input type="text" id="inp-prob" placeholder="The problem it solves is...">
+                            <input type="text" id="inp-people" placeholder="The people it helps are...">
+                            <input type="text" id="inp-sol" placeholder="The solution is...">
+                            <input type="text" id="inp-money"
+                                placeholder="The way it could earn or save money to support itself is...">
+                            <input type="text" id="inp-res" placeholder="The resources I can start with are...">
+                            <input type="text" id="inp-step" placeholder="The first small step is...">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Footer 1 -->
+                <div class="card-footer">
+                    <button class="btn-outline" onclick="window.location.href='reflect.html'">&lt; BACK</button>
+                    <!-- Wrapper provides the hover title when the button is disabled -->
+                    <div id="btn-step1-wrapper" title="Complete everything first">
+                        <button id="btn-step1-submit" class="btn-solid disabled-btn" disabled
+                            onclick="goToStep2()">SUBMIT</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================== -->
+            <!-- STEP 2 CONTAINER      -->
+            <!-- ===================== -->
+            <div id="step2-container">
+                <div class="card-body">
+
+                    <!-- Dr Ros Bubble -->
+                    <div class="chat-row">
+                        <div class="chat-avatar"><img src="assets_quest/Dr%20Ros%20illustration.png" alt="Dr Ros"></div>
+                        <div class="chat-text">
+                            <p>Below is your idea that will be posted on the community board for other students to read
+                                and vote on. Read your submission again to see if it follows the rules and you want to
+                                make any changes before you post it.</p>
+                        </div>
+                    </div>
+
+                    <!-- Warning Card -->
+                    <div class="warning-card">
+                        <div class="warning-text">
+                            <h3>Before you post</h3>
+                            <p>Before you post to the community board, check if these points are true:</p>
+                            <ul>
+                                <li>I did not include exact addresses, phone numbers, or full names.</li>
+                                <li>My idea explains a real problem.</li>
+                                <li>My idea gives a clear solution.</li>
+                                <li>My idea shows how I can start small.</li>
+                                <li>I wrote this in my own words.</li>
+                                <li>I understand that I will only score points if my submission is accepted.</li>
+                            </ul>
+                        </div>
+                        <img src="assets_challenge/Mwenza_ipad.png" class="warning-robot" alt="Robot Guide"
+                            onerror="this.style.display='none'">
+                    </div>
+
+                    <!-- Preview Area -->
+                    <div class="preview-box">
+                        <div class="preview-header">
+                            <img src="new_user.png" id="preview-avatar" class="preview-avatar" alt="User">
+                            <div class="preview-name-group">
+                                <div class="preview-idea-name" id="prev-idea">[Idea name]</div>
+                                <div class="preview-user-name" id="prev-user">User Name</div>
+                            </div>
+                        </div>
+
+                        <div class="preview-field"><b>My idea is called...</b> <span id="prev-val-idea"></span></div>
+                        <div class="preview-field"><b>The problem it solves is...</b> <span id="prev-val-prob"></span>
+                        </div>
+                        <div class="preview-field"><b>The people it helps are...</b> <span id="prev-val-people"></span>
+                        </div>
+                        <div class="preview-field"><b>The solution is...</b> <span id="prev-val-sol"></span></div>
+                        <div class="preview-field"><b>The way it could earn or save money to support itself is...</b>
+                            <span id="prev-val-money"></span></div>
+                        <div class="preview-field"><b>The resources I can start with are...</b> <span
+                                id="prev-val-res"></span></div>
+                        <div class="preview-field"><b>The first small step is...</b> <span id="prev-val-step"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Footer 2 -->
+                <div class="card-footer">
+                    <button class="btn-outline" onclick="goToStep1()">&lt; EDIT MY IDEA</button>
+                    <button class="btn-solid" id="final-submit-btn" onclick="finalSubmit()">SUBMIT</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===================== -->
+    <!-- LOADING MODAL         -->
+    <!-- ===================== -->
+    <div id="loadingModal" class="overlay">
+        <div class="modal-card loading-card">
+            <img src="assets_reflect/hourglass.png" alt="Loading">
+            <p id="loadingText">Submitting your answer...</p>
+        </div>
+    </div>
+
+    <!-- ===================== -->
+    <!-- SUCCESS MODAL         -->
+    <!-- ===================== -->
+    <div id="successModal" class="overlay">
+        <!-- Confetti Animation Canvas -->
+        <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+
+        <div class="success-content">
+            <h2 class="success-title">YOUR RESULTS</h2>
+            <div class="modal-card success-card">
+                <img src="assets_reflect/Happy%20Mwenza.png" alt="Happy Mwenza">
+                <p>Well done! Your post has been accepted. Let's go look at it on the community board. Remember you can
+                    earn up to 50 points by reading your peers' ideas and upvoting your favourite ones.</p>
+                <button class="btn-solid" onclick="window.location.href='community.html'">GO TO COMMUNITY BOARD</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTyvz2azkYILUbhFaWlQOZ454b9E_flwAlQ41cIhjacIfFop8Ter193nojY47uALI/exec';
+
+        // --- 1. Populate User Data ---
+        const urlParams = new URLSearchParams(window.location.search);
+        let userName = urlParams.get('user') || "Akira N";
+        let userAvatar = "new_user.png";
+
+        const savedData = localStorage.getItem('wavumbuzi_user_data_complete');
+        if (savedData) {
+            try {
+                const parsedData = JSON.parse(savedData);
+                if (parsedData && parsedData.fullName && !urlParams.get('user')) {
+                    userName = parsedData.fullName;
+                }
+                if (parsedData && parsedData.avatar) {
+                    userAvatar = parsedData.avatar;
+                }
+            } catch (e) { }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('prev-user').innerText = userName;
+            document.getElementById('preview-avatar').src = userAvatar;
+            checkFormCompletion(); // Initialize button state
+        });
+
+        // --- 2. Form Validation Logic (Step 1) ---
+        const formInputIds = [
+            'inp-q1', 'inp-q2', 'inp-idea', 'inp-prob',
+            'inp-people', 'inp-sol', 'inp-money', 'inp-res', 'inp-step'
+        ];
+
+        function checkFormCompletion() {
+            let allFilled = true;
+            formInputIds.forEach(id => {
+                if (document.getElementById(id).value.trim() === '') {
+                    allFilled = false;
+                }
+            });
+
+            const submitBtn = document.getElementById('btn-step1-submit');
+            const wrapper = document.getElementById('btn-step1-wrapper');
+
+            if (allFilled) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('disabled-btn');
+                wrapper.title = "";
+                wrapper.style.cursor = "pointer";
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('disabled-btn');
+                wrapper.title = "Complete everything first";
+                wrapper.style.cursor = "not-allowed";
+            }
+        }
+
+        formInputIds.forEach(id => {
+            document.getElementById(id).addEventListener('input', checkFormCompletion);
+        });
+
+        // --- 3. Navigation Logic ---
+        const step1 = document.getElementById('step1-container');
+        const step2 = document.getElementById('step2-container');
+        const progressBar = document.getElementById('progress-bar');
+        const cardTitle = document.getElementById('card-main-title');
+        const iconImg = document.getElementById('header-icon-img');
+        const iconPreview = document.getElementById('header-icon-preview');
+
+        function goToStep2() {
+            // Populate preview data
+            const ideaVal = document.getElementById('inp-idea').value || "[Idea name]";
+            document.getElementById('prev-idea').innerText = ideaVal;
+            document.getElementById('prev-val-idea').innerText = document.getElementById('inp-idea').value;
+            document.getElementById('prev-val-prob').innerText = document.getElementById('inp-prob').value;
+            document.getElementById('prev-val-people').innerText = document.getElementById('inp-people').value;
+            document.getElementById('prev-val-sol').innerText = document.getElementById('inp-sol').value;
+            document.getElementById('prev-val-money').innerText = document.getElementById('inp-money').value;
+            document.getElementById('prev-val-res').innerText = document.getElementById('inp-res').value;
+            document.getElementById('prev-val-step').innerText = document.getElementById('inp-step').value;
+
+            // UI Changes
+            step1.style.display = 'none';
+            step2.style.display = 'block';
+
+            progressBar.classList.add('step2-active');
+            cardTitle.innerText = "POST PREVIEW";
+            iconImg.style.display = 'none';
+            iconPreview.style.display = 'block';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goToStep1() {
+            step2.style.display = 'none';
+            step1.style.display = 'block';
+
+            progressBar.classList.remove('step2-active');
+            cardTitle.innerText = "REFLECT ON A PROBLEM IN YOUR OWN COMMUNITY";
+            iconImg.style.display = 'block';
+            iconPreview.style.display = 'none';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- 4. Modals & Storage Logic ---
+        function showLoadingModal(text) {
+            document.getElementById('loadingText').innerText = text;
+            const modal = document.getElementById('loadingModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+
+        function hideLoadingModal() {
+            const modal = document.getElementById('loadingModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function finalSubmit() {
+            const submitBtn = document.getElementById('final-submit-btn');
+            submitBtn.disabled = true;
+
+            showLoadingModal("Submitting your answer...");
+
+            const submissionData = {
+                action: 'submitReflection',
+                user: userName,
+                avatar: userAvatar,
+                idea: document.getElementById('inp-idea').value,
+                prob: document.getElementById('inp-prob').value,
+                people: document.getElementById('inp-people').value,
+                sol: document.getElementById('inp-sol').value,
+                money: document.getElementById('inp-money').value,
+                res: document.getElementById('inp-res').value,
+                step: document.getElementById('inp-step').value
+            };
+
+            // Local cache as backup for immediate rendering
+            localStorage.setItem('wavumbuzi_reflect_submission', JSON.stringify(submissionData));
+
+            fetch(APP_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(submissionData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    hideLoadingModal();
+                    setTimeout(() => {
+                        showSuccessModal();
+                        submitBtn.disabled = false;
+                    }, 300); // Wait for loading modal to fade out
+                })
+                .catch(error => {
+                    console.error('Error saving post:', error);
+                    hideLoadingModal();
+                    setTimeout(() => {
+                        alert("There was an error saving your post. Please try again.");
+                        submitBtn.disabled = false;
+                    }, 300);
+                });
+        }
+
+        let confettiAnimationId;
+
+        function showSuccessModal() {
+            const modal = document.getElementById('successModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+            startConfetti();
+        }
+
+        function startConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let particles = [];
+            const colors = ['#fba143', '#0ea5e9', '#15803d', '#b91c1c', '#d946ef', '#fcd34d'];
+
+            for (let i = 0; i < 150; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 10 + 5,
+                    h: Math.random() * 15 + 5,
+                    dx: Math.random() * 2 - 1,
+                    dy: Math.random() * 3 + 2,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    tilt: Math.floor(Math.random() * 10) - 10,
+                    tiltAngleInc: (Math.random() * 0.07) + 0.05,
+                    tiltAngle: 0
+                });
+            }
+
+            function draw() {
+                confettiAnimationId = requestAnimationFrame(draw);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                particles.forEach(p => {
+                    p.tiltAngle += p.tiltAngleInc;
+                    p.y += (Math.cos(p.tiltAngle) + p.dy + p.w / 2) / 2;
+                    p.x += Math.sin(p.tiltAngle) * 2;
+
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.moveTo(p.x + p.tilt + p.w / 2, p.y);
+                    ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.h / 2);
+                    ctx.lineTo(p.x + p.tilt - p.w / 2, p.y + p.tilt);
+                    ctx.lineTo(p.x + p.tilt, p.y + p.tilt - p.h / 2);
+                    ctx.fill();
+
+                    if (p.y > canvas.height) {
+                        p.x = Math.random() * canvas.width;
+                        p.y = -20;
+                        p.tilt = Math.floor(Math.random() * 10) - 10;
+                    }
+                });
+            }
+            draw();
+        }
+
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('confettiCanvas');
+            if (canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
+    </script>
+</body>
+
+</html>

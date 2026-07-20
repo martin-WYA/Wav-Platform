@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wavumbuzi - Choose Character</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #d8edf4;
+            background-image: url('Mwenza_background.jpg');
+            background-size: cover;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+        }
+
+        /* Top Navigation Header */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 48px;
+            width: 100%;
+            z-index: 50;
+            flex-shrink: 0;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .user-nav-group {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .bell-icon {
+            width: 20px;
+            height: 20px;
+            color: #111827;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .bell-icon:hover {
+            opacity: 0.7;
+        }
+
+        /* --- PROFILE DROPDOWN --- */
+        .profile-dropdown-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 30px;
+            transition: background 0.2s;
+        }
+
+        .profile-group:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #111827;
+            object-fit: cover;
+            background-color: #ffffff;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+            user-select: none;
+        }
+
+        .chevron-down {
+            width: 16px;
+            height: 16px;
+            color: #111827;
+            transition: transform 0.2s ease;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 180px;
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+            animation: slideDown 0.2s ease forwards;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-item {
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-align: left;
+            background: none;
+            width: 100%;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+            color: #e88524;
+            padding-left: 24px;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e2e8f0;
+            margin: 0;
+        }
+
+        .profile-dropdown-wrapper.open .chevron-down {
+            transform: rotate(180deg);
+        }
+
+        /* Main Content Container - Flex centered */
+        .main-container {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* Centers vertically */
+            align-items: center;
+            /* Centers horizontally */
+            flex-grow: 1;
+            z-index: 10;
+        }
+
+        /* Dark UI Card */
+        .picker-card {
+            background: linear-gradient(145deg, #0e1b15 0%, #1e150a 100%);
+            width: 100%;
+            border-radius: 20px;
+            padding: 48px 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: -8vh;
+            /* Optically pushes the card up to balance the footer background */
+            animation: fadeInCard 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeInCard {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-title {
+            font-size: 40px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 48px;
+            letter-spacing: -0.5px;
+            text-align: center;
+        }
+
+        /* 3D Carousel Area */
+        .carousel-wrapper {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+            margin-bottom: 40px;
+        }
+
+        .carousel-item {
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border-radius: 20px;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            background-color: #586762;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+            transition: all 0.5s ease;
+        }
+
+        /* Carousel Positional Classes */
+        .item-center {
+            transform: translateX(0) scale(1.3);
+            z-index: 5;
+            opacity: 1;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .item-left1 {
+            transform: translateX(-180px) scale(0.9);
+            z-index: 4;
+            opacity: 0.6;
+            filter: brightness(0.6);
+        }
+
+        .item-right1 {
+            transform: translateX(180px) scale(0.9);
+            z-index: 4;
+            opacity: 0.6;
+            filter: brightness(0.6);
+        }
+
+        .item-left2 {
+            transform: translateX(-320px) scale(0.7);
+            z-index: 3;
+            opacity: 0.2;
+            filter: brightness(0.3);
+        }
+
+        .item-right2 {
+            transform: translateX(320px) scale(0.7);
+            z-index: 3;
+            opacity: 0.2;
+            filter: brightness(0.3);
+        }
+
+        .item-hidden {
+            transform: translateX(0) scale(0.4);
+            z-index: 1;
+            opacity: 0;
+        }
+
+        /* Controls */
+        .controls-row {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.2);
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .nav-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(232, 133, 36, 0.4);
+        }
+
+        .nav-btn svg {
+            width: 20px;
+            height: 20px;
+            color: #111827;
+            stroke-width: 3px;
+        }
+
+        .btn-select {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 14px 40px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.2);
+        }
+
+        .btn-select:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(232, 133, 36, 0.4);
+        }
+
+        /* Loading State Overlay */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(14, 27, 21, 0.8);
+            border-radius: 20px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            color: white;
+            backdrop-filter: blur(4px);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(251, 161, 67, 0.3);
+            border-top-color: #fba143;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Instruction Modal (Mwenza Dialog) */
+        .instruction-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(14, 27, 21, 0.65);
+            backdrop-filter: blur(3px);
+            display: none;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: max(20px, 12vw);
+            z-index: 2000;
+            animation: fadeInOverlay 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeInOverlay {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .instruction-dialog {
+            background: linear-gradient(180deg, #cde3ec 0%, #e0eef4 100%);
+            width: 100%;
+            max-width: 380px;
+            border-radius: 20px;
+            padding: 50px 24px 24px 24px;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.2s;
+        }
+
+        @keyframes popIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* The speech bubble pointer */
+        .instruction-dialog::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -18px;
+            transform: translateY(-50%);
+            border-width: 18px 0 18px 18px;
+            border-style: solid;
+            border-color: transparent transparent transparent #d4e7ef;
+            filter: drop-shadow(3px 0px 2px rgba(0, 0, 0, 0.05));
+        }
+
+        .mwenza-ipad-img {
+            position: absolute;
+            top: -95px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110px;
+            height: auto;
+            z-index: 10;
+            animation: floatMwenza 3s ease-in-out infinite;
+        }
+
+        @keyframes floatMwenza {
+
+            0%,
+            100% {
+                transform: translate(-50%, 0);
+            }
+
+            50% {
+                transform: translate(-50%, -10px);
+            }
+        }
+
+        .instruction-white-box {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 24px 20px;
+            font-size: 14.5px;
+            color: #1f2937;
+            line-height: 1.6;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            margin-bottom: 24px;
+        }
+
+        .instruction-white-box p {
+            margin-bottom: 16px;
+        }
+
+        .instruction-white-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .btn-ready {
+            width: 100%;
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 14px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .btn-ready:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(232, 133, 36, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 16px 20px;
+            }
+
+            .picker-card {
+                padding: 32px 16px;
+                margin-top: -2vh;
+            }
+
+            .card-title {
+                font-size: 28px;
+                margin-bottom: 32px;
+            }
+
+            .item-left1 {
+                transform: translateX(-120px) scale(0.8);
+            }
+
+            .item-right1 {
+                transform: translateX(120px) scale(0.8);
+            }
+
+            .item-left2,
+            .item-right2 {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            /* Center the modal on mobile */
+            .instruction-overlay {
+                justify-content: center;
+                padding: 20px;
+            }
+
+            .instruction-dialog::after {
+                display: none;
+            }
+
+            /* Hide pointer on mobile since it is centered */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="instruction-overlay" id="mwenzaModal">
+        <div class="instruction-dialog">
+            <img src="Mwenza_ipad.png" alt="Mwenza with iPad" class="mwenza-ipad-img"
+                onerror="this.style.display='none'">
+
+            <div class="instruction-white-box">
+                <p>First choose a character.</p>
+                <p>You will be able to change your face more later. Just choose one that will represent you well for
+                    now.</p>
+                <p>Once you are happy with your choice, click SELECT CHARACTER to continue.</p>
+            </div>
+
+            <button class="btn-ready" onclick="closeMwenzaModal()">I'M READY</button>
+        </div>
+    </div>
+
+    <header class="top-nav">
+        <img src="Wavumbuzi_logo.png" alt="Wavumbuzi Logo" class="logo-img" onerror="this.alt='Wavumbuzi Challenge'">
+
+        <div class="user-nav-group">
+            <svg class="bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+
+            <!-- Dynamic Dropdown Wrapper -->
+            <div class="profile-dropdown-wrapper" id="profileDropdownWrapper">
+                <div class="profile-group" onclick="toggleDropdown(event)">
+                    <img src="new_user.png" id="navAvatar" class="profile-avatar" alt="User Profile"
+                        onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'><rect width=\\'100\\' height=\\'100\\' fill=\\'%23e2ecef\\'/></svg>'">
+                    <span class="profile-name" id="navNameDisplay">User</span>
+                    <svg class="chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="profile.html" class="dropdown-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        My Profile
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="logOut()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Log Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="picker-card">
+
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="spinner"></div>
+                <h3>Saving Profile...</h3>
+            </div>
+
+            <h1 class="card-title">Choose your character</h1>
+
+            <div class="carousel-wrapper" id="carouselWrapper">
+            </div>
+
+            <div class="controls-row">
+                <button class="nav-btn" onclick="rotateCarousel(-1)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                <button class="btn-select" onclick="selectAndSave()">SELECT CHARACTER</button>
+                <button class="nav-btn" onclick="rotateCarousel(1)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwTyvz2azkYILUbhFaWlQOZ454b9E_flwAlQ41cIhjacIfFop8Ter193nojY47uALI/exec";
+
+        // Load User Data
+        let userName = "Akira";
+        const urlParams = new URLSearchParams(window.location.search);
+        let paramUser = urlParams.get('newuser') || urlParams.get('user');
+
+        let savedData = null;
+        const localData = localStorage.getItem('wavumbuzi_user_data_complete');
+        if (localData) {
+            try { savedData = JSON.parse(localData); } catch (e) { }
+        }
+        if (paramUser) userName = paramUser;
+        else if (savedData && savedData.fullName) userName = savedData.fullName;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const nameParts = userName.trim().split(/\s+/);
+            const display = nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1).toLowerCase() + (nameParts.length > 1 ? " " + nameParts[nameParts.length - 1].charAt(0).toUpperCase() : "");
+            document.getElementById('navNameDisplay').innerText = display;
+            document.getElementById('navAvatar').src = savedData && savedData.avatar ? savedData.avatar : "new_user.png";
+            initCarousel();
+
+            // Tour Overlay Logic (Show only once)
+            const safeName = userName ? userName.replace(/\s+/g, '_').toLowerCase() : 'default_user';
+            const charTourKey = 'wavumbuzi_char_tour_' + safeName;
+
+            if (!localStorage.getItem(charTourKey)) {
+                document.getElementById('mwenzaModal').style.display = 'flex';
+                localStorage.setItem(charTourKey, 'true');
+            }
+        });
+
+        // Close Mwenza Modal
+        function closeMwenzaModal() {
+            const modal = document.getElementById('mwenzaModal');
+            modal.style.transition = "opacity 0.3s ease";
+            modal.style.opacity = "0";
+            setTimeout(() => {
+                modal.style.display = "none";
+            }, 300);
+        }
+
+        // --- Dropdown Logic ---
+        function toggleDropdown(e) {
+            e.stopPropagation();
+            const wrapper = document.getElementById('profileDropdownWrapper');
+            const menu = document.getElementById('dropdownMenu');
+            if (wrapper && menu) {
+                wrapper.classList.toggle('open');
+                menu.classList.toggle('show');
+            }
+        }
+
+        window.addEventListener('click', function (e) {
+            const wrapper = document.getElementById('profileDropdownWrapper');
+            const menu = document.getElementById('dropdownMenu');
+
+            if (wrapper && menu && !wrapper.contains(e.target)) {
+                wrapper.classList.remove('open');
+                menu.classList.remove('show');
+            }
+        });
+
+        function logOut() {
+            window.location.href = "login.html";
+        }
+
+        // Carousel Logic pulling directly from assets_login/
+        const avatarFiles = [
+            "assets_login/Aminate_Diallo.jpg",
+            "assets_login/Adeaze_Okafor.jpg",
+            "assets_login/Ibrahim_Touré.jpg",
+            "assets_login/Fatou_Bah.jpg",
+            "assets_login/Aïcha_Sow.jpg",
+            "assets_login/Kojo_Asante.jpg",
+            "assets_login/Mariame_Ca....jpg",
+            "assets_login/Tunde_Adeba.jpg",
+            "assets_login/Hadiza_Yusef.jpg",
+            "assets_login/Mary_Ezeno.jpg",
+            "assets_login/Ngozi_Okonko.jpg",
+            "assets_login/Salif_Konaté.jpg",
+            "assets_login/Yocouba_Sanou.jpg",
+            "assets_login/Akira_Nlovu.jpg",
+            "assets_login/Manzi_Kalisa.jpg",
+            "assets_login/Ihirwe_Uwera.jpg",
+            "assets_login/Kagame_Muhire.jpg",
+            "assets_login/Gapira_Uwase.jpg",
+            "assets_login/Gapira_Uwase-1.jpg",
+            "assets_login/Isimbi_Mugabo.jpg",
+            "assets_login/Kwame_Mens....jpg"
+        ];
+
+        let currentIndex = 3; // Start somewhere in the middle
+        const wrapper = document.getElementById('carouselWrapper');
+        let domItems = [];
+
+        function initCarousel() {
+            avatarFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.className = 'carousel-item';
+                // Removed the swatches panel
+                item.innerHTML = `
+                    <img src="${file}" alt="Character" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'><rect width=\\'100\\' height=\\'100\\' fill=\\'%23e2ecef\\'/></svg>'">
+                `;
+                wrapper.appendChild(item);
+                domItems.push(item);
+            });
+            updateCarouselClasses();
+        }
+
+        function rotateCarousel(direction) {
+            currentIndex = (currentIndex + direction + domItems.length) % domItems.length;
+            updateCarouselClasses();
+        }
+
+        function updateCarouselClasses() {
+            domItems.forEach((item, i) => {
+                item.className = 'carousel-item'; // reset
+                let diff = i - currentIndex;
+
+                // Account for circular array wrapping
+                if (diff < -Math.floor(domItems.length / 2)) diff += domItems.length;
+                if (diff > Math.floor(domItems.length / 2)) diff -= domItems.length;
+
+                if (diff === 0) item.classList.add('item-center');
+                else if (diff === 1) item.classList.add('item-right1');
+                else if (diff === -1) item.classList.add('item-left1');
+                else if (diff === 2) item.classList.add('item-right2');
+                else if (diff === -2) item.classList.add('item-left2');
+                else item.classList.add('item-hidden');
+            });
+        }
+
+        // Save & Proceed
+        function selectAndSave() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            const selectedAvatar = avatarFiles[currentIndex];
+
+            // 1. Update Local Storage so the UI reflects it instantly locally
+            if (savedData) {
+                savedData.avatar = selectedAvatar;
+                localStorage.setItem('wavumbuzi_user_data_complete', JSON.stringify(savedData));
+            } else {
+                localStorage.setItem('wavumbuzi_user_data_complete', JSON.stringify({ fullName: userName, avatar: selectedAvatar }));
+            }
+
+            // 2. Fire and forget to Google Sheets to update the master record
+            const payload = { action: 'updateAvatar', fullName: userName, avatar: selectedAvatar };
+
+            fetch(GOOGLE_SHEET_WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                finishSave();
+            }).catch(() => {
+                finishSave(); // Proceed even if offline
+            });
+        }
+
+        function finishSave() {
+            setTimeout(() => {
+                // Navigate back to Login so we can see our new avatar in the roster!
+                window.location.href = "profile.html";
+            }, 800); // Slight delay for visual confirmation
+        }
+
+    </script>
+</body>
+
+</html>

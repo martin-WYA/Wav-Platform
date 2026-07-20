@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wavumbuzi - Get Started</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-image: url('Blue sky with footer banner.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            display: flex;
+            align-items: center; 
+            justify-content: flex-start; 
+            padding-left: 10%; 
+        }
+
+        .start-container {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            max-width: 280px;
+            width: 100%;
+        }
+
+        /* --- BUTTON STYLES --- */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px 32px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+
+        /* Top Button: Log In (Vibrant Golden/Yellow Gradient) */
+        .btn-login {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            box-shadow: 0 8px 20px rgba(232, 133, 36, 0.25);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(232, 133, 36, 0.4);
+        }
+
+        /* Bottom Button: Sign Up (Clean Black Outline) */
+        .btn-signup {
+            background-color: transparent;
+            border: 2px solid #111827;
+            color: #111827;
+        }
+
+        .btn-signup:hover {
+            transform: translateY(-2px);
+            background-color: rgba(17, 24, 39, 0.05);
+            box-shadow: 0 8px 20px rgba(17, 24, 39, 0.1);
+        }
+
+        /* --- RESPONSIVE MOBILE ADJUSTMENTS --- */
+        @media (max-width: 650px) {
+            body {
+                justify-content: center; 
+                padding-left: 24px;
+                padding-right: 24px;
+            }
+            .start-container {
+                max-width: 300px;
+            }
+            .btn {
+                padding: 14px 28px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="start-container">
+        <!-- Log In is now on top and points to login.html -->
+        <a href="login.html" class="btn btn-login">Log In</a>
+        
+        <!-- Sign Up is now at the bottom and points to register.html -->
+        <a href="register.html" class="btn btn-signup">Sign Up</a>
+    </div>
+
+</body>
+</html>

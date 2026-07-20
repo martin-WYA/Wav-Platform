@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wavumbuzi - My Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #e9e3d9;
+            background-image: radial-gradient(circle at 100% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.4) 0%, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* --- TOP NAVIGATION --- */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 48px;
+            width: 100%;
+            z-index: 50;
+            flex-shrink: 0;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111827;
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #e88524;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 100%;
+            height: 3px;
+            background-color: #e88524;
+            border-radius: 2px;
+        }
+
+        .user-nav-group {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .bell-icon {
+            width: 20px;
+            height: 20px;
+            color: #111827;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .bell-icon:hover {
+            opacity: 0.7;
+        }
+
+        .profile-dropdown-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 30px;
+            transition: background 0.2s;
+        }
+
+        .profile-group:hover {
+            background-color: #f8fafc;
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #111827;
+            object-fit: cover;
+            background-color: #e2ecef;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+            user-select: none;
+        }
+
+        .chevron-down {
+            width: 14px;
+            height: 14px;
+            object-fit: contain;
+            transition: transform 0.2s ease;
+            transform: rotate(90deg);
+            filter: brightness(0);
+        }
+
+        .profile-dropdown-wrapper.open .chevron-down {
+            transform: rotate(270deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 180px;
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+            animation: slideDown 0.2s ease forwards;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-item {
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-align: left;
+            background: none;
+            width: 100%;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+            color: #e88524;
+            padding-left: 24px;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e2e8f0;
+            margin: 0;
+        }
+
+        /* --- MAIN DASHBOARD LAYOUT --- */
+        .main-container {
+            width: 100%;
+            max-width: 1100px;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 24px;
+            flex-grow: 1;
+            align-items: start;
+        }
+
+        /* Reusable Card Styles */
+        .card {
+            background-color: #132731;
+            border-radius: 12px;
+            border: 1px solid #27414d;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card-header-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            font-style: italic;
+            text-transform: uppercase;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            font-weight: 500;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        /* --- ROW 1: PROFILE & CLUBS --- */
+        .profile-banner {
+            grid-column: span 2;
+            display: flex;
+            align-items: stretch;
+            padding: 24px 32px 32px 32px;
+            gap: 32px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #0e1b15 0%, #132731 100%);
+            position: relative;
+        }
+
+        .profile-banner::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 16px;
+            background: url('Decorative footer banner.png') repeat-x bottom;
+            background-size: auto 100%;
+        }
+
+        .profile-avatar-large-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            flex-shrink: 0;
+        }
+
+        .profile-avatar-large {
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            object-fit: cover;
+            background-color: #586762;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .badge-new {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #fba143;
+            color: #111827;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .badge-edit {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            background-color: rgba(255, 255, 255, 0.8);
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: background 0.2s;
+        }
+
+        .badge-edit:hover {
+            background-color: #ffffff;
+        }
+
+        .badge-edit svg {
+            width: 14px;
+            height: 14px;
+            color: #111827;
+            stroke-width: 2px;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .country-tag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #cbd5e1;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .country-flag {
+            width: 16px;
+            height: 12px;
+            background: linear-gradient(to bottom, #000 33%, #b91c1c 33%, #b91c1c 66%, #15803d 66%);
+            position: relative;
+        }
+
+        .country-flag::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 6px;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+        }
+
+        .profile-full-name {
+            font-size: 42px;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.1;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .profile-school {
+            font-size: 15px;
+            font-weight: 500;
+            color: #cbd5e1;
+        }
+
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .settings-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .settings-btn svg {
+            width: 18px;
+            height: 18px;
+            color: #cbd5e1;
+        }
+
+        .clubs-card {
+            grid-column: span 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 24px;
+            text-align: center;
+            background: linear-gradient(180deg, #182d36 0%, #0e1b21 100%);
+        }
+
+        .header-with-lines {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .header-with-lines::before,
+        .header-with-lines::after {
+            content: '';
+            height: 1px;
+            flex-grow: 1;
+            background-color: rgba(255, 255, 255, 0.2);
+            max-width: 40px;
+        }
+
+        .clubs-empty-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            margin-bottom: 32px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #fba143;
+            color: #e88524;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-outline:hover {
+            background: rgba(251, 161, 67, 0.1);
+        }
+
+        /* --- ROW 2: CHALLENGE BANNER --- */
+        .challenge-banner {
+            grid-column: 1 / -1;
+            background: linear-gradient(120deg, #5a3118 0%, #132731 40%, #0e1b21 100%);
+            border-radius: 12px;
+            border: 1px solid #27414d;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 32px;
+            gap: 24px;
+        }
+
+        .cb-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cb-left-top {
+            font-size: 16px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .cb-left-bottom {
+            font-size: 32px;
+            font-weight: 800;
+            color: #f2ead3;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+        }
+
+        .cb-center {
+            background-color: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            padding: 16px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1;
+            max-width: 320px;
+        }
+
+        .cb-center-top {
+            font-size: 11px;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+
+        .cb-center-mid {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 8px 0;
+        }
+
+        .cb-timer-icon {
+            min-width: 28px;
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            color: #94a3b8;
+            margin-right: 4px;
+        }
+
+        .cb-days-num {
+            font-size: 36px;
+            font-weight: 800;
+            color: #fba143;
+            line-height: 1;
+        }
+
+        .cb-days-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fba143;
+        }
+
+        .cb-center-bot {
+            font-size: 11px;
+            color: #cbd5e1;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .cb-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .cb-total-pts-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .cb-points-box {
+            background-color: rgba(0, 0, 0, 0.25);
+            border-radius: 6px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .cb-points-box svg {
+            width: 16px;
+            height: 16px;
+            fill: #fba143;
+        }
+
+        .cb-points-val {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffffff;
+            min-width: 45px;
+            text-align: left;
+        }
+
+        .btn-cb {
+            background: transparent;
+            border: 1px solid #fba143;
+            color: #fba143;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            white-space: nowrap;
+            margin-top: 4px;
+        }
+
+        .btn-cb:hover {
+            background: rgba(251, 161, 67, 0.1);
+        }
+
+        /* --- ROW 3: SKILLS & CONTENT --- */
+        .skills-column {
+            grid-column: span 1;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+        }
+
+        .hexagon-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 32px;
+            width: 100%;
+        }
+
+        /* Default Hexagon State */
+        .hex-large {
+            width: 100px;
+            height: 110px;
+            background-color: #1e333e;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 800;
+            color: #4b6370;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .hex-large::after {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            background-color: #132731;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            z-index: -1;
+        }
+
+        .hex-label-large {
+            font-size: 14px;
+            font-weight: 800;
+            color: #f8fafc;
+            font-style: italic;
+            margin-bottom: 24px;
+        }
+
+        .hex-small-row {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            width: 100%;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hex-small-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hex-small {
+            width: 50px;
+            height: 55px;
+            background-color: #1e333e;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 800;
+            color: #4b6370;
+            margin-bottom: 8px;
+        }
+
+        .hex-label-small {
+            font-size: 9px;
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .skills-list {
+            margin-top: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .skill-category {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            font-style: italic;
+            margin-bottom: 12px;
+        }
+
+        .skill-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 12px;
+        }
+
+        .skill-name {
+            font-size: 10px;
+            font-weight: 600;
+            color: #f8fafc;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .skill-pts {
+            font-size: 10px;
+            font-weight: 600;
+            color: #fba143;
+        }
+
+        .skill-row-border {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 12px;
+            margin-bottom: 0;
+        }
+
+        .right-content-col {
+            grid-column: span 2;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .achievements-card {
+            padding: 24px 32px 32px 32px;
+        }
+
+        .achievements-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .btn-view-all {
+            background: transparent;
+            border: 1px solid #fba143;
+            color: #e88524;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-view-all:hover {
+            background: rgba(251, 161, 67, 0.1);
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        /* Base Achievement Box */
+        .achievement-box {
+            aspect-ratio: 4/3;
+            background-color: #172e38;
+            border: 1px solid #27414d;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-circle {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid #27414d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: #4b6370;
+        }
+
+        /* --- UNLOCKED ACHIEVEMENT STYLING --- */
+        .achievement-box.unlocked {
+            background-color: #1e3540;
+            border: 1px solid #375363;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .achievement-box.unlocked .badge-img {
+            position: absolute;
+            top: -2px;
+            width: 55%;
+            max-width: 90px;
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+        }
+
+        .ach-title-top {
+            font-size: 9.5px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .ach-title-bot {
+            font-size: 11px;
+            font-weight: 500;
+            color: #cbd5e1;
+        }
+
+        .portfolio-wrapper {
+            position: relative;
+            margin-top: 10px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-tab {
+            background-color: #132731;
+            border: 1px solid #27414d;
+            border-bottom: none;
+            padding: 12px 32px 12px 24px;
+            display: inline-block;
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 100%, 0 100%);
+            position: relative;
+            z-index: 2;
+            margin-bottom: -1px;
+        }
+
+        .portfolio-card {
+            padding: 24px 32px 32px 32px;
+            border-top-left-radius: 0;
+        }
+
+        .portfolio-section-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 16px;
+            margin-top: 24px;
+        }
+
+        .portfolio-section-title:first-child {
+            margin-top: 0;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .score-card-box {
+            aspect-ratio: 16/9;
+            background-color: #172e38;
+            border: 1px solid #27414d;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ribbon-icon {
+            position: absolute;
+            top: 0;
+            right: 16px;
+            width: 24px;
+            height: 32px;
+            background-color: #27414d;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+            z-index: 10;
+        }
+
+        .lab-box {
+            aspect-ratio: 16/9;
+            background-color: #172e38;
+            border: 1px solid #27414d;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 20px;
+        }
+
+        .bulb-icon {
+            width: 20px;
+            height: 20px;
+            color: #4b6370;
+        }
+
+        /* --- MODALS --- */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(17, 24, 39, 0.65);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.show {
+            opacity: 1;
+        }
+
+        .dialog-card {
+            background: linear-gradient(180deg, #cde3ec 0%, #e0eef4 100%);
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            padding: 40px 32px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            text-align: center;
+            transform: translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .overlay.show .dialog-card {
+            transform: translateY(0);
+        }
+
+        .dialog-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .dialog-desc {
+            font-size: 15px;
+            color: #4b5563;
+            font-weight: 500;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .btn-solid-modal {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 14px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.2);
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .btn-solid-modal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(232, 133, 36, 0.4);
+        }
+
+        /* Loading Card Styling */
+        .loading-card {
+            background: linear-gradient(90deg, #d3e5e0 0%, #f4ebd9 100%);
+            border-radius: 16px;
+            padding: 40px 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            max-width: 450px;
+            width: 100%;
+            border: none;
+            z-index: 5005;
+            position: relative;
+        }
+
+        .loading-card img {
+            width: 80px;
+            height: auto;
+            margin-bottom: 24px;
+            animation: pulse 1.2s infinite alternate ease-in-out;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+        }
+
+        .loading-card p {
+            font-size: 16px;
+            color: #111827;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+            }
+
+            100% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* --- TOUR OVERLAY & HIGHLIGHTS --- */
+        .tour-overlay-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(14, 27, 21, 0.75);
+            backdrop-filter: blur(2px);
+            z-index: 2000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tour-highlight {
+            position: relative !important;
+            z-index: 2001 !important;
+            box-shadow: 0 0 0 4px #fcd34d, 0 0 25px rgba(251, 161, 67, 0.8) !important;
+            border-color: #fcd34d !important;
+        }
+
+        .tour-modal {
+            position: absolute;
+            z-index: 2005;
+            width: 100%;
+            max-width: 360px;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 50px 24px 24px 24px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tour-modal.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tour-bot-img {
+            position: absolute;
+            top: -95px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 105px;
+            height: auto;
+            z-index: 10;
+            animation: floatTourBot 3s ease-in-out infinite;
+        }
+
+        @keyframes floatTourBot {
+
+            0%,
+            100% {
+                transform: translate(-50%, 0);
+            }
+
+            50% {
+                transform: translate(-50%, -8px);
+            }
+        }
+
+        .tour-text {
+            font-size: 14.5px;
+            color: #1f2937;
+            line-height: 1.6;
+            font-weight: 500;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .tour-text b {
+            font-weight: 800;
+            font-size: 16px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .tour-text p {
+            margin-bottom: 12px;
+        }
+
+        .tour-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .btn-tour-next {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .btn-tour-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(232, 133, 36, 0.4);
+        }
+
+        .btn-tour-secondary {
+            background: transparent;
+            border: 2px solid #111827;
+            color: #111827;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-tour-secondary:hover {
+            background: rgba(17, 24, 39, 0.05);
+            transform: translateY(-2px);
+        }
+
+        /* Dynamic Pointer */
+        .tour-pointer {
+            position: absolute;
+            border: 12px solid transparent;
+        }
+
+        .pointer-up {
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom-color: #ffffff;
+        }
+
+        .pointer-right {
+            top: 50%;
+            right: -24px;
+            transform: translateY(-50%);
+            border-left-color: #ffffff;
+        }
+
+        .pointer-left {
+            top: 50%;
+            left: -24px;
+            transform: translateY(-50%);
+            border-right-color: #ffffff;
+        }
+
+        .pointer-up-left {
+            top: -24px;
+            left: 20%;
+            border-bottom-color: #ffffff;
+        }
+
+        .pointer-hidden {
+            display: none;
+        }
+
+        /* Custom Arrow for Step 6 */
+        .custom-cursor-arrow {
+            position: absolute;
+            z-index: 2010;
+            width: 45px;
+            height: 45px;
+            display: none;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+            animation: bounceArrow 1s infinite alternate;
+        }
+
+        @keyframes bounceArrow {
+            from {
+                transform: translate(0, 0);
+            }
+
+            to {
+                transform: translate(5px, 5px);
+            }
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 950px) {
+            .main-container {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .profile-banner,
+            .clubs-card,
+            .challenge-banner,
+            .skills-column,
+            .right-content-col {
+                grid-column: 1 / -1;
+            }
+
+            .clubs-card {
+                padding: 24px;
+            }
+
+            .tour-modal.mobile-fixed {
+                position: fixed !important;
+                top: auto !important;
+                bottom: 20px !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                width: 90% !important;
+                z-index: 2050;
+            }
+
+            .tour-pointer.mobile-hidden {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 750px) {
+            .challenge-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .cb-left,
+            .cb-right {
+                align-items: center;
+                width: 100%;
+            }
+
+            .cb-total-pts-label {
+                text-align: center;
+            }
+
+            .cb-points-box {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .top-nav {
+                padding: 16px 20px;
+                flex-wrap: wrap;
+                gap: 16px;
+            }
+
+            .nav-links {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .profile-banner {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .profile-avatar-large-container {
+                width: 100px;
+                height: 100px;
+            }
+
+            .achievements-grid,
+            .portfolio-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Fetching Data Loading Modal -->
+    <div id="profileLoadingModal" class="overlay">
+        <div class="loading-card">
+            <img src="assets_reflect/hourglass.png" alt="Loading">
+            <p>One moment please...<br>We are polishing your awards.</p>
+        </div>
+    </div>
+
+    <!-- Coming Soon Modal Overlay -->
+    <div id="comingSoonModal" class="overlay">
+        <div class="dialog-card">
+            <h3 class="dialog-title">Oops...</h3>
+            <p class="dialog-desc">This part of Wavumbuzi is not available yet, but thank you for your interest!</p>
+            <button class="btn-solid-modal" onclick="closeComingSoonModal()">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- Tour Infrastructure -->
+    <div class="tour-overlay-bg" id="tourOverlayBg"></div>
+
+    <div class="tour-modal" id="tourModal">
+        <img src="Mwenza_ipad.png" class="tour-bot-img" alt="Mwenza" onerror="this.style.display='none'">
+        <div id="tourPointer" class="tour-pointer"></div>
+        <div class="tour-text" id="tourText"></div>
+        <div style="display: flex; gap: 12px; width: 100%;">
+            <button class="btn-tour-secondary" style="flex: 1; display: none; padding: 14px 10px;" id="tourSecondaryBtn"
+                onclick="endTour()">I'LL TRY IT LATER</button>
+            <button class="btn-tour-next" style="flex: 1; padding: 14px 10px;" id="tourNextBtn"
+                onclick="nextTourStep()">NEXT</button>
+        </div>
+    </div>
+
+    <svg id="tourCursor" class="custom-cursor-arrow" viewBox="0 0 24 24" fill="#ffffff" stroke="#111827"
+        stroke-width="1.5">
+        <path d="M5 3l15 9-6 2 3 7-3 1-3-7-4 5V3z" />
+    </svg>
+
+    <!-- Top Navigation -->
+    <header class="top-nav">
+        <img src="assets_challenge/Wavumbuzi_logo.png" alt="Wavumbuzi Logo" class="logo-img"
+            onerror="this.alt='Wavumbuzi'">
+
+        <div class="nav-links">
+            <a class="nav-link" href="challenge.html">2028 Challenge</a>
+            <a class="nav-link active">My profile</a>
+        </div>
+
+        <div class="user-nav-group">
+            <svg class="bell-icon" onclick="showComingSoon()" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+
+            <!-- Dynamic Dropdown Wrapper -->
+            <div class="profile-dropdown-wrapper" id="profileDropdownWrapper">
+                <div class="profile-group" onclick="toggleDropdown(event)">
+                    <img src="new_user.png" id="navAvatar" class="profile-avatar" alt="User Profile">
+                    <span class="profile-name" id="navNameDisplay">User</span>
+                    <img src="assets_challenge/Arrow%20icon.png" class="chevron-down" alt="Dropdown">
+                </div>
+
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="profile.html" class="dropdown-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        My Profile
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="logOut()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Log Out
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <main class="main-container">
+
+        <!-- --- ROW 1 --- -->
+        <div class="card profile-banner" id="cardBanner">
+            <button class="settings-btn" onclick="showComingSoon()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path
+                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                    </path>
+                </svg>
+            </button>
+
+            <div class="profile-avatar-large-container">
+                <img src="new_user.png" id="mainAvatar" class="profile-avatar-large" alt="Character">
+                <div class="badge-new">NEW</div>
+                <div class="badge-edit" id="btnEditCharacter" onclick="handleEditClick()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="profile-info">
+                <div class="country-tag">
+                    <div class="country-flag"></div> KENYA
+                </div>
+                <h1 class="profile-full-name" id="mainNameDisplay">User Name</h1>
+                <div class="profile-school">Kenya High School</div>
+            </div>
+        </div>
+
+        <div class="card clubs-card" id="cardClubs">
+            <div class="header-with-lines">
+                <h2 class="card-header-title">MY CLUBS</h2>
+            </div>
+            <p class="clubs-empty-text">You are not in any clubs</p>
+            <button class="btn-outline" onclick="showComingSoon()">JOIN OR CREATE A CLUB &rsaquo;</button>
+        </div>
+
+        <!-- --- ROW 2 --- -->
+        <div class="card challenge-banner">
+            <div class="cb-left">
+                <div class="cb-left-top">2028 WAVUMBUZI</div>
+                <div class="cb-left-bottom">CHALLENGE</div>
+            </div>
+
+            <div class="cb-center">
+                <div class="cb-center-top">There are only</div>
+                <div class="cb-center-mid">
+                    <svg class="cb-timer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="13" r="8"></circle>
+                        <polyline points="12 9 12 13 15 16"></polyline>
+                        <line x1="9" y1="2" x2="15" y2="2"></line>
+                    </svg>
+                    <span class="cb-days-num">32</span>
+                    <span class="cb-days-text">DAYS</span>
+                </div>
+                <div class="cb-center-bot">left to earn points in this challenge</div>
+            </div>
+
+            <div class="cb-right">
+                <div class="cb-total-pts-label">TOTAL POINTS</div>
+                <div class="cb-points-box">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                    </svg>
+                    <span class="cb-points-val" id="profileTotalPoints">0</span>
+                </div>
+                <button class="btn-cb" id="btnGoToChallenge" onclick="window.location.href='challenge.html'">GO TO
+                    CHALLENGE &rsaquo;</button>
+            </div>
+        </div>
+
+        <!-- --- ROW 3 --- -->
+        <div class="card skills-column" id="cardSkills">
+            <div class="header-with-lines">
+                <h2 class="card-header-title">STRENGTH AREA</h2>
+            </div>
+
+            <div class="hexagon-container">
+                <div class="hex-large">?</div>
+                <div class="hex-label-large">NONE</div>
+
+                <div class="hex-small-row">
+                    <div class="hex-small-group">
+                        <div class="hex-small">?</div>
+                        <div class="hex-label-small">NONE</div>
+                    </div>
+                    <div class="hex-small-group">
+                        <div class="hex-small">?</div>
+                        <div class="hex-label-small">NONE</div>
+                    </div>
+                    <div class="hex-small-group">
+                        <div class="hex-small">?</div>
+                        <div class="hex-label-small">NONE</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-with-lines" style="margin-bottom: 16px;">
+                <h2 class="card-header-title">MY SKILLS</h2>
+            </div>
+
+            <div class="skills-list">
+                <div>
+                    <div class="skill-category">RESOURCES</div>
+                    <div class="skill-item skill-row-border"><span class="skill-name">Need For Achievement</span><span
+                            class="skill-pts">0pts</span></div>
+                    <div class="skill-item skill-row-border"><span class="skill-name">Need For Autonomy</span><span
+                            class="skill-pts">0pts</span></div>
+                    <div class="skill-item skill-row-border"><span class="skill-name">Self-Efficacy</span><span
+                            class="skill-pts">0pts</span></div>
+                    <div class="skill-item skill-row-border"><span class="skill-name">Resilience</span><span
+                            class="skill-pts">0pts</span></div>
+                    <div class="skill-item skill-row-border"><span class="skill-name">Resourcefulness</span><span
+                            class="skill-pts">0pts</span></div>
+                    <div class="skill-item skill-row-border"><span class="skill-name">Money Sense</span><span
+                            class="skill-pts">0pts</span></div>
+                </div>
+                <div>
+                    <div class="skill-category">IDEAS AND OPPORTUNITIES</div>
+                    <div class="skill-item skill-row-border"><span class="skill-name">Opportunity
+                            Recognition</span><span class="skill-pts">0pts</span></div>
+                    <div class="skill-item skill-row-border"><span class="skill-name">Opportunity Assessment</span><span
+                            class="skill-pts">0pts</span></div>
+                    <div class="skill-item skill-row-border"><span class="skill-name">Innovative Problem
+                            Solving</span><span class="skill-pts">0pts</span></div>
+                    <div class="skill-item skill-row-border"><span class="skill-name">Values Driven</span><span
+                            class="skill-pts">0pts</span></div>
+                </div>
+                <div>
+                    <div class="skill-category">INTO ACTION</div>
+                    <div class="skill-item skill-row-border"><span class="skill-name">Taking Action &
+                            Initiative</span><span class="skill-pts">0pts</span></div>
+                    <div class="skill-item skill-row-border"><span class="skill-name">Mobilising Others</span><span
+                            class="skill-pts">0pts</span></div>
+                    <div class="skill-item"><span class="skill-name">Working With Others</span><span
+                            class="skill-pts">0pts</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-content-col">
+
+            <div class="card achievements-card" id="cardAchievements">
+                <div class="achievements-header">
+                    <div>
+                        <h2 class="card-header-title" style="text-transform: uppercase;">MY RECENT ACHIEVEMENTS</h2>
+                        <p class="card-subtitle">Complete activities to earn rewards!</p>
+                    </div>
+                    <button class="btn-view-all" onclick="showComingSoon()">VIEW ALL &rsaquo;</button>
+                </div>
+
+                <div class="achievements-grid">
+                    <div class="achievement-box" id="achievement-box-1">
+                        <div class="achievement-circle">?</div>
+                    </div>
+                    <div class="achievement-box" id="achievement-box-2">
+                        <div class="achievement-circle">?</div>
+                    </div>
+                    <div class="achievement-box" id="achievement-box-3">
+                        <div class="achievement-circle">?</div>
+                    </div>
+
+                    <div class="achievement-box">
+                        <div class="achievement-circle">?</div>
+                    </div>
+                    <div class="achievement-box">
+                        <div class="achievement-circle">?</div>
+                    </div>
+                    <div class="achievement-box">
+                        <div class="achievement-circle">?</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-wrapper" id="cardPortfolio">
+                <div class="portfolio-tab card-header-title">MY PORTFOLIO</div>
+                <div class="card portfolio-card">
+                    <p class="card-subtitle" style="margin-bottom: 24px; margin-top: 0;">Participate in the Challenge to
+                        build your portfolio.</p>
+
+                    <h3 class="portfolio-section-title">Challenge score card</h3>
+                    <div class="portfolio-grid" style="margin-bottom: 24px;">
+                        <div class="score-card-box" id="portfolio-box-1">
+                            <div class="ribbon-icon"></div>
+                        </div>
+                        <div class="score-card-box">
+                            <div class="ribbon-icon"></div>
+                        </div>
+                        <div class="score-card-box">
+                            <div class="ribbon-icon"></div>
+                        </div>
+                    </div>
+
+                    <h3 class="portfolio-section-title">Labs projects</h3>
+                    <div class="portfolio-grid">
+                        <div class="lab-box"><svg class="bulb-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7zM9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1z">
+                                </path>
+                            </svg></div>
+                        <div class="lab-box"><svg class="bulb-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7zM9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1z">
+                                </path>
+                            </svg></div>
+                        <div class="lab-box"><svg class="bulb-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7zM9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1z">
+                                </path>
+                            </svg></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTyvz2azkYILUbhFaWlQOZ454b9E_flwAlQ41cIhjacIfFop8Ter193nojY47uALI/exec';
+
+        // --- 1. Populate Profile Data ---
+        const urlParams = new URLSearchParams(window.location.search);
+        let userName = urlParams.get('newuser') || urlParams.get('user');
+        let userAvatar = "new_user.png";
+
+        const savedData = localStorage.getItem('wavumbuzi_user_data_complete');
+        if (savedData) {
+            try {
+                const parsedData = JSON.parse(savedData);
+                if (parsedData && parsedData.fullName && !userName) userName = parsedData.fullName;
+                if (parsedData && parsedData.avatar) userAvatar = parsedData.avatar;
+            } catch (e) { }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (userName) {
+                const nameParts = userName.trim().split(/\s+/);
+                let firstName = nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1).toLowerCase();
+                let lastInitial = nameParts.length > 1 ? " " + nameParts[nameParts.length - 1].charAt(0).toUpperCase() : "";
+
+                const navNameDisplay = document.getElementById('navNameDisplay');
+                if (navNameDisplay) navNameDisplay.innerText = firstName + lastInitial;
+
+                const mainNameDisplay = document.getElementById('mainNameDisplay');
+                if (mainNameDisplay) mainNameDisplay.innerText = userName;
+
+                const navAvatar = document.getElementById('navAvatar');
+                if (navAvatar) navAvatar.src = userAvatar;
+
+                const mainAvatar = document.getElementById('mainAvatar');
+                if (mainAvatar) mainAvatar.src = userAvatar;
+
+                // --- Setup Onboarding Tour Tracking Condition ---
+                const safeName = userName ? userName.replace(/\s+/g, '_').toLowerCase() : 'default_user';
+                const tourStorageKey = 'wavumbuzi_tour_' + safeName;
+                const hasSeenTour = localStorage.getItem(tourStorageKey);
+
+                // --- Scoreboard Spinning Tracker ---
+                const pointsVal = document.getElementById('profileTotalPoints');
+                let spinInterval;
+
+                if (pointsVal) {
+                    spinInterval = setInterval(() => {
+                        pointsVal.innerText = Math.floor(Math.random() * 8999) + 1000;
+                    }, 50);
+                }
+
+                if (!hasSeenTour) {
+                    // =========================================================
+                    // ONBOARDING USER PATHWAY: Skip server fetching completely!
+                    // =========================================================
+                    if (spinInterval) clearInterval(spinInterval);
+                    if (pointsVal) pointsVal.innerText = "0";
+
+                    // Directly stage and trigger the tutorial tour infrastructure
+                    setTimeout(startTour, 600);
+                    localStorage.setItem(tourStorageKey, 'true');
+
+                } else {
+                    // =========================================================
+                    // RETURNING USER PATHWAY: Normal point scoring retrieval
+                    // =========================================================
+                    showProfileLoadingModal();
+
+                    Promise.all([
+                        fetch(APP_SCRIPT_URL + '?action=getUserData&user=' + encodeURIComponent(userName)).then(res => res.json()).catch(() => ({ success: false, points: 0 })),
+                        fetch(APP_SCRIPT_URL + '?action=getReflections').then(res => res.json()).catch(() => ({ success: false, reflections: [] }))
+                    ])
+                        .then(([userData, reflectData]) => {
+                            hideProfileLoadingModal();
+                            if (spinInterval) clearInterval(spinInterval);
+
+                            const points = userData.success ? (userData.points || 0) : 0;
+                            if (pointsVal) {
+                                pointsVal.innerText = points;
+                            }
+
+                            const hasCompleted = reflectData.success && reflectData.reflections && reflectData.reflections.find(r => r.user.toLowerCase() === (userName || "").toLowerCase());
+
+                            // Strength Area Updates (Triggers at 500+ points or if Reflect is completed)
+                            if (points >= 500 || hasCompleted) {
+                                const hexContainer = document.querySelector('.hexagon-container');
+                                if (hexContainer) {
+                                    hexContainer.innerHTML = `
+                                    <img src="assets_profile/INTO-ACTION_Strength-Area-Block.png" alt="Into Action" style="width: 100%; max-width: 250px; height: auto; margin-bottom: 24px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));">
+                                    <div style="display: flex; gap: 12px; width: 100%; padding-bottom: 32px; border-bottom: 1px solid rgba(255,255,255,0.1); justify-content: space-between;">
+                                        <img src="assets_profile/Into-Action_Taking-action-and-initiative-coin.png" alt="Taking Action & Initiative" style="width: 31%; height: auto; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));">
+                                        <img src="assets_profile/Into-Action_Working-with-others-coin.png" alt="Working with Others" style="width: 31%; height: auto; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));">
+                                        <img src="assets_profile/Into-Action_Mobilising-others-coin.png" alt="Mobilising Others" style="width: 31%; height: auto; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));">
+                                    </div>
+                                `;
+                                }
+
+                                // Generate Random Skill Points
+                                const skillCategories = document.querySelectorAll('.skills-list > div');
+                                if (skillCategories.length === 3) {
+                                    skillCategories[0].querySelectorAll('.skill-pts').forEach(el => {
+                                        el.innerText = (Math.floor(Math.random() * 4) + 1) + 'pts';
+                                    });
+                                    skillCategories[1].querySelectorAll('.skill-pts').forEach(el => {
+                                        el.innerText = (Math.floor(Math.random() * 4) + 1) + 'pts';
+                                    });
+                                    skillCategories[2].querySelectorAll('.skill-pts').forEach(el => {
+                                        el.innerText = (Math.floor(Math.random() * 6) + 15) + 'pts';
+                                    });
+                                }
+                            }
+
+                            // Check for thresholds and unlock badges
+                            if (points >= 300) {
+                                const box1 = document.getElementById('achievement-box-1');
+                                if (box1) {
+                                    box1.classList.add('unlocked');
+                                    box1.innerHTML = `
+                                    <img src="assets_quest/Award%20overlay%20Bronze%20badge.png" class="badge-img" alt="Bronze Badge">
+                                    <div style="text-align: center; position: relative; z-index: 2; width: 100%; padding: 0 4px;">
+                                        <div class="ach-title-top">2028 Health Quest</div>
+                                        <div class="ach-title-bot">Bronze League award</div>
+                                    </div>
+                                `;
+                                }
+                            }
+                            if (points >= 500) {
+                                const box2 = document.getElementById('achievement-box-2');
+                                if (box2) {
+                                    box2.classList.add('unlocked');
+                                    box2.innerHTML = `
+                                    <img src="assets_quest/Award%20overlay%20Silver%20badge.png" class="badge-img" alt="Silver Badge">
+                                    <div style="text-align: center; position: relative; z-index: 2; width: 100%; padding: 0 4px;">
+                                        <div class="ach-title-top">2028 Health Quest</div>
+                                        <div class="ach-title-bot">Silver League award</div>
+                                    </div>
+                                `;
+                                }
+                            }
+                            if (hasCompleted) {
+                                const box3 = document.getElementById('achievement-box-3');
+                                if (box3) {
+                                    box3.classList.add('unlocked');
+                                    box3.innerHTML = `
+                                    <img src="assets_quest/Award%20overlay%20Gold%20badge.png" class="badge-img" alt="Gold Badge">
+                                    <div style="text-align: center; position: relative; z-index: 2; width: 100%; padding: 0 4px;">
+                                        <div class="ach-title-top">2028 Health Quest</div>
+                                        <div class="ach-title-bot">Gold League award</div>
+                                    </div>
+                                `;
+                                }
+
+                                // Unlock Score Card Graphic
+                                const portfolioBox1 = document.getElementById('portfolio-box-1');
+                                if (portfolioBox1) {
+                                    portfolioBox1.innerHTML = '<img src="assets_profile/2028%20Score%20card.png" alt="2028 Score Card" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover; display: block;">';
+                                    portfolioBox1.style.backgroundColor = 'transparent';
+                                    portfolioBox1.style.border = 'none';
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Error fetching points:", err);
+                            hideProfileLoadingModal();
+                            if (spinInterval) clearInterval(spinInterval);
+                            if (pointsVal) pointsVal.innerText = 0;
+                        });
+                }
+
+            } else {
+                hideProfileLoadingModal();
+            }
+        });
+
+        // --- Modals Logic ---
+        function showProfileLoadingModal() {
+            const modal = document.getElementById('profileLoadingModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('show'), 10);
+            }
+        }
+
+        function hideProfileLoadingModal() {
+            const modal = document.getElementById('profileLoadingModal');
+            if (modal) {
+                modal.classList.remove('show');
+                setTimeout(() => modal.style.display = 'none', 300);
+            }
+        }
+
+        function showComingSoon() {
+            const modal = document.getElementById('comingSoonModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('show'), 10);
+            }
+        }
+
+        function closeComingSoonModal() {
+            const modal = document.getElementById('comingSoonModal');
+            if (modal) {
+                modal.classList.remove('show');
+                setTimeout(() => modal.style.display = 'none', 300);
+            }
+        }
+
+        function handleEditClick() {
+            endTour();
+            const param = userName ? "?user=" + encodeURIComponent(userName) : "";
+            window.location.href = "character_picker.html" + param;
+        }
+
+        // --- Dropdown Logic ---
+        function toggleDropdown(e) {
+            e.stopPropagation();
+            const wrapper = document.getElementById('profileDropdownWrapper');
+            const menu = document.getElementById('dropdownMenu');
+            if (wrapper && menu) {
+                wrapper.classList.toggle('open');
+                menu.classList.toggle('show');
+            }
+        }
+
+        window.addEventListener('click', function (e) {
+            const wrapper = document.getElementById('profileDropdownWrapper');
+            const menu = document.getElementById('dropdownMenu');
+
+            if (wrapper && menu && !wrapper.contains(e.target)) {
+                wrapper.classList.remove('open');
+                menu.classList.remove('show');
+            }
+        });
+
+        function logOut() {
+            window.location.href = "login.html";
+        }
+
+        // --- 2. Interactive Tour Logic ---
+        const tourSteps = [
+            {
+                target: null,
+                text: "<b>Welcome to your profile!</b><p>Your profile is a special place where you can keep track of all the progress you make on Wavumbuzi.</p><p>The more activities you complete, the fancier your profile will become!</p>",
+                placement: 'center', pointer: 'pointer-hidden'
+            },
+            {
+                target: 'cardClubs',
+                text: "<p>As a student of a participating Wavumbuzi school, you may be able to join a club to learn about entrepreneurship with your school mates!</p><p>Once you join a club, your club name will appear here. You can join more than one club if there are more available in your school.</p>",
+                placement: 'bottom', pointer: 'pointer-up'
+            },
+            {
+                target: 'cardAchievements',
+                text: "<p>As you play games and complete activities you will earn badges and achievements.</p><p>Each badge and achievement you unlock will appear here. Collect as many badges as you can to show off your entrepreneurship superpowers!</p>",
+                placement: 'left', pointer: 'pointer-right'
+            },
+            {
+                target: 'cardPortfolio',
+                text: "<p>Wavumbuzi can help you prepare for your future. When you participate in the challenge, you can upload projects that you work on to the portfolio section of your profile.</p><p>Your portfolio can help you get real entrepreneurship opportunities in the future, so be sure to keep this updated after participating in the challenge!</p>",
+                placement: 'left', pointer: 'pointer-right'
+            },
+            {
+                target: 'cardSkills',
+                text: "<p>Here, you can see all the entrepreneurship skills you will learn during the challenge. You will learn more about these special skills later, but you can always return here to see which skills you have learnt.</p>",
+                placement: 'right', pointer: 'pointer-left'
+            },
+            {
+                target: 'cardBanner',
+                text: "<p>You can also see and update your Wavumbuzi character from your profile page.</p>",
+                placement: 'bottom-left', pointer: 'pointer-up-left',
+                showArrow: true
+            },
+            {
+                target: 'btnGoToChallenge',
+                text: "<p>Ready to earn some points? Let's go learn about the challenge. Click this button to get started.</p>",
+                placement: 'left', pointer: 'pointer-right',
+                showTryLater: true,
+                btnText: 'GOT IT'
+            }
+        ];
+
+        let currentStep = 0;
+        const overlay = document.getElementById('tourOverlayBg');
+        const modal = document.getElementById('tourModal');
+        const pointer = document.getElementById('tourPointer');
+        const customArrow = document.getElementById('tourCursor');
+
+        function startTour() {
+            overlay.style.display = 'block';
+            setTimeout(() => overlay.style.opacity = '1', 10);
+            renderStep(currentStep);
+        }
+
+        function renderStep(index) {
+            document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+            customArrow.style.display = 'none';
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+
+            if (index >= tourSteps.length) {
+                endTour();
+                return;
+            }
+
+            const step = tourSteps[index];
+            document.getElementById('tourText').innerHTML = step.text;
+
+            const nextBtn = document.getElementById('tourNextBtn');
+            const secBtn = document.getElementById('tourSecondaryBtn');
+
+            nextBtn.innerText = step.btnText || 'NEXT';
+
+            if (step.showTryLater) {
+                secBtn.style.display = 'block';
+                nextBtn.onclick = endTour;
+            } else {
+                secBtn.style.display = 'none';
+                nextBtn.onclick = nextTourStep;
+            }
+
+            let targetEl = null;
+            if (step.target) {
+                targetEl = document.getElementById(step.target);
+                if (targetEl) {
+                    targetEl.classList.add('tour-highlight');
+                    const yOffset = targetEl.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight / 2) + (targetEl.offsetHeight / 2);
+                    window.scrollTo({ top: yOffset, behavior: 'smooth' });
+                }
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            setTimeout(() => {
+                modal.style.display = 'block';
+                positionModal(step, targetEl);
+                setTimeout(() => modal.classList.add('show'), 10);
+
+                if (step.showArrow) {
+                    const editBtn = document.getElementById('btnEditCharacter');
+                    if (editBtn) {
+                        const btnRect = editBtn.getBoundingClientRect();
+                        customArrow.style.display = 'block';
+                        customArrow.style.top = (window.pageYOffset + btnRect.top + 35) + 'px';
+                        customArrow.style.left = (window.pageXOffset + btnRect.left + 35) + 'px';
+                    }
+                }
+            }, 400);
+        }
+
+        function positionModal(step, targetEl) {
+            modal.classList.remove('mobile-fixed');
+            pointer.className = 'tour-pointer ' + step.pointer;
+
+            const isMobile = window.innerWidth <= 950;
+
+            if (!targetEl || step.placement === 'center') {
+                modal.style.position = 'fixed';
+                modal.style.top = '50%';
+                modal.style.left = '50%';
+                modal.style.transform = 'translate(-50%, -50%)';
+                pointer.classList.add('pointer-hidden');
+                return;
+            }
+
+            if (isMobile) {
+                modal.classList.add('mobile-fixed');
+                pointer.classList.add('pointer-hidden');
+                return;
+            }
+
+            modal.style.position = 'absolute';
+            modal.style.transform = 'none';
+
+            const rect = targetEl.getBoundingClientRect();
+            const scrollY = window.pageYOffset;
+            const scrollX = window.pageXOffset;
+            const gap = 30;
+
+            let top = 0, left = 0;
+
+            switch (step.placement) {
+                case 'bottom':
+                    top = scrollY + rect.bottom + gap;
+                    left = scrollX + rect.left + (rect.width / 2) - (modal.offsetWidth / 2);
+                    break;
+                case 'left':
+                    top = scrollY + rect.top + (rect.height / 2) - (modal.offsetHeight / 2);
+                    left = scrollX + rect.left - modal.offsetWidth - gap;
+                    break;
+                case 'right':
+                    top = scrollY + rect.top + (rect.height / 2) - (modal.offsetHeight / 2);
+                    left = scrollX + rect.right + gap;
+                    break;
+                case 'bottom-left':
+                    top = scrollY + rect.bottom + gap;
+                    left = scrollX + rect.left + 20;
+                    break;
+            }
+
+            if (left < 20) left = 20;
+            if (left + modal.offsetWidth > window.innerWidth - 20) left = window.innerWidth - modal.offsetWidth - 20;
+
+            modal.style.top = top + 'px';
+            modal.style.left = left + 'px';
+        }
+
+        function nextTourStep() {
+            currentStep++;
+            renderStep(currentStep);
+        }
+
+        function endTour() {
+            overlay.style.opacity = '0';
+            modal.classList.remove('show');
+            document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+            customArrow.style.display = 'none';
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                modal.style.display = 'none';
+            }, 300);
+        }
+    </script>
+</body>
+
+</html>

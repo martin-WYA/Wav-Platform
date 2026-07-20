@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wavumbuzi - 2028 Challenge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500;1,600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #e9e3d9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* --- TOP NAVIGATION --- */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 48px;
+            width: 100%;
+            z-index: 50;
+            flex-shrink: 0;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111827;
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #e88524;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 100%;
+            height: 3px;
+            background-color: #e88524;
+            border-radius: 2px;
+        }
+
+        .user-nav-group {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .bell-icon {
+            width: 20px;
+            height: 20px;
+            color: #111827;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .bell-icon:hover {
+            opacity: 0.7;
+        }
+
+        /* --- PROFILE DROPDOWN --- */
+        .profile-dropdown-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 30px;
+            transition: background 0.2s;
+        }
+
+        .profile-group:hover {
+            background-color: #f8fafc;
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #111827;
+            object-fit: cover;
+            background-color: #e2ecef;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+            user-select: none;
+        }
+
+        /* Arrow asset pointing right by default, rotated down for dropdown */
+        .chevron-down {
+            width: 14px;
+            height: 14px;
+            object-fit: contain;
+            transition: transform 0.2s ease;
+            transform: rotate(90deg);
+            filter: brightness(0);
+        }
+
+        .profile-dropdown-wrapper.open .chevron-down {
+            transform: rotate(270deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 180px;
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+            animation: slideDown 0.2s ease forwards;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-item {
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-align: left;
+            background: none;
+            width: 100%;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+            color: #e88524;
+            padding-left: 24px;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e2e8f0;
+            margin: 0;
+        }
+
+        /* --- REUSABLE UTILS --- */
+        .section-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            padding: 64px 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .btn-solid {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 14px 40px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.2);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-solid:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(232, 133, 36, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            padding: 12px 40px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .title-main {
+            font-size: 40px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+            text-align: center;
+        }
+
+        .subtitle-main {
+            font-size: 14px;
+            color: #1e293b;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 60px;
+            line-height: 1.6;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero-section {
+            background-color: #448098;
+            background-image: url('assets_challenge/Hero%20Sky%20BG.png');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            padding: 100px 24px 80px 24px;
+            overflow: hidden;
+        }
+
+        .hero-mandala-left {
+            position: absolute;
+            left: 0;
+            top: 100px;
+            width: 160px;
+            z-index: 1;
+        }
+
+        .hero-mandala-right {
+            position: absolute;
+            right: 0;
+            top: 100px;
+            width: 160px;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .hero-title {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+        }
+
+        .title-top {
+            font-size: 54px;
+            line-height: 1.1;
+            letter-spacing: 1px;
+        }
+
+        .title-bottom {
+            font-size: 92px;
+            line-height: 0.9;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            font-weight: 500;
+            opacity: 0.95;
+            margin-bottom: 40px;
+            max-width: 650px;
+            line-height: 1.5;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 64px;
+        }
+
+        /* --- TROPHY SCORE CARD --- */
+        .score-card {
+            background: #446e80;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            padding: 32px;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            max-width: 580px;
+            width: 100%;
+        }
+
+        .score-trophy {
+            width: 140px;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .score-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .score-label {
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .score-value-box {
+            background-color: #172836;
+            border-radius: 8px;
+            padding: 12px 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .score-value-box img {
+            width: 28px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .score-value-text {
+            font-size: 32px;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1;
+            letter-spacing: -0.5px;
+            min-width: 160px;
+            text-align: left;
+        }
+
+        .score-desc {
+            font-size: 15px;
+            color: #ffffff;
+            font-weight: 500;
+            margin-bottom: 16px;
+            letter-spacing: 0.2px;
+        }
+
+        .score-link {
+            font-size: 14px;
+            font-weight: 700;
+            color: #f2ba75;
+            text-decoration: underline;
+            text-decoration-thickness: 1.5px;
+            text-underline-offset: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: opacity 0.2s;
+        }
+
+        .score-link:hover {
+            opacity: 0.8;
+        }
+
+        /* --- PATTERN BANNER DIVIDER --- */
+        .pattern-banner {
+            width: 100%;
+            height: 24px;
+            background: url('assets_challenge/Decorative%20footer%20banner.png') repeat-x center;
+            background-size: auto 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- PRIZE BANNER SECTION --- */
+        .prize-section {
+            background: linear-gradient(90deg, #091710 0%, #3e270c 100%);
+            padding: 80px 24px;
+            position: relative;
+            overflow: visible;
+        }
+
+        .prize-container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 60px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .prize-text-col {
+            flex: 1;
+            max-width: 580px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .prize-paragraph {
+            font-size: 16px;
+            color: #f8fafc;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        .prize-img-wrapper {
+            width: 480px;
+            height: auto;
+            flex-shrink: 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 -40px -120px 0;
+            z-index: 10;
+        }
+
+        .prize-img-wrapper img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.4));
+        }
+
+        /* --- QUESTS SECTION --- */
+        .quests-section {
+            background: linear-gradient(135deg, #f2ead3 0%, #cde1db 100%);
+            padding: 120px 24px 80px 24px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .quest-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            width: 100%;
+        }
+
+        .quest-card {
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .quest-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .quest-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 12px;
+            z-index: 10;
+        }
+
+        .quest-info-wrap {
+            padding: 40px 40px 40px 52px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .quest-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .quest-date {
+            font-size: 14px;
+            font-weight: 500;
+            color: #cbd5e1;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .quest-badge-box {
+            width: 220px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .quest-badge-box img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Card Color Profiles */
+        .quest-card.q-health {
+            background: linear-gradient(90deg, #4f2510 0%, #121815 60%);
+        }
+
+        .quest-card.q-health::before {
+            background-color: #d15615;
+        }
+
+        .quest-card.q-health .quest-badge-box {
+            background: linear-gradient(180deg, #993108 0%, #c94c08 100%);
+        }
+
+        .quest-card.q-ai {
+            background: linear-gradient(90deg, #13405c 0%, #0d171d 60%);
+        }
+
+        .quest-card.q-ai::before {
+            background-color: #0575b5;
+        }
+
+        .quest-card.q-ai .quest-badge-box {
+            background: linear-gradient(180deg, #0a4f7e 0%, #0278bd 100%);
+        }
+
+        .quest-card.q-food {
+            background: linear-gradient(90deg, #371d4c 0%, #110e16 60%);
+        }
+
+        .quest-card.q-food::before {
+            background-color: #792865;
+        }
+
+        .quest-card.q-food .quest-badge-box {
+            background: linear-gradient(180deg, #611754 0%, #8a2a72 100%);
+        }
+
+
+        /* --- TESTIMONIAL / DIVIDER SECTION --- */
+        .testimonial-section {
+            padding: 64px 24px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .testi-container {
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .testi-photo {
+            width: 380px;
+            height: auto;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .testi-photo img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .testi-bubble {
+            background-color: #fba143;
+            padding: 32px;
+            border-radius: 24px;
+            border-top-left-radius: 4px;
+            position: relative;
+            flex: 1;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            line-height: 1.6;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .testi-bubble::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -20px;
+            border-width: 0 20px 20px 0;
+            border-style: solid;
+            border-color: transparent #fba143 transparent transparent;
+        }
+
+        /* --- WHAT IS A QUEST --- */
+        .how-section {
+            background: linear-gradient(135deg, #f2ead3 0%, #cde1db 100%);
+            padding: 80px 24px 120px 24px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .how-grid {
+            display: flex;
+            align-items: stretch;
+            justify-content: space-between;
+            gap: 16px;
+            margin: 0 auto 32px auto;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .how-card-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 31%;
+            border-radius: 16px;
+            overflow: visible;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .how-card-top {
+            background: linear-gradient(180deg, #1b160d 0%, #2a2215 100%);
+            border-radius: 16px 16px 0 0;
+            padding: 32px 24px 32px 24px;
+            position: relative;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: visible;
+        }
+
+        .how-stars {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .how-stars svg {
+            width: 14px;
+            height: 14px;
+            fill: #fba143;
+        }
+
+        .how-icon-float {
+            position: absolute;
+            top: -50px;
+            right: -15px;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            pointer-events: none;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
+        }
+
+        .how-icon-float img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .how-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .how-desc {
+            font-size: 14px;
+            color: #e2e8f0;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .how-card-bottom {
+            background-color: #c8d2d1;
+            border-radius: 0 0 16px 16px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .how-num {
+            font-size: 26px;
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+
+        .how-unlock {
+            font-size: 10.5px;
+            font-weight: 800;
+            color: #1e293b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .how-arrow {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            flex-shrink: 0;
+            align-self: center;
+            filter: brightness(0);
+            opacity: 0.8;
+        }
+
+        .how-banner {
+            background-color: #c8d2d1;
+            border-radius: 12px;
+            padding: 24px 32px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            line-height: 1.5;
+        }
+
+        /* --- CLUBS PROMO (FULL WIDTH LAYOUT) --- */
+        .clubs-promo-section {
+            width: 100%;
+            position: relative;
+            background: linear-gradient(90deg, #819495 0%, #062130 100%);
+            padding: 140px 24px 100px 24px;
+            display: flex;
+            justify-content: center;
+            overflow: visible;
+            margin-top: 0;
+        }
+
+        /* Repeating Geometric Banner Under Clubs */
+        .clubs-promo-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 24px;
+            background: url('assets_challenge/Decorative%20footer%20banner.png') repeat-x center;
+            background-size: auto 100%;
+            z-index: 15;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .clubs-promo-container {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            position: relative;
+            justify-content: flex-end;
+        }
+
+        .clubs-promo-img {
+            position: absolute;
+            left: -40px;
+            bottom: -60px;
+            width: 600px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .clubs-promo-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+        }
+
+        .clubs-promo-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            z-index: 10;
+            max-width: 580px;
+        }
+
+        .clubs-promo-title {
+            font-size: 40px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 16px;
+            line-height: 1.15;
+            letter-spacing: -0.5px;
+        }
+
+        .clubs-promo-desc {
+            font-size: 16px;
+            color: #f8fafc;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            font-weight: 500;
+        }
+
+
+        /* --- FAQ SECTION --- */
+        .faq-section {
+            padding: 80px 24px 100px 24px;
+            background: linear-gradient(135deg, #f2ead3 0%, #cde1db 100%);
+        }
+
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .faq-item {
+            background-color: #ffffff;
+            border-radius: 50px;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .faq-item.active {
+            background-color: rgba(225, 235, 232, 0.7);
+            border-radius: 40px 40px 24px 24px;
+        }
+
+        .faq-question-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 16px 20px 16px 40px;
+            background-color: #ffffff;
+            border-radius: 50px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .faq-question {
+            font-size: 16px;
+            font-weight: 800;
+            color: #111827;
+        }
+
+        .faq-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, #fcd34d 0%, #e88524 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .faq-icon img {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+            transform: rotate(90deg);
+            filter: brightness(0);
+        }
+
+        .faq-item.active .faq-icon img {
+            transform: rotate(-90deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            opacity: 0;
+            transition: all 0.4s ease;
+            font-size: 14px;
+            color: #111827;
+            line-height: 1.6;
+        }
+
+        .faq-answer-inner {
+            padding: 24px 40px 32px 40px;
+        }
+
+        .faq-answer p {
+            margin-bottom: 12px;
+        }
+
+        .faq-answer p:last-child {
+            margin-bottom: 0;
+        }
+
+        .faq-answer ul {
+            margin-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .faq-answer li {
+            margin-bottom: 4px;
+        }
+
+        .faq-item.active .faq-answer {
+            opacity: 1;
+        }
+
+        /* --- LABS PROMO (DEDICATED SECTION) --- */
+        .labs-section {
+            background: linear-gradient(135deg, #f2ead3 0%, #cde1db 100%);
+            padding: 80px 24px 100px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .labs-header {
+            text-align: center;
+            max-width: 900px;
+            margin-bottom: 48px;
+        }
+
+        .labs-tag {
+            color: #d97706;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .labs-title {
+            font-size: 40px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .labs-subtitle {
+            font-size: 15px;
+            color: #1e293b;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .labs-promo-card {
+            background: linear-gradient(90deg, #0d140e 0%, #3e3115 100%);
+            border-radius: 12px;
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 950px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .labs-promo-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 12px;
+            background-color: #fba143;
+        }
+
+        .labs-promo-content {
+            max-width: 65%;
+            text-align: left;
+            padding-left: 16px;
+        }
+
+        .labs-promo-title-card {
+            color: #ffffff;
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .labs-promo-desc-card {
+            color: #e2e8f0;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        .labs-promo-starts {
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 0;
+        }
+
+        .labs-icon-box {
+            width: 160px;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            flex-shrink: 0;
+        }
+
+        .labs-icon-box img {
+            width: 90px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        /* --- COMING SOON MODAL --- */
+        .coming-soon-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(17, 24, 39, 0.65);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .coming-soon-overlay.show {
+            opacity: 1;
+        }
+
+        .dialog-card {
+            background: linear-gradient(180deg, #cde3ec 0%, #e0eef4 100%);
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            padding: 40px 32px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            text-align: center;
+            transform: translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .coming-soon-overlay.show .dialog-card {
+            transform: translateY(0);
+        }
+
+        .dialog-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .dialog-desc {
+            font-size: 15px;
+            color: #4b5563;
+            font-weight: 500;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .btn-solid-modal {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 14px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.2);
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .btn-solid-modal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(232, 133, 36, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 1000px) {
+            .clubs-promo-img {
+                width: 500px;
+                left: -80px;
+                bottom: -100px;
+            }
+
+            .clubs-promo-text {
+                max-width: 500px;
+            }
+
+            .prize-img-wrapper {
+                margin: 0 -20px -100px 0;
+                width: 400px;
+            }
+        }
+
+        @media (max-width: 900px) {
+
+            /* Reset transforms on mobile so it doesn't break out of the screen */
+            .how-grid {
+                flex-direction: column;
+                align-items: center;
+                gap: 40px;
+                transform: none;
+            }
+
+            .how-banner {
+                transform: none;
+            }
+
+            .how-card-wrapper {
+                width: 100%;
+                max-width: 400px;
+            }
+
+            .how-arrow {
+                transform: rotate(90deg);
+                margin: 8px 0;
+            }
+
+            .clubs-promo-section {
+                padding-top: 380px;
+                padding-bottom: 60px;
+            }
+
+            .clubs-promo-container {
+                justify-content: center;
+            }
+
+            .clubs-promo-img {
+                width: 85%;
+                max-width: 450px;
+                left: 50%;
+                transform: translateX(-50%);
+                top: 40px;
+                bottom: auto;
+            }
+
+            .clubs-promo-text {
+                align-items: center;
+                text-align: center;
+                max-width: 100%;
+            }
+
+            .clubs-promo-title {
+                font-size: 32px;
+            }
+
+            .testi-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 32px;
+            }
+
+            .testi-photo {
+                transform: none;
+                width: 100%;
+                max-width: 450px;
+                height: auto;
+            }
+
+            .testi-bubble::before {
+                top: -20px;
+                left: 50%;
+                transform: translateX(-50%);
+                border-width: 0 20px 20px 20px;
+                border-color: transparent transparent #fba143 transparent;
+            }
+
+            .prize-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 40px;
+            }
+
+            .prize-text-col {
+                align-items: center;
+                text-align: center;
+            }
+
+            .prize-img-wrapper {
+                margin: 0 auto -100px auto;
+                width: 100%;
+                max-width: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .labs-title {
+                font-size: 32px;
+            }
+
+            .labs-promo-card {
+                flex-direction: column;
+                text-align: left;
+                gap: 32px;
+                padding: 32px 24px 32px 40px;
+            }
+
+            .labs-promo-content {
+                max-width: 100%;
+                padding-left: 0;
+            }
+
+            .labs-icon-box {
+                align-self: center;
+            }
+
+            .faq-question-row {
+                padding: 16px 20px 16px 24px;
+            }
+
+            .faq-answer-inner {
+                padding: 24px;
+            }
+
+            .score-card {
+                padding: 24px;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .score-details {
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .top-nav {
+                padding: 16px 20px;
+                flex-wrap: wrap;
+                gap: 16px;
+            }
+
+            .nav-links {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .hero-title {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .title-top {
+                font-size: 36px;
+                letter-spacing: 0;
+            }
+
+            .title-bottom {
+                font-size: 60px;
+            }
+
+            .hero-mandala-left,
+            .hero-mandala-right {
+                width: 100px;
+                top: 80px;
+            }
+
+            .score-trophy {
+                width: 120px;
+                height: 120px;
+            }
+
+            .quest-card {
+                flex-direction: column;
+            }
+
+            .quest-badge-box {
+                width: 100%;
+                padding: 40px;
+            }
+
+            .quest-info-wrap {
+                padding: 40px 24px 40px 36px;
+                text-align: center;
+                align-items: center;
+            }
+
+            .clubs-promo-section {
+                padding-top: 280px;
+            }
+
+            .clubs-promo-img {
+                top: 20px;
+                width: 95%;
+                max-width: 350px;
+            }
+
+            .prize-section {
+                padding-bottom: 60px;
+            }
+
+            .prize-img-wrapper {
+                margin-bottom: -80px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Coming Soon Modal Overlay -->
+    <div id="comingSoonModal" class="coming-soon-overlay">
+        <div class="dialog-card">
+            <h3 class="dialog-title">Oops...</h3>
+            <p class="dialog-desc">This part of Wavumbuzi is not available yet, but thank you for your interest!</p>
+            <button class="btn-solid-modal" onclick="closeComingSoonModal()">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- Top Navigation -->
+    <header class="top-nav">
+        <img src="assets_challenge/Wavumbuzi_logo.png" alt="Wavumbuzi Logo" class="logo-img"
+            onerror="this.alt='Wavumbuzi'">
+
+        <div class="nav-links">
+            <a class="nav-link active">2028 Challenge</a>
+            <a class="nav-link" href="profile.html">My profile</a>
+        </div>
+
+        <div class="user-nav-group">
+            <svg class="bell-icon" onclick="showComingSoon()" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+
+            <!-- Dynamic Dropdown Wrapper -->
+            <div class="profile-dropdown-wrapper" id="profileDropdownWrapper">
+                <div class="profile-group" onclick="toggleDropdown(event)">
+                    <img src="new_user.png" id="navAvatar" class="profile-avatar" alt="User Profile">
+                    <span class="profile-name" id="navNameDisplay">User</span>
+                    <img src="assets_challenge/Arrow%20icon.png" class="chevron-down" alt="Dropdown">
+                </div>
+
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="profile.html" class="dropdown-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        My Profile
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="logOut()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Log Out
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="section-wrapper hero-section">
+
+        <!-- Decorative Mandalas -->
+        <img class="hero-mandala-left" src="assets_challenge/Left%20Wav%20decor%20element%20on%20white.png"
+            alt="Decor Left">
+        <img class="hero-mandala-right" src="assets_challenge/Right%20Wav%20decor%20element%20on%20white.png"
+            alt="Decor Right">
+
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="title-top">2028 WAVUMBUZI</span>
+                <span class="title-bottom">CHALLENGE!</span>
+            </h1>
+            <p class="hero-subtitle">You are registered and ready to go. The challenge has begun. Get ready to explore,
+                learn and win!</p>
+
+            <div class="hero-buttons">
+                <button class="btn-outline" onclick="showComingSoon()">LEADERBOARD</button>
+                <button class="btn-solid" onclick="scrollToQuests()">QUESTS</button>
+            </div>
+
+            <div class="score-card">
+                <div class="score-trophy">
+                    <img src="assets_challenge/Leaderboard%20Trophy.png" alt="Trophy"
+                        style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+                <div class="score-details">
+                    <div class="score-label">YOU HAVE EARNED</div>
+                    <div class="score-value-box">
+                        <img src="assets_challenge/Points%20icon.png" alt="Points">
+                        <div class="score-value-text" id="hero-points-text" style="min-width: 160px; text-align: left;">
+                            0 points</div>
+                    </div>
+                    <div class="score-desc">on the 2028 Challenge leaderboard.</div>
+                    <div class="score-link" onclick="showComingSoon()">VIEW LEADERBOARD &gt;</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PATTERN BANNER DIVIDER -->
+    <div class="pattern-banner"></div>
+
+    <!-- PRIZE BANNER SECTION -->
+    <section class="section-wrapper prize-section">
+        <div class="prize-container">
+            <div class="prize-text-col">
+                <p class="prize-paragraph">In the Wavumbuzi Challenge you'll go on Quests and work to finish all three
+                    Activities in each Quest.</p>
+                <p class="prize-paragraph">Each Activity you finish earns you points. The more points you earn, the
+                    better your chances of winning awards and prizes. Earning points also means you are learning
+                    important skills that will help your career and community.</p>
+                <p class="prize-paragraph" style="margin-bottom: 32px;">You can earn even more points by playing as a
+                    Wavumbuzi club.</p>
+
+                <button class="btn-solid" onclick="showComingSoon()">LEARN ABOUT CLUBS</button>
+            </div>
+
+            <div class="prize-img-wrapper">
+                <img src="assets_challenge/Wav%20prize%20banner%20graphic.png" alt="Prize Laptop">
+            </div>
+        </div>
+    </section>
+
+    <!-- QUESTS SECTION -->
+    <section class="section-wrapper quests-section" id="quests-section">
+        <div class="container" style="padding-top: 0; padding-bottom: 0;">
+            <h2 class="title-main">Quest topics in 2028</h2>
+            <div style="max-width: 900px; margin: 0 auto 48px auto; text-align: center;">
+                <p class="subtitle-main" style="margin-bottom: 16px;">Once the challenge starts, you will be able to
+                    choose one of these three Quests. You can even do all three Quests to earn more points.</p>
+                <p class="subtitle-main" style="margin-bottom: 0;">Click on a Quest to learn more about it. You can
+                    already start earning points towards the Health quest from 01 February 2028!</p>
+            </div>
+
+            <div class="quest-list">
+
+                <div class="quest-card q-health">
+                    <div class="quest-info-wrap">
+                        <h3 class="quest-title">2028 HEALTH QUEST</h3>
+                        <div class="quest-date">You have earned 600 points in this Quest so far!</div>
+                        <button class="btn-solid" onclick="window.location.href='quest.html'">CONTINUE</button>
+                    </div>
+                    <div class="quest-badge-box">
+                        <img src="assets_challenge/Health%20badge.png" alt="Health Badge">
+                    </div>
+                </div>
+
+                <div class="quest-card q-ai">
+                    <div class="quest-info-wrap">
+                        <h3 class="quest-title">2028 AI AND ROBOTICS QUEST</h3>
+                        <div class="quest-date">Start earning points from 01 March 2028.</div>
+                        <button class="btn-solid" onclick="showComingSoon()">LEARN MORE</button>
+                    </div>
+                    <div class="quest-badge-box">
+                        <img src="assets_challenge/Robotics%20badge.png" alt="AI Badge">
+                    </div>
+                </div>
+
+                <div class="quest-card q-food">
+                    <div class="quest-info-wrap">
+                        <h3 class="quest-title">2028 FOOD SYSTEMS QUEST</h3>
+                        <div class="quest-date">Start earning points from 01 April 2028.</div>
+                        <button class="btn-solid" onclick="showComingSoon()">LEARN MORE</button>
+                    </div>
+                    <div class="quest-badge-box">
+                        <img src="assets_challenge/Food%20Systems%20badge.png" alt="Food Badge">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIAL 1 -->
+    <section class="section-wrapper testimonial-section"
+        style="background-image: url('assets_challenge/Green%20testimonial%20block%20BG.png'); background-size: cover; background-position: center;">
+        <div class="testi-container">
+            <div class="testi-photo">
+                <img src="assets_challenge/Testimonial%20eg.%20pic%201.png" alt="Student"
+                    style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+            <div class="testi-bubble">
+                "Wavumbuzi is fun because it challenges me to think differently. I learn about real problems and I get
+                to use my imagination to come up with solutions. It is way better than normal school work!"
+            </div>
+        </div>
+    </section>
+
+    <!-- PATTERN BANNER DIVIDER -->
+    <div class="pattern-banner"></div>
+
+    <!-- WHAT IS A QUEST -->
+    <section class="how-section">
+        <div class="container" style="padding: 0; max-width: 1100px;">
+            <h2 class="title-main">What is a Quest?</h2>
+            <p class="subtitle-main" style="max-width: 950px; margin: 0 auto 64px auto;">Each Quest has three
+                Activities: Discover, Explore and Reflect. You must finish them in that order. You will earn points for
+                each Activity. If you earn enough points, you will unlock the next Activity. Once you have finished all
+                three Activities, you have completed an entire Quest.</p>
+
+            <div class="how-grid">
+
+                <div class="how-card-wrapper">
+                    <div class="how-card-top">
+                        <div class="how-stars">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="how-title">Discover</h3>
+                        <p class="how-desc">Learn the stories of inspiring entrepreneurs and the skills that helped them
+                            achieve their goals.</p>
+                        <div class="how-icon-float">
+                            <img src="assets_challenge/Discover%20binoculars.png" alt="Discover">
+                        </div>
+                    </div>
+                    <div class="how-card-bottom">
+                        <span class="how-num">01</span>
+                        <span class="how-unlock">START YOUR QUEST HERE</span>
+                    </div>
+                </div>
+
+                <img src="assets_challenge/Arrow%20icon.png" class="how-arrow" alt="Arrow">
+
+                <div class="how-card-wrapper">
+                    <div class="how-card-top">
+                        <div class="how-stars">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="how-title">Explore</h3>
+                        <p class="how-desc">Use the skills you learned in Discover to solve a problem in this fun
+                            learning game. Let's see where your story goes!</p>
+                        <div class="how-icon-float">
+                            <img src="assets_challenge/Explore%20Magnifying%20glass.png" alt="Explore">
+                        </div>
+                    </div>
+                    <div class="how-card-bottom">
+                        <span class="how-num">02</span>
+                        <span class="how-unlock">1000 POINTS TO UNLOCK</span>
+                    </div>
+                </div>
+
+                <img src="assets_challenge/Arrow%20icon.png" class="how-arrow" alt="Arrow">
+
+                <div class="how-card-wrapper">
+                    <div class="how-card-top">
+                        <div class="how-stars">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="how-title">Reflect</h3>
+                        <p class="how-desc">It's your turn to come up with something new. Think of a way to solve a
+                            problem in your community.</p>
+                        <div class="how-icon-float" style="width: 140px; right: -25px; top: -60px;">
+                            <img src="assets_challenge/Reflect%20mirror.png" alt="Reflect">
+                        </div>
+                    </div>
+                    <div class="how-card-bottom">
+                        <span class="how-num">03</span>
+                        <span class="how-unlock">5000 POINTS TO UNLOCK</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="how-banner">
+                Not everyone will get to the end of the Quest. That's okay! Even if you only finish Discover you can
+                still win a prize and have a lot to be proud of! Just do your best to earn as many points as you can.
+            </div>
+        </div>
+    </section>
+
+    <!-- CLUBS PROMO (FULL WIDTH LAYOUT) -->
+    <section class="clubs-promo-section">
+        <div class="clubs-promo-container">
+            <div class="clubs-promo-img">
+                <img src="assets_challenge/Wavumbuzi%20student%20club%20photo.png" alt="Student Club">
+            </div>
+            <div class="clubs-promo-text">
+                <h2 class="clubs-promo-title">Enter the challenge as a Wavumbuzi club to win extra prizes!</h2>
+                <p class="clubs-promo-desc">With Wavumbuzi clubs you can work with your classmates to set goals and give
+                    each other support during the Challenge. This will help you finish the Challenge with much more
+                    points. You can also win awards and prizes that are only given to clubs. If you want, you can even
+                    be part of more than one club.</p>
+                <button class="btn-solid" onclick="showComingSoon()">LEARN ABOUT CLUBS</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section-wrapper faq-section">
+        <div class="container" style="padding-top: 0; padding-bottom: 0;">
+            <h2 class="title-main">Do you have more questions? We have answers!</h2>
+
+            <div class="faq-list">
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question-row">
+                        <div class="faq-question">How do I earn points?</div>
+                        <div class="faq-icon"><img src="assets_challenge/Arrow%20icon.png" alt="Expand"></div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <p>You earn points by taking part in the Wavumbuzi Challenge.</p>
+                            <p>You earn points when you:</p>
+                            <ul>
+                                <li>answer questions</li>
+                                <li>finish Activities</li>
+                                <li>complete Quests</li>
+                            </ul>
+                            <p>Your points help you move up the leaderboard and unlock new parts of the Challenge.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question-row">
+                        <div class="faq-question">How can I get as many points as possible?</div>
+                        <div class="faq-icon"><img src="assets_challenge/Arrow%20icon.png" alt="Expand"></div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <p>To get more points, keep taking part in the Challenge and try your best.</p>
+                            <p>You can:</p>
+                            <ul>
+                                <li>complete more Quests</li>
+                                <li>answer questions carefully in Discover activities</li>
+                                <li>play and replay Explore activities to improve your score</li>
+                                <li>complete Reflect activities when they unlock</li>
+                            </ul>
+                            <p>The more you take part, the more chances you have to learn, improve, and earn points.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question-row">
+                        <div class="faq-question">Where can I see how many points I have?</div>
+                        <div class="faq-icon"><img src="assets_challenge/Arrow%20icon.png" alt="Expand"></div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <p>You can see your points on the Challenge leaderboard.</p>
+                            <p>During the pre-challenge warm-up period, From February to April, the leaderboard shows
+                                the points learners are already earning by exploring Discover activities.</p>
+                            <p>During the main Challenge, from May to June, your points can help you move into the
+                                bronze, silver, or gold league of the leaderboard. Aim for the gold league to earn your
+                                2028 Challenge gold league badge!</p>
+                            <p>Your points may take a little time to update, so check again later if you do not see them
+                                right away.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question-row">
+                        <div class="faq-question">What can I win in the Challenge?</div>
+                        <div class="faq-icon"><img src="assets_challenge/Arrow%20icon.png" alt="Expand"></div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <p>You can earn points, badges, profile rewards, and a bronze, silver, or gold league place
+                                on the leaderboard.</p>
+                            <p>Some learners, clubs, schools, or Labs teams may also win awards or prizes.</p>
+                            <p>The prizes may be different each year, so ask your teacher or Wavumbuzi contact what
+                                prizes are available in this Challenge.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question-row">
+                        <div class="faq-question">Will I get a badge and a place on the leaderboard if I only finish
+                            Discover?</div>
+                        <div class="faq-icon"><img src="assets_challenge/Arrow%20icon.png" alt="Expand"></div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <p>Yes, Discover can help you earn points and appear on the leaderboard during the
+                                pre-challenge and main Challenge periods.</p>
+                            <p>You can also earn a theme badge if you reach the points target for that theme. Your badge
+                                can grow from bronze to silver to gold as you earn more points on the leaderboard.</p>
+                            <p>To unlock Explore, Reflect, and Labs, you will need to reach the next points target and
+                                keep going.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question-row">
+                        <div class="faq-question">How can I start a Wavumbuzi Club at my school?</div>
+                        <div class="faq-icon"><img src="assets_challenge/Arrow%20icon.png" alt="Expand"></div>
+                    </div>
+                    <div class="faq-answer">
+                        <div class="faq-answer-inner">
+                            <p>A Wavumbuzi Club is a wonderful way for classmates to work together to learn skills and
+                                earn points. Learn how to set goals and achieve them as a team. If you want to start
+                                your own Wavumbuzi Club, read this guide on Starting a club to learn how.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- PATTERN BANNER DIVIDER -->
+    <div class="pattern-banner"></div>
+
+    <!-- LABS PROMO (DEDICATED SECTION) -->
+    <section class="labs-section">
+        <div class="labs-header">
+            <div class="labs-tag">PUT YOUR SKILLS TO THE TEST IN REAL LIFE</div>
+            <h2 class="labs-title">Finish a quest to get into Labs 2028</h2>
+            <p class="labs-subtitle">Wavumbuzi Labs is an exciting chance to design an innovative solution for a real
+                problem. You will work with your classmates and our AI coach to design your proposal. Outstanding
+                projects will win a prize and may even get funding in real life.</p>
+        </div>
+
+        <div class="labs-promo-card">
+            <div class="labs-promo-content">
+                <h3 class="labs-promo-title-card">UNLOCK LABS</h3>
+                <p class="labs-promo-desc-card">You must complete one whole quest -- including the Discover, Explore,
+                    and Reflect activities -- this year to qualify for Labs 2028.</p>
+                <p class="labs-promo-starts">Labs starts in August.</p>
+            </div>
+
+            <div class="labs-icon-box">
+                <img src="assets_challenge/Labs%20lightbulb.png" alt="Lightbulb">
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIAL 2 -->
+    <section class="section-wrapper testimonial-section"
+        style="background-image: url('assets_challenge/Red%20Testimonial%20block%20BG.png'); background-size: cover; background-position: center; padding-bottom: 80px;">
+        <div class="testi-container">
+            <div class="testi-photo">
+                <img src="assets_challenge/Testimonial%20eg.%20pic%202.png" alt="Student"
+                    style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+            <div class="testi-bubble">
+                "I never thought I could be an entrepreneur until I played Wavumbuzi. It showed me that anyone can solve
+                problems if they look closely at their community. I am excited to see what quests are coming this year!"
+            </div>
+        </div>
+    </section>
+
+    <!-- PATTERN BANNER DIVIDER -->
+    <div class="pattern-banner"></div>
+
+    <script>
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTyvz2azkYILUbhFaWlQOZ454b9E_flwAlQ41cIhjacIfFop8Ter193nojY47uALI/exec';
+
+        // Data Extraction Logic
+        const urlParams = new URLSearchParams(window.location.search);
+        let userName = urlParams.get('user');
+        let userAvatar = "new_user.png";
+
+        // Fetch from LocalStorage
+        const savedData = localStorage.getItem('wavumbuzi_user_data_complete');
+        if (savedData) {
+            try {
+                const parsedData = JSON.parse(savedData);
+                if (parsedData && parsedData.fullName && !userName) {
+                    userName = parsedData.fullName;
+                }
+                if (parsedData && parsedData.avatar) {
+                    userAvatar = parsedData.avatar;
+                }
+            } catch (e) { }
+        }
+
+        // Apply Data to UI & Fetch Live Points
+        window.addEventListener('DOMContentLoaded', () => {
+            if (userName) {
+                const nameParts = userName.trim().split(/\s+/);
+                let firstName = nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1).toLowerCase();
+                let lastInitial = nameParts.length > 1 ? " " + nameParts[nameParts.length - 1].charAt(0).toUpperCase() : "";
+                document.getElementById('navNameDisplay').innerText = firstName + lastInitial;
+                document.getElementById('navAvatar').src = userAvatar;
+
+                // --- NEW: Fetch Live Points & Spinning Animation ---
+                const pointsVal = document.getElementById('hero-points-text');
+                let spinInterval;
+
+                if (pointsVal) {
+                    // Start spinning animation
+                    spinInterval = setInterval(() => {
+                        pointsVal.innerText = (Math.floor(Math.random() * 8999) + 1000) + " points";
+                    }, 50);
+                }
+
+                fetch(APP_SCRIPT_URL + '?action=getUserData&user=' + encodeURIComponent(userName))
+                    .then(response => response.json())
+                    .then(data => {
+                        if (spinInterval) clearInterval(spinInterval); // Stop spinning
+
+                        if (data.success && pointsVal) {
+                            pointsVal.innerText = (data.points || 0) + " points";
+                        } else if (pointsVal) {
+                            pointsVal.innerText = "0 points";
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error fetching points:", err);
+                        if (spinInterval) clearInterval(spinInterval); // Stop spinning on error
+                        if (pointsVal) pointsVal.innerText = "0 points";
+                    });
+            }
+        });
+
+        // Dropdown Logic
+        function toggleDropdown(e) {
+            e.stopPropagation();
+            const wrapper = document.getElementById('profileDropdownWrapper');
+            const menu = document.getElementById('dropdownMenu');
+
+            wrapper.classList.toggle('open');
+            menu.classList.toggle('show');
+        }
+
+        window.addEventListener('click', function (e) {
+            const wrapper = document.getElementById('profileDropdownWrapper');
+            const menu = document.getElementById('dropdownMenu');
+
+            if (wrapper && !wrapper.contains(e.target)) {
+                wrapper.classList.remove('open');
+                menu.classList.remove('show');
+            }
+        });
+
+        // Logout Logic
+        function logOut() {
+            window.location.href = "login.html";
+        }
+
+        // Scroll to Quests
+        function scrollToQuests() {
+            const questSection = document.getElementById('quests-section');
+            if (questSection) {
+                questSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // FAQ Toggle Logic
+        function toggleFaq(element) {
+            const answer = element.querySelector('.faq-answer');
+            const isExpanded = answer.style.maxHeight;
+
+            // Close all currently open FAQs
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+                const ans = item.querySelector('.faq-answer');
+                ans.style.maxHeight = null;
+            });
+
+            // If the clicked one wasn't expanded, open it
+            if (!isExpanded) {
+                element.classList.add('active');
+                answer.style.maxHeight = answer.scrollHeight + "px";
+            }
+        }
+
+        // Coming Soon Modal Logic
+        function showComingSoon() {
+            const modal = document.getElementById('comingSoonModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('show'), 10);
+            }
+        }
+
+        function closeComingSoonModal() {
+            const modal = document.getElementById('comingSoonModal');
+            if (modal) {
+                modal.classList.remove('show');
+                setTimeout(() => modal.style.display = 'none', 300);
+            }
+        }
+    </script>
+</body>
+
+</html>

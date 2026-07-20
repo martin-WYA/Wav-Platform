@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wavumbuzi - User Registration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #d8edf4;
+            background-image: url('Blue sky with footer banner.jpg');
+            background-size: cover;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            align-items: flex-start;
+            padding-left: max(20px, 8vw);
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 850px;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-grow: 1;
+            z-index: 10;
+            align-items: flex-start;
+        }
+
+        .reg-card {
+            background-color: #f2f8fa;
+            width: 100%;
+            max-width: 680px;
+            border-radius: 20px;
+            padding: 32px 48px 44px 48px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .teacher-link {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            color: #e88524;
+            font-weight: 700;
+            font-size: 13px;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            cursor: pointer;
+            transition: color 0.2s;
+            z-index: 20;
+        }
+
+        .teacher-link:hover {
+            color: #cf7015;
+        }
+
+        .step-indicator {
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .card-header {
+            text-align: center;
+            margin-top: 16px;
+            margin-bottom: 32px;
+        }
+
+        .card-title {
+            font-size: 30px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+
+        .card-desc {
+            font-size: 15px;
+            color: #1f2937;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 8px;
+            padding: 0 2px;
+        }
+
+        .label-text {
+            font-size: 12px;
+            font-weight: 700;
+            color: #374151;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .label-required {
+            font-size: 12px;
+            font-weight: 500;
+            color: #4b5563;
+        }
+
+        .input-text {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1.5px solid #4b5563;
+            border-radius: 12px;
+            font-size: 15px;
+            color: #1f2937;
+            background-color: #ffffff;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-text::placeholder {
+            color: #a0aec0;
+        }
+
+        .input-text:focus {
+            border-color: #e88524;
+            box-shadow: 0 0 0 3px rgba(232, 133, 36, 0.15);
+        }
+
+        .dob-container {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .dob-input-wrapper {
+            display: flex;
+            align-items: center;
+            border: 1.5px solid #4b5563;
+            border-radius: 12px;
+            background-color: #ffffff;
+            padding: 4px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .dob-input-wrapper:focus-within {
+            border-color: #e88524;
+            box-shadow: 0 0 0 3px rgba(232, 133, 36, 0.15);
+        }
+
+        .dob-input-wrapper.error {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+        }
+
+        .calendar-icon-badge {
+            background-color: #e88524;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-right: 12px;
+        }
+
+        .dob-input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 15px;
+            color: #1f2937;
+            background: transparent;
+            padding: 8px 0;
+        }
+
+        .dob-input::placeholder {
+            color: #a0aec0;
+            font-weight: 500;
+        }
+
+        .dob-error-text {
+            display: none;
+            color: #dc2626;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .sequence-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .sequence-boxes {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 10px 20px;
+            border-radius: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .sequence-boxes.practice-mode {
+            background-color: #e2ecef;
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .seq-box {
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
+            border: 1.5px solid #374151;
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .seq-box.active {
+            background-color: #fed7aa;
+            border-color: #fba143;
+            box-shadow: 0 0 0 3px rgba(251, 161, 67, 0.25);
+        }
+
+        .seq-box.filled {
+            background-color: #fffaf0;
+            border-color: #e88524;
+        }
+
+        .seq-divider {
+            display: none;
+            color: #64748b;
+            font-weight: 700;
+            font-size: 18px;
+            user-select: none;
+        }
+
+        .sequence-boxes.practice-mode .seq-divider {
+            display: block;
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+            width: 100%;
+        }
+
+        .icon-btn {
+            aspect-ratio: 1 / 1;
+            background-color: #ffffff;
+            border: 1.5px solid #64748b;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            padding: 6px;
+            position: relative;
+        }
+
+        .icon-btn:hover:not(.selected) {
+            border-color: #0f172a;
+            background-color: #f8fafc;
+            transform: translateY(-1px);
+        }
+
+        .icon-btn.selected {
+            background-color: #fed7aa;
+            border-color: #fba143;
+            box-shadow: 0 0 0 2px rgba(251, 161, 67, 0.3);
+            cursor: default;
+        }
+
+        .seq-box svg,
+        .icon-btn svg {
+            width: 100%;
+            height: 100%;
+            max-width: 28px;
+            max-height: 28px;
+            stroke: #0f172a;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .rule-text {
+            font-size: 13px;
+            font-weight: 500;
+            color: #475569;
+            text-align: center;
+            margin-bottom: 8px;
+            min-height: 18px;
+        }
+
+        .hourglass-icon {
+            margin: 0 auto 16px auto;
+            display: flex;
+            justify-content: center;
+            animation: floatHourglass 4s ease-in-out infinite;
+        }
+
+        @keyframes floatHourglass {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        .status-container {
+            background-color: #e5eff2;
+            border-radius: 12px;
+            padding: 24px 32px;
+            position: relative;
+            margin-top: 32px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .status-line {
+            position: absolute;
+            left: 43px;
+            top: 38px;
+            bottom: 38px;
+            width: 2px;
+            background-color: #111827;
+            z-index: 1;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .status-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .status-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            background-color: #111827;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .status-icon.empty {
+            background-color: #e5eff2;
+            border: 1.5px solid #94a3b8;
+            color: transparent;
+        }
+
+        .status-icon svg {
+            width: 12px;
+            height: 12px;
+            fill: currentColor;
+            stroke: currentColor;
+            stroke-width: 1;
+        }
+
+        .status-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-grow: 1;
+            width: 100%;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            padding-bottom: 8px;
+        }
+
+        .status-item:last-child .status-content {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .status-text {
+            font-size: 15px;
+            color: #111827;
+        }
+
+        .status-text.bold {
+            font-weight: 700;
+        }
+
+        .status-text.faded {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .status-time {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .status-time.bold {
+            color: #111827;
+            font-weight: 700;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 32px;
+            width: 100%;
+        }
+
+        .btn {
+            padding: 12px 44px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .btn-cancel {
+            background-color: transparent;
+            border: 1.5px solid #374151;
+            color: #1f2937;
+        }
+
+        .btn-cancel:hover {
+            background-color: rgba(55, 65, 81, 0.05);
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #fce0bc 0%, #f3c796 100%);
+            border: none;
+            color: #785835;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.15);
+            min-width: 140px;
+            cursor: not-allowed;
+        }
+
+        .btn-next.active {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            color: #1f2937;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.3);
+            cursor: pointer;
+        }
+
+        .btn-next.active:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(232, 133, 36, 0.4);
+        }
+
+        .step-section {
+            display: none;
+            width: 100%;
+        }
+
+        .step-section.active-step {
+            display: block;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(17, 24, 39, 0.65);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .custom-cancel-card {
+            background: linear-gradient(145deg, #1c2619 0%, #4a2e10 100%);
+            width: 100%;
+            max-width: 440px;
+            border-radius: 20px;
+            padding: 40px 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .robot-container {
+            margin-bottom: 16px;
+            animation: float 3.5s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .cancel-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .cancel-desc {
+            font-size: 15px;
+            color: #e2e8f0;
+            margin-bottom: 36px;
+            font-weight: 500;
+        }
+
+        .cancel-btn-row {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .cancel-go-back {
+            background: transparent;
+            border: 1.5px solid #fba143;
+            color: #fba143;
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 30px;
+        }
+
+        .cancel-go-back:hover {
+            background: rgba(251, 161, 67, 0.1);
+        }
+
+        .cancel-confirm {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 30px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                align-items: center;
+                padding-left: 0;
+            }
+
+            .main-container {
+                align-items: center;
+            }
+
+            .reg-card {
+                padding: 24px 16px 32px 16px;
+            }
+
+            .teacher-link {
+                position: static;
+                display: block;
+                text-align: right;
+                margin-bottom: 12px;
+            }
+
+            .icon-grid {
+                gap: 5px;
+            }
+
+            .icon-btn {
+                padding: 4px;
+                border-radius: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .icon-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            .cancel-btn-row {
+                flex-direction: column-reverse;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <main class="reg-card">
+            <div id="step1" class="step-section active-step">
+                <a class="teacher-link" onclick="alert('Teacher login link clicked.')">I'M A TEACHER</a>
+                <div class="card-header">
+                    <h1 class="card-title">What is your name?</h1>
+                    <p class="card-desc">Type your full government name.<br>A teacher will check your account before you
+                        can use it.</p>
+                </div>
+                <form id="registrationForm" onsubmit="handleStep1Submit(event)">
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label class="label-text" for="fullName">FULL NAME*</label>
+                            <span class="label-required">*Required</span>
+                        </div>
+                        <input type="text" id="fullName" name="fullName" class="input-text"
+                            placeholder="Enter your full name" required autocomplete="name">
+                    </div>
+                    <div class="form-group dob-container">
+                        <div class="label-row">
+                            <label class="label-text" for="dob">DATE OF BIRTH*</label>
+                            <span class="label-required">*Required</span>
+                        </div>
+                        <div class="dob-input-wrapper" id="dobWrapper">
+                            <div class="calendar-icon-badge">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1f2937"
+                                    stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    <rect x="7" y="14" width="2" height="2" fill="#1f2937"></rect>
+                                    <rect x="11" y="14" width="2" height="2" fill="#1f2937"></rect>
+                                    <rect x="15" y="14" width="2" height="2" fill="#1f2937"></rect>
+                                </svg>
+                            </div>
+                            <input type="text" id="dob" name="dob" class="dob-input" placeholder="DD / MM / YYYY"
+                                required maxlength="14">
+                        </div>
+                        <div class="dob-error-text" id="dobError">Your date of birth does not look right. Please try
+                            again.</div>
+                    </div>
+                    <div class="button-row">
+                        <!-- Canceling step 1 directly navigates to start page -->
+                        <button type="button" class="btn btn-cancel"
+                            onclick="window.location.href='start.html'">CANCEL</button>
+                        <button type="submit" class="btn btn-next active">NEXT</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="step2" class="step-section">
+                <a class="teacher-link" onclick="alert('Teacher login link clicked.')">I'M A TEACHER</a>
+                <div class="card-header" style="margin-top: 4px;">
+                    <div class="step-indicator">SIGN UP | STEP 2 OF 3</div>
+                    <h1 class="card-title" id="stepTitle">Pick your first picture</h1>
+                    <p class="card-desc" id="stepDesc">Choose one you will remember. You will need it to come back.</p>
+                </div>
+                <div class="sequence-wrapper">
+                    <div class="sequence-boxes" id="sequenceContainer">
+                        <div class="seq-box active" id="box1">1</div><span class="seq-divider">&rsaquo;</span>
+                        <div class="seq-box" id="box2">2</div><span class="seq-divider">&rsaquo;</span>
+                        <div class="seq-box" id="box3">3</div>
+                    </div>
+                </div>
+                <div class="icon-grid" id="iconGrid"></div>
+                <div class="rule-text" id="ruleText">Each picture can only be used once.</div>
+                <div class="button-row">
+                    <button type="button" class="btn btn-cancel" id="step2CancelBtn"
+                        onclick="showCancelModal()">CANCEL</button>
+                    <button type="button" class="btn btn-next" id="step2NextBtn" onclick="handleStep2Next()"
+                        disabled>NEXT</button>
+                </div>
+            </div>
+
+            <div id="step3" class="step-section">
+                <a class="teacher-link" onclick="alert('Teacher login link clicked.')">I'M A TEACHER</a>
+                <div class="card-header" style="margin-top: 4px;">
+                    <div class="step-indicator">SIGN UP | STEP 3 OF 3</div>
+                    <div class="hourglass-icon">
+                        <svg width="60" height="60" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 12 C16 8, 48 8, 48 12 L45 16 C45 18, 19 18, 19 16 Z" fill="#7030a0" />
+                            <path d="M16 52 C16 56, 48 56, 48 52 L45 48 C45 46, 19 46, 19 48 Z" fill="#7030a0" />
+                            <path d="M22 16 C 22 28, 28 30, 32 32 C 36 30, 42 28, 42 16" fill="#e2ecef" stroke="#94a3b8"
+                                stroke-width="2" />
+                            <path d="M22 48 C 22 36, 28 34, 32 32 C 36 34, 42 36, 42 48" fill="#e2ecef" stroke="#94a3b8"
+                                stroke-width="2" />
+                            <path d="M24 22 C 27 28, 30 30, 32 32 C 34 30, 37 28, 40 22 Z" fill="#fbbf24" />
+                            <path d="M25 48 C 25 40, 28 36, 32 32 C 36 36, 39 40, 39 48 Z" fill="#fbbf24" />
+                            <line x1="32" y1="32" x2="32" y2="44" stroke="#fbbf24" stroke-width="2" />
+                            <path d="M26 20 C 26 24, 28 26, 30 28" stroke="#ffffff" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h1 class="card-title" id="step3Name">You're almost in, Name</h1>
+                    <p class="card-desc">A teacher at Kenya High School needs to check your name and class<br>before you
+                        can log in. This usually takes less than a day.</p>
+                </div>
+                <div class="status-container">
+                    <div class="status-line"></div>
+                    <div class="status-item">
+                        <div class="status-icon"><svg viewBox="0 0 24 24">
+                                <path d="M20 6L9 17l-5-5" fill="none" stroke="white" stroke-width="3"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg></div>
+                        <div class="status-content"><span class="status-text">We know your name</span><span
+                                class="status-time">just now</span></div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-icon"><svg viewBox="0 0 24 24">
+                                <path d="M20 6L9 17l-5-5" fill="none" stroke="white" stroke-width="3"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg></div>
+                        <div class="status-content"><span class="status-text">You have chosen your picture
+                                code</span><span class="status-time">just now</span></div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-icon"><svg viewBox="0 0 24 24" stroke-width="2">
+                                <path d="M7 4h10 M7 20h10 M9 4v4l3 4 3-4V4 M9 20v-4l3-4 3 4v4" fill="none"
+                                    stroke="white" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg></div>
+                        <div class="status-content"><span class="status-text bold">A teacher must check your name and
+                                class</span><span class="status-time bold">pending</span></div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-icon empty"></div>
+                        <div class="status-content" style="border: none;"><span class="status-text faded">Sign in and
+                                start learning</span></div>
+                    </div>
+                </div>
+                <div class="rule-text" style="margin-top: 24px; font-weight: 600; color: #111827;">Come back later, or
+                    ask a teacher to approve you in person.</div>
+
+                <div class="button-row">
+                    <button type="button" class="btn btn-next active" onclick="goToNextScreen()">CONTINUE TO
+                        LOGIN</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="customCancelModal" class="modal-overlay">
+        <div class="custom-cancel-card">
+            <div class="robot-container">
+                <svg width="80" height="80" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="50" cy="90" rx="20" ry="4" fill="rgba(0,0,0,0.3)" />
+                    <rect x="35" y="55" width="30" height="25" rx="8" fill="#e88524" />
+                    <circle cx="50" cy="67" r="6" fill="#fce0bc" />
+                    <path d="M 35 60 C 25 60, 20 70, 25 75" fill="none" stroke="#e88524" stroke-width="6"
+                        stroke-linecap="round" />
+                    <path d="M 65 60 C 75 60, 80 70, 75 75" fill="none" stroke="#e88524" stroke-width="6"
+                        stroke-linecap="round" />
+                    <circle cx="25" cy="75" r="5" fill="#0ea5e9" />
+                    <circle cx="75" cy="75" r="5" fill="#0ea5e9" />
+                    <path d="M 25 45 C 25 20, 75 20, 75 45 L 75 55 C 75 60, 25 60, 25 55 Z" fill="#e88524" />
+                    <rect x="32" y="30" width="36" height="22" rx="6" fill="#0f172a" />
+                    <path d="M 38 36 Q 42 34 44 42 Q 40 44 38 36" fill="#22d3ee" />
+                    <path d="M 62 36 Q 58 34 56 42 Q 60 44 62 36" fill="#22d3ee" />
+                    <line x1="46" y1="48" x2="54" y2="48" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </div>
+            <h2 class="cancel-title">Are you sure?</h2>
+            <p class="cancel-desc">You will have to start again if you cancel now.</p>
+            <div class="cancel-btn-row">
+                <button class="btn cancel-go-back" onclick="closeCancelModal()">GO BACK</button>
+                <!-- Confirming cancellation routes safely back to start -->
+                <button class="btn cancel-confirm" onclick="confirmReset()">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const NEXT_SCREEN_URL = "login.html";
+        const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwTyvz2azkYILUbhFaWlQOZ454b9E_flwAlQ41cIhjacIfFop8Ter193nojY47uALI/exec";
+
+        let userData = { fullName: "", dob: "", selectedIcons: [], practiceIcons: [] };
+        let isPracticeMode = false, practiceAttempts = 0;
+
+        const dobInput = document.getElementById('dob');
+        const dobError = document.getElementById('dobError');
+        const dobWrapper = document.getElementById('dobWrapper');
+
+        dobInput.addEventListener('input', function (e) {
+            dobError.style.display = 'none'; dobWrapper.classList.remove('error');
+            let input = e.target.value.replace(/\D/g, '');
+            let formatted = '';
+            if (input.length > 0) formatted += input.substring(0, 2);
+            if (input.length >= 3) formatted += ' / ' + input.substring(2, 4);
+            if (input.length >= 5) formatted += ' / ' + input.substring(4, 8);
+            e.target.value = formatted;
+        });
+
+        function isValidDate(dateString) {
+            const parts = dateString.split(' / ');
+            if (parts.length !== 3) return false;
+            const day = parseInt(parts[0], 10), month = parseInt(parts[1], 10), year = parseInt(parts[2], 10);
+            if (isNaN(day) || isNaN(month) || isNaN(year)) return false;
+            const currentYear = new Date().getFullYear();
+            if (year < 1900 || year > currentYear) return false;
+            if (month < 1 || month > 12) return false;
+            const daysInMonth = new Date(year, month, 0).getDate();
+            if (day < 1 || day > daysInMonth) return false;
+            return true;
+        }
+
+        function showCancelModal() { document.getElementById('customCancelModal').style.display = 'flex'; }
+        function closeCancelModal() { document.getElementById('customCancelModal').style.display = 'none'; }
+
+        // Modal confirm now safely exits back out to start.html layout
+        function confirmReset() { window.location.href = 'start.html'; }
+
+        function handleStep1Submit(event) {
+            event.preventDefault();
+            const dobVal = document.getElementById('dob').value.trim();
+            if (!isValidDate(dobVal)) { dobError.style.display = 'block'; dobWrapper.classList.add('error'); return; }
+            userData.fullName = document.getElementById('fullName').value.trim();
+            userData.dob = dobVal;
+            document.getElementById('step1').classList.remove('active-step');
+            document.getElementById('step2').classList.add('active-step');
+            resetStep2UI();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        const iconsData = [
+            { id: "icon_0", svg: `<circle cx="14" cy="14" r="4"/><path d="M14 2v3M14 23v3M2 14h3M23 14h3M5.5 5.5l2.1 2.1M20.4 20.4l2.1 2.1M5.5 22.5l2.1-2.1M20.4 7.6l2.1-2.1"/>` },
+            { id: "icon_1", svg: `<path d="M4 17l10-8 10 8M4 11l10-8 10 8"/>` },
+            { id: "icon_2", svg: `<polygon points="14,2 26,14 14,26 2,14"/><polygon points="14,7 21,14 14,21 7,14"/><circle cx="14" cy="14" r="1.5" fill="#0f172a"/>` },
+            { id: "icon_3", svg: `<path d="M14 3v22M7 9h14M8 15h12M10 21h8"/>` },
+            { id: "icon_4", svg: `<circle cx="10" cy="10" r="6"/><circle cx="18" cy="18" r="6"/><path d="M13 13l2 2"/>` },
+            { id: "icon_5", svg: `<circle cx="14" cy="14" r="10"/><path d="M14 4v20M4 14h20"/>` },
+            { id: "icon_6", svg: `<polygon points="5,4 23,4 14,14 23,24 5,24 14,14"/>` },
+            { id: "icon_7", svg: `<path d="M14 2c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12z"/>` },
+            { id: "icon_8", svg: `<rect x="3" y="3" width="22" height="22" rx="2"/><rect x="8" y="8" width="12" height="12"/><rect x="12" y="12" width="4" height="4" fill="#0f172a"/>` },
+            { id: "icon_9", svg: `<circle cx="14" cy="14" r="10"/><path d="M14 4v20M4 14h20M7 7l14 14M17 7L7 21"/>` },
+            { id: "icon_10", svg: `<path d="M14 26V4M14 10l-6-5M14 15l-6-5M14 20l-6-5M14 10l6-5M14 15l6-5M14 20l6-5"/>` },
+            { id: "icon_11", svg: `<circle cx="8" cy="14" r="5"/><circle cx="20" cy="14" r="5"/><path d="M13 14h2"/>` },
+            { id: "icon_12", svg: `<path d="M5 9c4 0 6 10 10 10s6-10 10-10M5 19c4 0 6-10 10-10s6 10 10 10"/>` },
+            { id: "icon_13", svg: `<circle cx="14" cy="14" r="9" stroke-dasharray="3 3"/>` },
+            { id: "icon_14", svg: `<path d="M14 23C14 23 4 16 4 9a5 5 0 0 1 10-2 5 5 0 0 1 10 2c0 7-10 14-10 14z"/>` },
+            { id: "icon_15", svg: `<rect x="4" y="4" width="20" height="20" rx="2"/><path d="M4 10h20M4 16h20M10 4v20M16 4v20"/>` },
+            { id: "icon_16", svg: `<path d="M14 3l9 8h-5v12H10V11H5z"/>` },
+            { id: "icon_17", svg: `<path d="M9 4c-3 6-3 14 0 20M19 4c3 6 3 14 0 20"/>` },
+            { id: "icon_18", svg: `<path d="M14 14C14 8 9 5 9 5s-3 5 5 9c-8 0-11 5-11 5s5 3 9-5c0 8 5 11 5 11s3-5-5-9c8 0 11-5 11-5s-5-3-9 5z"/>` },
+            { id: "icon_19", svg: `<path d="M5 23h4v-4h4v-4h4v-4h4V7"/>` },
+            { id: "icon_20", svg: `<path d="M5 24V10a9 9 0 0 1 18 0v14M5 16h18"/>` },
+            { id: "icon_21", svg: `<path d="M6 6l16 16M22 6L6 22"/>` },
+            { id: "icon_22", svg: `<path d="M4 22a10 10 0 0 1 20 0M8 22a6 6 0 0 1 12 0M12 22a2 2 0 0 1 4 0"/>` },
+            { id: "icon_23", svg: `<circle cx="14" cy="16" r="7"/><path d="M11 9h6v2h-6zM12 4h4v5h-4z"/>` },
+            { id: "icon_24", svg: `<rect x="4" y="4" width="20" height="20" rx="2"/><path d="M14 4v20M4 14h20"/>` },
+            { id: "icon_25", svg: `<polygon points="4,5 24,5 14,14 24,23 4,23 14,14"/>` },
+            { id: "icon_26", svg: `<path d="M2 14c4-7 16-7 24 0-4 7-16 7-24 0z"/><circle cx="14" cy="14" r="4"/>` },
+            { id: "icon_27", svg: `<path d="M6 4v20M12 6v16M18 8v12M22 10v8M3 14h20"/>` },
+            { id: "icon_28", svg: `<path d="M8 3v22M20 3v22M8 8h12M8 14h12M8 20h12"/>` },
+            { id: "icon_29", svg: `<circle cx="14" cy="8" r="4"/><path d="M14 12v13M8 17h12"/>` },
+            { id: "icon_30", svg: `<polygon points="6,6 22,6 14,14 22,22 6,22 14,14"/>` },
+            { id: "icon_31", svg: `<circle cx="8" cy="8" r="1.5" fill="#0f172a"/><circle cx="14" cy="8" r="1.5" fill="#0f172a"/><circle cx="20" cy="8" r="1.5" fill="#0f172a"/><circle cx="8" cy="14" r="1.5" fill="#0f172a"/><circle cx="14" cy="14" r="1.5" fill="#0f172a"/><circle cx="20" cy="14" r="1.5" fill="#0f172a"/><circle cx="8" cy="20" r="1.5" fill="#0f172a"/><circle cx="14" cy="20" r="1.5" fill="#0f172a"/><circle cx="20" cy="20" r="1.5" fill="#0f172a"/>` },
+            { id: "icon_32", svg: `<path d="M3 22l6-10 5 7 5-11 6 14z"/>` },
+            { id: "icon_33", svg: `<path d="M14 4v20M5.3 9l17.4 10M5.3 19L22.7 9"/>` },
+            { id: "icon_34", svg: `<ellipse cx="14" cy="14" rx="7" ry="11"/><path d="M14 3v22"/>` },
+            { id: "icon_35", svg: `<circle cx="8" cy="14" r="4"/><circle cx="20" cy="14" r="4"/><path d="M12 14h4"/>` }
+        ];
+
+        const gridContainer = document.getElementById('iconGrid');
+
+        function renderGrid() {
+            gridContainer.innerHTML = '';
+            iconsData.forEach(icon => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'icon-btn';
+                btn.id = `btn_${icon.id}`;
+                btn.innerHTML = `<svg viewBox="0 0 28 28">${icon.svg}</svg>`;
+                btn.onclick = () => selectIcon(icon);
+                gridContainer.appendChild(btn);
+            });
+        }
+
+        function selectIcon(icon) {
+            const currentArray = isPracticeMode ? userData.practiceIcons : userData.selectedIcons;
+            if (currentArray.includes(icon.id)) return;
+            if (currentArray.length >= 3) return;
+
+            currentArray.push(icon.id);
+            const currentStepNumber = currentArray.length;
+            const btn = document.getElementById(`btn_${icon.id}`);
+            btn.classList.add('selected');
+            btn.disabled = true;
+
+            const seqBox = document.getElementById(`box${currentStepNumber}`);
+            seqBox.innerHTML = `<svg viewBox="0 0 28 28">${icon.svg}</svg>`;
+            seqBox.classList.remove('active');
+            seqBox.classList.add('filled');
+
+            if (currentStepNumber < 3) {
+                const nextBox = document.getElementById(`box${currentStepNumber + 1}`);
+                nextBox.classList.add('active');
+                if (!isPracticeMode) {
+                    const words = ["first", "second", "third"];
+                    document.getElementById('stepTitle').innerText = `Pick your ${words[currentStepNumber]} picture`;
+                }
+            } else {
+                const nextBtn = document.getElementById('step2NextBtn');
+                if (!isPracticeMode) {
+                    document.getElementById('stepTitle').innerText = `Sequence complete!`;
+                    document.getElementById('stepDesc').innerText = `Great job. Remember this exact order to sign in later.`;
+                    nextBtn.disabled = false;
+                    nextBtn.classList.add('active');
+                } else {
+                    verifyPracticeSequence();
+                }
+            }
+        }
+
+        function verifyPracticeSequence() {
+            const isMatch = userData.selectedIcons.every((id, index) => id === userData.practiceIcons[index]);
+            const nextBtn = document.getElementById('step2NextBtn');
+
+            if (isMatch) {
+                submitFinalDataAndShowStep3();
+            } else {
+                practiceAttempts++;
+                if (practiceAttempts >= 2) {
+                    // Start fresh if they fail twice
+                    document.getElementById('registrationForm').reset();
+                    dobError.style.display = 'none'; dobWrapper.classList.remove('error');
+                    userData = { fullName: "", dob: "", selectedIcons: [], practiceIcons: [] };
+                    practiceAttempts = 0;
+                    resetStep2UI();
+                    document.getElementById('step3').classList.remove('active-step');
+                    document.getElementById('step2').classList.remove('active-step');
+                    document.getElementById('step1').classList.add('active-step');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    document.getElementById('stepTitle').innerText = `Oops! That's incorrect.`;
+                    document.getElementById('stepDesc').innerText = `Try again. If you can't remember your code, click "Cancel" to start again.`;
+                    userData.practiceIcons = [];
+                    for (let i = 1; i <= 3; i++) {
+                        const box = document.getElementById(`box${i}`);
+                        box.innerHTML = i;
+                        box.className = 'seq-box' + (i === 1 ? ' active' : '');
+                    }
+                    document.querySelectorAll('.icon-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                        btn.disabled = false;
+                    });
+                    nextBtn.disabled = true;
+                    nextBtn.classList.remove('active');
+                }
+            }
+        }
+
+        function resetStep2UI() {
+            isPracticeMode = false;
+            userData.selectedIcons = [];
+            userData.practiceIcons = [];
+            document.getElementById('sequenceContainer').classList.remove('practice-mode');
+            for (let i = 1; i <= 3; i++) {
+                const box = document.getElementById(`box${i}`);
+                box.innerHTML = i;
+                box.className = 'seq-box' + (i === 1 ? ' active' : '');
+            }
+            document.querySelectorAll('.icon-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                btn.disabled = false;
+            });
+            document.getElementById('stepTitle').innerText = `Pick your first picture`;
+            document.getElementById('stepDesc').innerText = `Choose one you will remember. You will need it to come back.`;
+            const nextBtn = document.getElementById('step2NextBtn');
+            nextBtn.disabled = true;
+            nextBtn.classList.remove('active');
+        }
+
+        function startPracticeMode() {
+            isPracticeMode = true;
+            userData.practiceIcons = [];
+            practiceAttempts = 0;
+            document.getElementById('sequenceContainer').classList.add('practice-mode');
+            for (let i = 1; i <= 3; i++) {
+                const box = document.getElementById(`box${i}`);
+                box.innerHTML = i;
+                box.className = 'seq-box' + (i === 1 ? ' active' : '');
+            }
+            document.querySelectorAll('.icon-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                btn.disabled = false;
+            });
+            document.getElementById('stepTitle').innerText = `Almost done! Let's practice`;
+            document.getElementById('stepDesc').innerText = `Select your three pictures to see if you remember them.`;
+            const nextBtn = document.getElementById('step2NextBtn');
+            nextBtn.disabled = true;
+            nextBtn.classList.remove('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function handleStep2Next() {
+            if (!isPracticeMode) startPracticeMode();
+            else verifyPracticeSequence();
+        }
+
+        function submitFinalDataAndShowStep3() {
+            const payload = {
+                timestamp: new Date().toISOString(),
+                fullName: userData.fullName,
+                dob: userData.dob,
+                pictographicPassword: userData.selectedIcons,
+                stepCompleted: "Step 2 - Verified & Practiced Sequence"
+            };
+
+            // Save to localStorage for Day 2 testing persistence
+            localStorage.setItem('wavumbuzi_user_data_complete', JSON.stringify(payload));
+
+            if (GOOGLE_SHEET_WEB_APP_URL && !GOOGLE_SHEET_WEB_APP_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
+                fetch(GOOGLE_SHEET_WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).then(() => console.log("Success silently logged to Sheet")).catch(e => console.error(e));
+            }
+            let firstName = userData.fullName.split(' ')[0];
+            if (firstName) firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+            else firstName = "User";
+
+            document.getElementById('step3Name').innerText = `You're almost in, ${firstName}`;
+            document.getElementById('step2').classList.remove('active-step');
+            document.getElementById('step3').classList.add('active-step');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goToNextScreen() {
+            const encodedName = encodeURIComponent(userData.fullName);
+            window.location.href = NEXT_SCREEN_URL + "?newuser=" + encodedName;
+        }
+
+        window.addEventListener('DOMContentLoaded', renderGrid);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wavumbuzi - Community Board</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0d2731 0%, #3a1c0d 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 80px;
+        }
+
+        /* --- TOP NAVIGATION --- */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 48px;
+            width: 100%;
+            z-index: 50;
+            flex-shrink: 0;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111827;
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #e88524;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 100%;
+            height: 3px;
+            background-color: #e88524;
+            border-radius: 2px;
+        }
+
+        .user-nav-group {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .bell-icon {
+            width: 20px;
+            height: 20px;
+            color: #111827;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .bell-icon:hover {
+            opacity: 0.7;
+        }
+
+        .profile-dropdown-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 30px;
+            transition: background 0.2s;
+        }
+
+        .profile-group:hover {
+            background-color: #f8fafc;
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #111827;
+            object-fit: cover;
+            background-color: #e2ecef;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+            user-select: none;
+        }
+
+        .chevron-down {
+            width: 14px;
+            height: 14px;
+            object-fit: contain;
+            transition: transform 0.2s ease;
+            transform: rotate(90deg);
+            filter: brightness(0);
+        }
+
+        .profile-dropdown-wrapper.open .chevron-down {
+            transform: rotate(270deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 180px;
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+            animation: slideDown 0.2s ease forwards;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-item {
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-align: left;
+            background: none;
+            width: 100%;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+            color: #e88524;
+            padding-left: 24px;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e2e8f0;
+            margin: 0;
+        }
+
+        /* --- COMMUNITY PAGE WRAPPER --- */
+        .page-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- BREADCRUMB --- */
+        .breadcrumb {
+            align-self: flex-start;
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb:hover {
+            color: #fba143;
+        }
+
+        /* --- COMMUNITY HEADER --- */
+        .community-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            gap: 24px;
+        }
+
+        .ch-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .ch-badge {
+            width: 110px;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
+        }
+
+        .ch-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ch-sub {
+            color: #fba143;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .ch-title {
+            color: #ffffff;
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .ch-desc {
+            color: #e2e8f0;
+            font-size: 13px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .votes-box {
+            background-color: #1b1612;
+            border: 1px solid #4a3628;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            width: 260px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .vb-top {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .vb-num {
+            font-size: 32px;
+            font-weight: 800;
+            color: #fba143;
+            line-height: 1;
+        }
+
+        .vb-label-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .vb-icon {
+            width: 24px;
+            height: 24px;
+            fill: #6b7280;
+            margin-bottom: 2px;
+        }
+
+        .vb-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: #9ca3af;
+            letter-spacing: 0.5px;
+        }
+
+        .vb-bottom {
+            background-color: #3b2c21;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            color: #e2e8f0;
+            letter-spacing: 0.5px;
+        }
+
+        .vb-bottom svg {
+            width: 14px;
+            height: 14px;
+            fill: #e2e8f0;
+        }
+
+        /* --- TABS --- */
+        .tabs-container {
+            display: flex;
+            gap: 4px;
+        }
+
+        .tab {
+            background-color: #a3b1a8;
+            color: #111827;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 14px 28px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab img {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+        }
+
+        .tab.active {
+            background-color: #e2ede5;
+        }
+
+        .tab:hover:not(.active) {
+            background-color: #b4c0ba;
+        }
+
+        /* --- BOARD CONTAINER --- */
+        .board-container {
+            background-color: #e2ede5;
+            border-radius: 0 12px 12px 12px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .board-controls {
+            display: flex;
+            margin-bottom: 24px;
+        }
+
+        .filter-dropdown {
+            background-color: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #111827;
+            cursor: pointer;
+            outline: none;
+            appearance: none;
+            background-image: url('assets_challenge/Arrow%20icon.png');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+            padding-right: 36px;
+        }
+
+        /* --- IDEA CARDS --- */
+        .post-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .post-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .post-card.highlight {
+            border-color: #fba143;
+            box-shadow: 0 10px 25px rgba(251, 161, 67, 0.15);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+        }
+
+        .ph-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .ph-rank {
+            font-size: 24px;
+            font-weight: 800;
+            color: #111827;
+            min-width: 36px;
+        }
+
+        .ph-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid #111827;
+            object-fit: cover;
+            background-color: #f8fafc;
+        }
+
+        .ph-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ph-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 2px;
+        }
+
+        .ph-author {
+            font-size: 13px;
+            color: #4b5563;
+            font-weight: 500;
+        }
+
+        .ph-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-upvote {
+            background: transparent;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 800;
+            color: #4b5563;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-upvote svg {
+            width: 18px;
+            height: 18px;
+            fill: transparent;
+            stroke: #4b5563;
+            stroke-width: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-upvote:hover {
+            border-color: #fba143;
+            color: #fba143;
+        }
+
+        .btn-upvote:hover svg {
+            stroke: #fba143;
+        }
+
+        .btn-upvote.voted {
+            background-color: #fba143;
+            border-color: #fba143;
+            color: #111827;
+        }
+
+        .btn-upvote.voted svg {
+            stroke: #111827;
+            fill: #111827;
+        }
+
+        .btn-toggle {
+            background-color: #fba143;
+            border: none;
+            border-radius: 6px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-toggle:hover {
+            background-color: #e88524;
+        }
+
+        .btn-toggle svg {
+            width: 20px;
+            height: 20px;
+            fill: #111827;
+            transition: transform 0.3s ease;
+        }
+
+        .post-card.collapsed .btn-toggle svg {
+            transform: rotate(180deg);
+        }
+
+        .post-body {
+            padding: 0 24px 24px 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .post-card.collapsed .post-body {
+            display: none;
+        }
+
+        .preview-field {
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #374151;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .preview-field:last-child {
+            margin-bottom: 0;
+        }
+
+        .preview-field b {
+            color: #111827;
+            font-weight: 800;
+            margin-right: 4px;
+        }
+
+        /* --- PAGINATION --- */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .page-btn {
+            background-color: #c0ccc5;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .page-btn:hover {
+            background-color: #a3b1a8;
+        }
+
+        .page-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: #111827;
+        }
+
+        .page-num {
+            background-color: #ffffff;
+            font-size: 13px;
+            font-weight: 800;
+            color: #111827;
+            padding: 4px 12px;
+            border-radius: 4px;
+        }
+
+        /* --- MODAL STYLES --- */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.show {
+            opacity: 1;
+        }
+
+        .dialog-card {
+            background: linear-gradient(180deg, #cde3ec 0%, #e0eef4 100%);
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            padding: 40px 32px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            text-align: center;
+            transform: translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .overlay.show .dialog-card {
+            transform: translateY(0);
+        }
+
+        .dialog-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .dialog-desc {
+            font-size: 15px;
+            color: #4b5563;
+            font-weight: 500;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .btn-solid-modal {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 14px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.2);
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .btn-solid-modal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(232, 133, 36, 0.4);
+        }
+
+        /* Specific Loading Styles */
+        .loading-card {
+            background: linear-gradient(90deg, #d3e5e0 0%, #f4ebd9 100%);
+            border-radius: 16px;
+            padding: 40px 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            max-width: 500px;
+            width: 100%;
+            border: none;
+        }
+
+        .loading-card img {
+            width: 100px;
+            height: auto;
+            margin-bottom: 24px;
+            animation: pulse 1.2s infinite alternate ease-in-out;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+        }
+
+        .loading-card p {
+            font-size: 18px;
+            color: #111827;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+            }
+
+            100% {
+                transform: scale(1.05);
+            }
+        }
+
+        .btn-solid {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 16px 40px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-solid:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(232, 133, 36, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 850px) {
+            .community-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .ch-left {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .ch-badge {
+                width: 90px;
+            }
+
+            .votes-box {
+                align-self: flex-start;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .tabs-container {
+                overflow-x: auto;
+                padding-bottom: 0;
+                white-space: nowrap;
+            }
+
+            .tab {
+                border-radius: 8px 8px 0 0;
+                padding: 12px 20px;
+            }
+
+            .board-container {
+                border-radius: 0 0 12px 12px;
+                padding: 24px 16px;
+            }
+
+            .post-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .ph-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .top-nav {
+                padding: 16px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .ch-title {
+                font-size: 28px;
+            }
+
+            .loading-card {
+                padding: 32px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Coming Soon Modal -->
+    <div id="comingSoonModal" class="overlay">
+        <div class="dialog-card">
+            <h3 class="dialog-title">Oops...</h3>
+            <p class="dialog-desc">This part of Wavumbuzi is not available yet, but thank you for your interest!</p>
+            <button class="btn-solid-modal" onclick="closeComingSoonModal()">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- Out of Votes Modal -->
+    <div id="outOfVotesModal" class="overlay">
+        <div class="dialog-card">
+            <h3 class="dialog-title">Out of votes!</h3>
+            <p class="dialog-desc">You have run out of votes for today. Check back tomorrow to vote on more ideas!</p>
+            <button class="btn-solid-modal" onclick="closeOutOfVotesModal()">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="overlay">
+        <div class="loading-card">
+            <img src="assets_reflect/hourglass.png" alt="Loading">
+            <p id="loadingText">Fetching your posts...</p>
+        </div>
+    </div>
+
+    <!-- Top Navigation -->
+    <header class="top-nav">
+        <img src="assets_challenge/Wavumbuzi_logo.png" alt="Wavumbuzi Logo" class="logo-img"
+            onerror="this.alt='Wavumbuzi'">
+
+        <div class="nav-links">
+            <a class="nav-link active" href="challenge.html">2028 Challenge</a>
+            <a class="nav-link" href="profile.html">My profile</a>
+        </div>
+
+        <div class="user-nav-group">
+            <svg class="bell-icon" onclick="showComingSoon()" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+
+            <div class="profile-dropdown-wrapper" id="profileDropdownWrapper">
+                <div class="profile-group" onclick="toggleDropdown(event)">
+                    <img src="new_user.png" id="navAvatar" class="profile-avatar" alt="User Profile">
+                    <span class="profile-name" id="navNameDisplay">User</span>
+                    <img src="assets_challenge/Arrow%20icon.png" class="chevron-down" alt="Dropdown">
+                </div>
+
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="profile.html" class="dropdown-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        My Profile
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="logOut()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Log Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="page-wrapper">
+
+        <a href="quest.html" class="breadcrumb">&lt; GO BACK TO QUEST</a>
+
+        <div class="community-header">
+            <div class="ch-left">
+                <img src="assets_challenge/Health%20badge.png" class="ch-badge" alt="Health Quest Badge">
+                <div class="ch-text">
+                    <div class="ch-sub">HEALTH QUEST</div>
+                    <h1 class="ch-title">COMMUNITY BOARD</h1>
+                    <p class="ch-desc">Read ideas from other learners.<br>Upvote the ideas you think could help a
+                        community.</p>
+                </div>
+            </div>
+
+            <div class="votes-box">
+                <div class="vb-top">
+                    <span class="vb-num" id="votesLeft">3/5</span>
+                    <div class="vb-label-group">
+                        <svg class="vb-icon" viewBox="0 0 24 24">
+                            <path
+                                d="M2 10h4v11H2zM21.46 11.59l-1.04-4.17A2.002 2.002 0 0 0 18.48 6H13V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v6l-2.06 2.06V21h10.29c.87 0 1.63-.55 1.9-1.38l2.3-9A2.006 2.006 0 0 0 21.46 11.59z" />
+                        </svg>
+                        <span class="vb-label">VOTES LEFT</span>
+                    </div>
+                </div>
+                <div class="vb-bottom">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" />
+                        <polyline points="12 6 12 12 16 14" fill="none" stroke="currentColor" stroke-width="2" />
+                    </svg>
+                    32 DAYS UNTIL VOTING ENDS
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs-container">
+            <div class="tab active">
+                <img src="assets_reflect/Your%20country%20icon.png" alt="Country">
+                YOUR COUNTRY
+            </div>
+            <div class="tab" onclick="showComingSoon()">
+                <img src="assets_reflect/Clubs%20icon.png" alt="Clubs">
+                YOUR CLUBS
+            </div>
+            <div class="tab" onclick="showComingSoon()">
+                <img src="assets_reflect/School%20icon.png" alt="School">
+                YOUR SCHOOL
+            </div>
+        </div>
+
+        <div class="board-container">
+
+            <div class="board-controls">
+                <select class="filter-dropdown">
+                    <option>MOST UPVOTED</option>
+                    <option>RECENT</option>
+                </select>
+            </div>
+
+            <div class="post-list" id="postListContainer">
+
+                <!-- Card 1 -->
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="ph-left">
+                            <span class="ph-rank">#1</span>
+                            <img src="assets_reflect/Adeaze%20profile%20pic.png" class="ph-avatar" alt="Avatar">
+                            <div class="ph-info">
+                                <div class="ph-title">Healthy break box</div>
+                                <div class="ph-author">Adeaze O.</div>
+                            </div>
+                        </div>
+                        <div class="ph-actions">
+                            <button class="btn-upvote" onclick="toggleUpvote(this, 18)">
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M2 10h4v11H2zM21.46 11.59l-1.04-4.17A2.002 2.002 0 0 0 18.48 6H13V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v6l-2.06 2.06V21h10.29c.87 0 1.63-.55 1.9-1.38l2.3-9A2.006 2.006 0 0 0 21.46 11.59z" />
+                                </svg>
+                                <span>18</span>
+                            </button>
+                            <button class="btn-toggle" onclick="toggleCard(this)">
+                                <svg viewBox="0 0 24 24">
+                                    <polyline points="18 15 12 9 6 15" stroke="currentColor" stroke-width="3"
+                                        fill="none" stroke-linecap="round" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="post-body">
+                        <div class="preview-field"><b>My idea is called...</b> Healthy break box</div>
+                        <div class="preview-field"><b>The problem it solves is...</b> Some students at my school get
+                            hungry during the day, but the easiest snacks to buy are unhealthy sweets and sugary drinks.
+                        </div>
+                        <div class="preview-field"><b>The people it helps are...</b> It helps students who need a
+                            healthy snack during break, especially students who stay at school for a long day.</div>
+                        <div class="preview-field"><b>The solution is...</b> I will make snack boxes with cheap healthy
+                            foods like fruit slices, roasted peanuts, boiled eggs, or yoghurt. Students can order a box
+                            before school and collect it at break.</div>
+                        <div class="preview-field"><b>The way it could earn or save money to support itself is...</b>
+                            Students can pay a small amount for each snack box. I can use the money to buy more
+                            ingredients from local fruit sellers and offer a discount for students who order for the
+                            full week.</div>
+                        <div class="preview-field"><b>The resources I can start with are...</b> I can start by asking
+                            the local fruit sellers which fruits are the cheapest and healthiest. I can clean and reuse
+                            plastic containers. I can ask a few classmates to help pack the snack boxes.</div>
+                        <div class="preview-field"><b>The first small step is...</b> I will ask 10 learners what healthy
+                            snacks they would actually buy and find out the prices from two local sellers.</div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="post-card highlight collapsed">
+                    <div class="post-header">
+                        <div class="ph-left">
+                            <span class="ph-rank">#2</span>
+                            <img src="assets_reflect/Akira%20profile%20pic.png" class="ph-avatar" alt="Avatar">
+                            <div class="ph-info">
+                                <div class="ph-title">Taka-Safi Eco-Blocks</div>
+                                <div class="ph-author">Akira N.</div>
+                            </div>
+                        </div>
+                        <div class="ph-actions">
+                            <button class="btn-upvote" onclick="toggleUpvote(this, 12)">
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M2 10h4v11H2zM21.46 11.59l-1.04-4.17A2.002 2.002 0 0 0 18.48 6H13V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v6l-2.06 2.06V21h10.29c.87 0 1.63-.55 1.9-1.38l2.3-9A2.006 2.006 0 0 0 21.46 11.59z" />
+                                </svg>
+                                <span>12</span>
+                            </button>
+                            <button class="btn-toggle" onclick="toggleCard(this)">
+                                <svg viewBox="0 0 24 24">
+                                    <polyline points="18 15 12 9 6 15" stroke="currentColor" stroke-width="3"
+                                        fill="none" stroke-linecap="round" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="post-body">
+                        <div class="preview-field"><b>My idea is called...</b> Taka-Safi Eco-Blocks</div>
+                        <div class="preview-field"><b>The problem it solves is...</b> It solves the problem of plastic
+                            pollution in our environment and reduces the spread of malaria by keeping our water trenches
+                            clear so water can flow.</div>
+                        <div class="preview-field"><b>The people it helps are...</b> It helps our neighbors, especially
+                            young children and pregnant mothers who are most affected by malaria, and the local clinic
+                            which is always overcrowded.</div>
+                        <div class="preview-field"><b>The solution is...</b> My friends and I will collect the discarded
+                            plastic bottles and soft polythene bags from the trenches and roadsides. We will wash them
+                            and pack the soft plastics very tightly into the bottles using wooden sticks to create
+                            strong "eco-bricks." We will use mud or cement to join them together to build things like
+                            school dustbins, benches, and small walls for chicken houses.</div>
+                        <div class="preview-field"><b>The way it could earn or save money to support itself is...</b> We
+                            can sell the finished eco-bricks to local builders, farmers, or NGOs who want cheap and
+                            strong building materials. It will also save money for our community because families will
+                            not have to spend all their savings buying malaria drugs at the pharmacy.</div>
+                        <div class="preview-field"><b>The resources I can start with are...</b> I can start with things
+                            that are free around me: the scattered plastic bottles, the polythene bags, long sticks from
+                            the trees in our school compound for packing, and the hands of my fellow students.</div>
+                        <div class="preview-field"><b>The first small step is...</b> To go to the staff room tomorrow
+                            during break time and present my idea to our Agriculture teacher, asking for permission to
+                            set up a small collection point for plastic bottles behind our classrooms.</div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="post-card collapsed">
+                    <div class="post-header">
+                        <div class="ph-left">
+                            <span class="ph-rank">#3</span>
+                            <img src="assets_reflect/Ngozi%20profile%20pic.png" class="ph-avatar" alt="Avatar">
+                            <div class="ph-info">
+                                <div class="ph-title">Stress free tests</div>
+                                <div class="ph-author">Ngozi Okonko</div>
+                            </div>
+                        </div>
+                        <div class="ph-actions">
+                            <button class="btn-upvote" onclick="toggleUpvote(this, 8)">
+                                <svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M2 10h4v11H2zM21.46 11.59l-1.04-4.17A2.002 2.002 0 0 0 18.48 6H13V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v6l-2.06 2.06V21h10.29c.87 0 1.63-.55 1.9-1.38l2.3-9A2.006 2.006 0 0 0 21.46 11.59z" />
+                                </svg>
+                                <span>8</span>
+                            </button>
+                            <button class="btn-toggle" onclick="toggleCard(this)">
+                                <svg viewBox="0 0 24 24">
+                                    <polyline points="18 15 12 9 6 15" stroke="currentColor" stroke-width="3"
+                                        fill="none" stroke-linecap="round" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="post-body">
+                        <div class="preview-field"><b>My idea is called...</b> Stress free tests</div>
+                        <div class="preview-field"><b>The problem it solves is...</b> Some students feel stressed before
+                            tests and exams. They worry about forgetting what they studied or not doing well.</div>
+                        <div class="preview-field"><b>The people it helps are...</b> It helps students who feel nervous
+                            before tests, especially students who do not always have someone to ask for help and
+                            struggle with their mental health.</div>
+                        <div class="preview-field"><b>The solution is...</b> I will print out notebooks that have some
+                            encouraging quotes and study tips on each page. The notebook will also include a place to
+                            make a study checklist and blank pages to make revision notes.</div>
+                        <div class="preview-field"><b>The way it could earn or save money to support itself is...</b> I
+                            can make one sample notebook and show it to students before printing many copies. If
+                            students like it, they can order one and pay a small deposit to help cover the printing
+                            cost. Once I have enough orders, I can print the notebooks in bulk for a cheaper price.
+                            Students can pay the rest when they get their notebook.</div>
+                        <div class="preview-field"><b>The resources I can start with are...</b> I can use the printer in
+                            the school library to print out one sample notebook to show students. My cousin has a laptop
+                            and can help me design the notebook and find quotes to put on the pages.</div>
+                        <div class="preview-field"><b>The first small step is...</b> I will find quotes and tips that
+                            can help people feel more calm when they are stressed on the internet using my cousin's
+                            laptop.</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <button class="page-btn"><svg viewBox="0 0 24 24">
+                        <polyline points="15 18 9 12 15 6" stroke="currentColor" stroke-width="3" fill="none"
+                            stroke-linecap="round" />
+                    </svg></button>
+                <div class="page-num">1</div>
+                <button class="page-btn"><svg viewBox="0 0 24 24">
+                        <polyline points="9 18 15 12 9 6" stroke="currentColor" stroke-width="3" fill="none"
+                            stroke-linecap="round" />
+                    </svg></button>
+            </div>
+
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; margin-top: 40px; width: 100%;">
+            <button class="btn-solid" onclick="window.location.href='quest.html'">GO BACK TO QUEST</button>
+        </div>
+
+    </main>
+
+    <script>
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTyvz2azkYILUbhFaWlQOZ454b9E_flwAlQ41cIhjacIfFop8Ter193nojY47uALI/exec';
+
+        // --- Populate User Data ---
+        const urlParams = new URLSearchParams(window.location.search);
+        let userName = urlParams.get('user');
+        let userAvatar = "new_user.png";
+
+        const savedData = localStorage.getItem('wavumbuzi_user_data_complete');
+        if (savedData) {
+            try {
+                const parsedData = JSON.parse(savedData);
+                if (parsedData && parsedData.fullName && !userName) userName = parsedData.fullName;
+                if (parsedData && parsedData.avatar) userAvatar = parsedData.avatar;
+            } catch (e) { }
+        }
+
+        // --- Modals Logic ---
+        function showLoadingModal(text) {
+            document.getElementById('loadingText').innerText = text;
+            const modal = document.getElementById('loadingModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+
+        function hideLoadingModal() {
+            const modal = document.getElementById('loadingModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (userName) {
+                const nameParts = userName.trim().split(/\s+/);
+                let firstName = nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1).toLowerCase();
+                let lastInitial = nameParts.length > 1 ? " " + nameParts[nameParts.length - 1].charAt(0).toUpperCase() : "";
+
+                document.getElementById('navNameDisplay').innerText = firstName + lastInitial;
+                document.getElementById('navAvatar').src = userAvatar;
+            }
+
+            // Fetch dynamic posts from Google Spreadsheet
+            showLoadingModal("Fetching your posts...");
+
+            fetch(APP_SCRIPT_URL + '?action=getReflections')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.reflections && data.reflections.length > 0) {
+                        const postList = document.getElementById('postListContainer');
+                        let currentRank = 4;
+
+                        data.reflections.forEach(reflection => {
+                            const newCard = document.createElement('div');
+                            newCard.className = 'post-card collapsed';
+                            newCard.innerHTML = `
+                                <div class="post-header">
+                                    <div class="ph-left">
+                                        <span class="ph-rank">#${currentRank}</span>
+                                        <img src="${reflection.avatar || 'new_user.png'}" class="ph-avatar" alt="Avatar">
+                                        <div class="ph-info">
+                                            <div class="ph-title">${reflection.idea || 'My Awesome Idea'}</div>
+                                            <div class="ph-author">${reflection.user || 'User'}</div>
+                                        </div>
+                                    </div>
+                                    <div class="ph-actions">
+                                        <button class="btn-upvote" onclick="toggleUpvote(this, 0)">
+                                            <svg viewBox="0 0 24 24"><path d="M2 10h4v11H2zM21.46 11.59l-1.04-4.17A2.002 2.002 0 0 0 18.48 6H13V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v6l-2.06 2.06V21h10.29c.87 0 1.63-.55 1.9-1.38l2.3-9A2.006 2.006 0 0 0 21.46 11.59z"/></svg>
+                                            <span>0</span>
+                                        </button>
+                                        <button class="btn-toggle" onclick="toggleCard(this)">
+                                            <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="post-body">
+                                    <div class="preview-field"><b>My idea is called...</b> ${reflection.idea}</div>
+                                    <div class="preview-field"><b>The problem it solves is...</b> ${reflection.prob}</div>
+                                    <div class="preview-field"><b>The people it helps are...</b> ${reflection.people}</div>
+                                    <div class="preview-field"><b>The solution is...</b> ${reflection.sol}</div>
+                                    <div class="preview-field"><b>The way it could earn or save money to support itself is...</b> ${reflection.money}</div>
+                                    <div class="preview-field"><b>The resources I can start with are...</b> ${reflection.res}</div>
+                                    <div class="preview-field"><b>The first small step is...</b> ${reflection.step}</div>
+                                </div>
+                            `;
+                            postList.appendChild(newCard);
+                            currentRank++;
+                        });
+                    }
+                    hideLoadingModal();
+                })
+                .catch(e => {
+                    console.error('Error loading submissions:', e);
+                    hideLoadingModal();
+                });
+        });
+
+        // --- Dropdown Logic ---
+        function toggleDropdown(e) {
+            e.stopPropagation();
+            const wrapper = document.getElementById('profileDropdownWrapper');
+            const menu = document.getElementById('dropdownMenu');
+            if (wrapper && menu) {
+                wrapper.classList.toggle('open');
+                menu.classList.toggle('show');
+            }
+        }
+
+        window.addEventListener('click', function (e) {
+            const wrapper = document.getElementById('profileDropdownWrapper');
+            const menu = document.getElementById('dropdownMenu');
+            if (wrapper && menu && !wrapper.contains(e.target)) {
+                wrapper.classList.remove('open');
+                menu.classList.remove('show');
+            }
+        });
+
+        function logOut() { window.location.href = "login.html"; }
+
+        function showComingSoon() {
+            const modal = document.getElementById('comingSoonModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('show'), 10);
+            }
+        }
+
+        function closeComingSoonModal() {
+            const modal = document.getElementById('comingSoonModal');
+            if (modal) {
+                modal.classList.remove('show');
+                setTimeout(() => modal.style.display = 'none', 300);
+            }
+        }
+
+        function showOutOfVotesModal() {
+            const modal = document.getElementById('outOfVotesModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('show'), 10);
+            }
+        }
+
+        function closeOutOfVotesModal() {
+            const modal = document.getElementById('outOfVotesModal');
+            if (modal) {
+                modal.classList.remove('show');
+                setTimeout(() => modal.style.display = 'none', 300);
+            }
+        }
+
+        let votesLeft = 3;
+
+        function toggleCard(btn) {
+            const card = btn.closest('.post-card');
+            card.classList.toggle('collapsed');
+        }
+
+        function toggleUpvote(btn, baseCount) {
+            const span = btn.querySelector('span');
+
+            if (btn.classList.contains('voted')) {
+                btn.classList.remove('voted');
+                span.innerText = baseCount;
+                votesLeft++;
+            } else {
+                if (votesLeft <= 0) {
+                    showOutOfVotesModal();
+                    return;
+                }
+                btn.classList.add('voted');
+                span.innerText = baseCount + 1;
+                votesLeft--;
+            }
+            document.getElementById('votesLeft').innerText = votesLeft + "/5";
+        }
+    </script>
+</body>
+
+</html>

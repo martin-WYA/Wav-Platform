@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wavumbuzi - Discover Health</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            /* Simulates the rich dark blue to reddish-brown gradient */
+            background: linear-gradient(120deg, #0a1f2e 0%, #151b1f 40%, #521c08 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* --- BACKGROUND PATTERN OVERLAY --- */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* A subtle geometric CSS pattern to mimic the background texture */
+            background-image: radial-gradient(rgba(255, 255, 255, 0.03) 2px, transparent 2px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+            /* Placed behind layout layers so navigation child objects scale freely */
+        }
+
+        /* --- GLOBAL TUTORIAL BACKDROP --- */
+        .tutorial-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1500;
+            display: none;
+            cursor: default;
+        }
+
+        /* --- TOP RIGHT UI --- */
+        .top-nav {
+            position: absolute;
+            top: 24px;
+            right: 32px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            /* Removed trapping z-index rules */
+        }
+
+        /* Dynamically elevates targeted containers above the backdrop layout */
+        .on-top {
+            z-index: 1600 !important;
+            position: relative;
+        }
+
+        .points-pill {
+            background-color: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: box-shadow 0.3s ease;
+        }
+
+        /* Pulses golden yellow to encourage user tracking during tutorial */
+        .highlight-element {
+            box-shadow: 0 0 0 2px #fba143, 0 0 20px rgba(251, 161, 67, 0.6) !important;
+            animation: pulseHighlight 1.5s infinite alternate;
+            pointer-events: auto;
+        }
+
+        @keyframes pulseHighlight {
+            from {
+                box-shadow: 0 0 0 2px #fba143, 0 0 15px rgba(251, 161, 67, 0.4);
+            }
+
+            to {
+                box-shadow: 0 0 0 3px #fba143, 0 0 35px rgba(251, 161, 67, 0.9);
+            }
+        }
+
+        .points-bolt {
+            width: 14px;
+            height: auto;
+            fill: #fba143;
+        }
+
+        .points-text {
+            color: #fba143;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            min-width: 70px;
+        }
+
+        .help-coin {
+            width: 26px;
+            height: 26px;
+            background: radial-gradient(circle, #7e6040 0%, #4a3420 100%);
+            border: 2px solid #8e6c46;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2), 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .help-coin:hover {
+            transform: scale(1.1);
+        }
+
+        .exit-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            transition: transform 0.2s, opacity 0.2s, filter 0.3s;
+            position: relative;
+        }
+
+        .exit-btn:hover {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+
+        .exit-btn img {
+            width: 32px;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Highlight animation that pulls icons safely above the darkness */
+        .highlight-icon {
+            position: relative;
+            z-index: 1600 !important;
+            animation: pulseIconHighlight 1.5s infinite alternate;
+            pointer-events: auto;
+        }
+
+        @keyframes pulseIconHighlight {
+            from {
+                filter: drop-shadow(0 0 5px #fba143) brightness(1.2);
+                transform: scale(1);
+            }
+
+            to {
+                filter: drop-shadow(0 0 25px #fba143) brightness(1.4);
+                transform: scale(1.1);
+            }
+        }
+
+        /* --- CENTER CONTENT --- */
+        .center-container {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            padding: 0 24px;
+            text-align: center;
+        }
+
+        .golden-line {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(251, 161, 67, 0) 0%, rgba(251, 161, 67, 0.7) 50%, rgba(251, 161, 67, 0) 100%);
+            margin: 40px 0;
+            opacity: 0.6;
+        }
+
+        .main-icon {
+            width: 100px;
+            height: auto;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.5));
+            animation: floatIcon 4s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .pathway-subtitle {
+            color: #fba143;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .main-title {
+            color: #ffffff;
+            font-size: 48px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 32px;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 16px 40px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(232, 133, 36, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(232, 133, 36, 0.4);
+        }
+
+        /* --- ROBOT ONBOARDING POPUP --- */
+        .robot-onboarding {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            background-color: #d1eaf0;
+            border-radius: 16px;
+            padding: 50px 24px 24px 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .robot-onboarding.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .robot-img {
+            position: absolute;
+            top: -105px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 105px;
+            height: auto;
+            z-index: 2001;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+            animation: bobRobot 3s ease-in-out infinite;
+        }
+
+        @keyframes bobRobot {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+
+        .speech-box {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 14.5px;
+            font-weight: 600;
+            color: #111827;
+            text-align: center;
+            line-height: 1.5;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 8px;
+            transition: opacity 0.4s ease;
+        }
+
+        .btn-okay {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 14px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.3);
+            transition: transform 0.2s;
+            width: 100%;
+        }
+
+        .btn-okay:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-nothanks {
+            background: transparent;
+            border: 1.5px solid #111827;
+            color: #111827;
+            padding: 14px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-nothanks:hover {
+            background: rgba(17, 24, 39, 0.05);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 600px) {
+            .main-title {
+                font-size: 36px;
+            }
+
+            .top-nav {
+                top: 16px;
+                right: 16px;
+                gap: 16px;
+            }
+
+            .points-text {
+                font-size: 14px;
+            }
+
+            .btn-start {
+                padding: 14px 32px;
+                font-size: 13px;
+            }
+
+            .exit-btn img {
+                width: 26px;
+            }
+
+            .robot-onboarding.show {
+                top: auto !important;
+                left: 50% !important;
+                bottom: 20px !important;
+                transform: translateX(-50%) !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Global Tutorial Dark Backdrop -->
+    <div class="tutorial-backdrop" id="tutorialBackdrop"></div>
+
+    <!-- Top Right Nav -->
+    <div class="top-nav">
+        <div class="points-pill" id="pointsPillWrapper">
+            <!-- SVG Lightning Bolt -->
+            <svg class="points-bolt" viewBox="0 0 24 24">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+            </svg>
+            <span class="points-text">0 Points</span>
+            <div class="help-coin" title="Help">?</div>
+        </div>
+
+        <button class="exit-btn" id="exitIconBtn" onclick="goBack()" title="Exit to Quest">
+            <img src="assets_reflect/Exit%20icon.png" alt="Exit">
+        </button>
+    </div>
+
+    <!-- Center Content -->
+    <div class="center-container">
+        <div class="golden-line"></div>
+
+        <img src="assets_quest/Discover%20binoculars.png" alt="Discover Binoculars" class="main-icon">
+
+        <div class="pathway-subtitle">PATHWAY 1 | AMBUCYCLE</div>
+
+        <h1 class="main-title">DISCOVER HEALTH</h1>
+
+        <button class="btn-start" onclick="startDiscover()">BEGIN DISCOVERING</button>
+
+        <div class="golden-line"></div>
+    </div>
+
+    <!-- Robot Onboarding Popup -->
+    <div class="robot-onboarding" id="robotPopup">
+        <img src="Mwenza_ipad.png" alt="Mwenza Robot" class="robot-img" onerror="this.style.display='none'">
+        <div class="speech-box" id="robotText">
+            Welcome! I am going to explain how the Discover game works. Let me know if you'd like to skip my lesson.
+            I'll be quick!
+        </div>
+        <button class="btn-okay" id="btnPrimary" onclick="goToStepExit()">OKAY</button>
+        <button class="btn-nothanks" id="btnSecondary" onclick="dismissRobot()">NO THANK YOU</button>
+    </div>
+
+    <script>
+        // Extract URL Parameters for passing to the next page
+        const urlParams = new URLSearchParams(window.location.search);
+        let userName = urlParams.get('user') || urlParams.get('newuser');
+
+        let tutorialStep = 1;
+
+        // --- Execute Step 1 on Load ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const popup = document.getElementById('robotPopup');
+            document.getElementById('tutorialBackdrop').style.display = 'block';
+            setTimeout(() => {
+                popup.classList.add('show');
+            }, 300);
+        });
+
+        // Navigation Functions
+        function goBack() {
+            const dest = userName ? `quest.html?user=${encodeURIComponent(userName)}` : 'quest.html';
+            window.location.href = dest;
+        }
+
+        function startDiscover() {
+            window.location.href = 'https://martin-wya.github.io/WavDiscover/?user=${encodeURIComponent(userName)}&redirect=https://martin-wya.github.io/Wav-Platform/quest.html?user=${encodeURIComponent(userName)}';
+        }
+
+        // --- Dynamic Robot Positioning Helper ---
+        function positionModal(targetId) {
+            const modal = document.getElementById('robotPopup');
+
+            if (!targetId) {
+                modal.style.top = '50%';
+                modal.style.left = '50%';
+                modal.style.transform = 'translate(-50%, -50%)';
+                return;
+            }
+
+            const targetEl = document.getElementById(targetId);
+            const rect = targetEl.getBoundingClientRect();
+            const scrollY = window.pageYOffset;
+            const scrollX = window.pageXOffset;
+
+            let top = scrollY + rect.bottom + 110;
+            let left = scrollX + rect.left + (rect.width / 2) - (modal.offsetWidth / 2);
+
+            if (left < 20) left = 20;
+            if (left + modal.offsetWidth > window.innerWidth - 20) left = window.innerWidth - modal.offsetWidth - 20;
+
+            modal.style.transform = 'none';
+            modal.style.top = top + 'px';
+            modal.style.left = left + 'px';
+        }
+
+        // --- STEP 1.5: Highlight Exit Icon Only ---
+        function goToStepExit() {
+            tutorialStep = 1.5;
+
+            const robotText = document.getElementById('robotText');
+            robotText.style.opacity = 0;
+
+            document.getElementById('btnSecondary').classList.add('hidden');
+
+            // Highlight the exit button clearly above the darkness
+            document.getElementById('exitIconBtn').classList.add('highlight-icon');
+
+            positionModal('exitIconBtn');
+
+            setTimeout(() => {
+                robotText.innerText = "This is where you can close the game. You can close it, log out of Wavumbuzi, and come back later any time. You will be able to continue your game where you left off.";
+                robotText.style.opacity = 1;
+
+                const btnPrimary = document.getElementById('btnPrimary');
+                btnPrimary.innerText = "CONTINUE";
+                btnPrimary.onclick = goToStepPoints;
+            }, 400);
+        }
+
+        // --- STEP 2: Highlight Points Bar Only ---
+        function goToStepPoints() {
+            tutorialStep = 2;
+
+            const robotText = document.getElementById('robotText');
+            robotText.style.opacity = 0;
+
+            // Swap highlights from Exit to Points
+            document.getElementById('exitIconBtn').classList.remove('highlight-icon');
+            document.getElementById('pointsPillWrapper').classList.add('on-top');
+            document.getElementById('pointsPillWrapper').classList.add('highlight-element');
+
+            positionModal('pointsPillWrapper');
+
+            setTimeout(() => {
+                robotText.innerText = "This is where you can see how many points you have earned in this activity. When you're ready, click 'BEGIN DISCOVERING' below to get started!";
+                robotText.style.opacity = 1;
+
+                const btnPrimary = document.getElementById('btnPrimary');
+                btnPrimary.innerText = "LET'S PLAY!";
+                btnPrimary.onclick = dismissRobot;
+                btnPrimary.classList.remove('hidden');
+            }, 400);
+        }
+
+        function dismissRobot() {
+            const popup = document.getElementById('robotPopup');
+            popup.classList.remove('show');
+            document.getElementById('tutorialBackdrop').style.display = 'none';
+            document.getElementById('pointsPillWrapper').classList.remove('on-top');
+            document.getElementById('pointsPillWrapper').classList.remove('highlight-element');
+            document.getElementById('exitIconBtn').classList.remove('highlight-icon');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wavumbuzi - Explore Health</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0b1a13 0%, #0f2416 40%, #3e1f0b 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* --- BACKGROUND PATTERN OVERLAY --- */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.03) 2px, transparent 2px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+            /* Placed behind layout layers so top-bar doesn't need trapping z-indices */
+        }
+
+        /* --- GLOBAL TUTORIAL BACKDROP --- */
+        .tutorial-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1500;
+            display: none;
+            cursor: default;
+        }
+
+        /* --- FLOATING TOP NAVIGATION BAR --- */
+        .top-bar {
+            position: absolute;
+            top: 24px;
+            width: calc(100% - 48px);
+            max-width: 1200px;
+            background-color: #636b60;
+            border-radius: 12px;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            /* Removed fixed z-index trap so child elements can freely scale above the backdrop layer */
+        }
+
+        /* Dynamically elevates targeted elements cleanly through the dark backdrop layout */
+        .on-top {
+            position: relative;
+            z-index: 1600 !important;
+        }
+
+        .tb-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .tb-icons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .tb-icons img {
+            width: 55px;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+            transition: transform 0.2s, filter 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tb-icons img:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Highlight animation that pulls icons safely above the darkness */
+        .highlight-icon {
+            position: relative;
+            z-index: 1600 !important;
+            animation: pulseIconHighlight 1.5s infinite alternate;
+            pointer-events: auto;
+        }
+
+        @keyframes pulseIconHighlight {
+            from {
+                filter: drop-shadow(0 0 5px #fba143) brightness(1.2);
+                transform: scale(1);
+            }
+
+            to {
+                filter: drop-shadow(0 0 25px #fba143) brightness(1.4);
+                transform: scale(1.1);
+            }
+        }
+
+        .tb-title {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .tb-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* --- POINTS DROPDOWN & WRAPPER --- */
+        .points-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .points-pill {
+            background-color: #2e3c39;
+            border-radius: 30px;
+            padding: 6px 12px 6px 6px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            z-index: 16;
+            width: 175px;
+        }
+
+        .points-pill:hover {
+            background-color: #3a4a47;
+        }
+
+        .points-pill.active {
+            width: 340px;
+            background-color: #3a4a47;
+            border-color: rgba(251, 161, 67, 0.3);
+        }
+
+        /* Pulses golden yellow to encourage clicking during tutorial */
+        .highlight-element {
+            box-shadow: 0 0 0 2px #fba143, 0 0 20px rgba(251, 161, 67, 0.6) !important;
+            animation: pulseHighlight 1.5s infinite alternate;
+            pointer-events: auto;
+        }
+
+        @keyframes pulseHighlight {
+            from {
+                box-shadow: 0 0 0 2px #fba143, 0 0 15px rgba(251, 161, 67, 0.4);
+            }
+
+            to {
+                box-shadow: 0 0 0 3px #fba143, 0 0 35px rgba(251, 161, 67, 0.9);
+            }
+        }
+
+        .points-bolt-circle {
+            background-color: #212c2a;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
+        }
+
+        .points-bolt {
+            width: 14px;
+            height: auto;
+            fill: #fcd34d;
+        }
+
+        .points-text {
+            color: #fcd34d;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .help-coin-wrapper {
+            position: relative;
+            width: 24px;
+            height: 28px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+        }
+
+        .points-pill:hover .help-coin-wrapper {
+            transform: scale(1.1);
+        }
+
+        .help-coin-bg {
+            position: absolute;
+            inset: 0;
+            background-color: #fbd68b;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        .help-coin-inner {
+            position: absolute;
+            inset: 2px;
+            background: linear-gradient(135deg, #f6af54 0%, #df8b33 100%);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #111827;
+            font-size: 13px;
+            font-weight: 900;
+            user-select: none;
+        }
+
+        /* --- DROPDOWN MENU --- */
+        .points-dropdown {
+            position: absolute;
+            top: calc(100% - 20px);
+            right: 0;
+            background: linear-gradient(180deg, #bed7cd 0%, #e6dec9 100%);
+            border-radius: 20px;
+            padding: 35px 20px 20px 20px;
+            width: 340px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            display: none;
+            flex-direction: column;
+            z-index: 14;
+        }
+
+        .points-dropdown.show {
+            display: flex;
+            animation: slideDown 0.2s ease forwards;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pd-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            font-weight: 800;
+            color: #111827;
+            padding: 8px 0;
+        }
+
+        .pd-row-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .pd-row-left img {
+            width: 48px;
+            height: auto;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+        }
+
+        .pd-pts {
+            color: #111827;
+            font-weight: 700;
+            font-size: 16px;
+            font-style: italic;
+        }
+
+        .pd-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.6);
+            margin: 6px 0;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        /* Animated Pointer Hand/Cursor */
+        .tutorial-mouse {
+            position: absolute;
+            bottom: -20px;
+            right: -10px;
+            width: 38px;
+            height: 38px;
+            z-index: 1700;
+            display: none;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.4));
+            animation: clickBounce 1s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes clickBounce {
+            from {
+                transform: translate(0, 0);
+            }
+
+            to {
+                transform: translate(-10px, -10px);
+            }
+        }
+
+        .exit-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, opacity 0.2s;
+            position: relative;
+        }
+
+        .exit-btn:hover {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+
+        .exit-btn img {
+            width: 32px;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        /* --- CENTER CONTENT --- */
+        .center-container {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            padding: 0 24px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .golden-line {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(251, 161, 67, 0) 0%, rgba(251, 161, 67, 0.7) 50%, rgba(251, 161, 67, 0) 100%);
+            margin: 40px 0;
+            opacity: 0.6;
+        }
+
+        .main-icon {
+            width: 100px;
+            height: auto;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.5));
+            animation: floatIcon 4s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .pathway-subtitle {
+            color: #fba143;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .main-title {
+            color: #ffffff;
+            font-size: 48px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .main-desc {
+            color: #e2e8f0;
+            font-size: 15px;
+            font-weight: 500;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto 32px auto;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 16px 40px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(232, 133, 36, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(232, 133, 36, 0.4);
+        }
+
+        /* --- ROBOT ONBOARDING POPUP --- */
+        .robot-onboarding {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            background-color: #d1eaf0;
+            border-radius: 16px;
+            padding: 50px 24px 24px 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .robot-onboarding.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .robot-img {
+            position: absolute;
+            top: -105px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 105px;
+            height: auto;
+            z-index: 2001;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+            animation: bobRobot 3s ease-in-out infinite;
+        }
+
+        @keyframes bobRobot {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+
+        .speech-box {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 14.5px;
+            font-weight: 600;
+            color: #111827;
+            text-align: center;
+            line-height: 1.5;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 8px;
+            transition: opacity 0.4s ease;
+        }
+
+        .btn-okay {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 14px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.3);
+            transition: transform 0.2s;
+            width: 100%;
+        }
+
+        .btn-okay:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-nothanks {
+            background: transparent;
+            border: 1.5px solid #111827;
+            color: #111827;
+            padding: 14px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-nothanks:hover {
+            background: rgba(17, 24, 39, 0.05);
+        }
+
+        /* Hide utility class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- NOTEBOOK MODAL --- */
+        .notebook-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .notebook-overlay.show {
+            display: flex;
+        }
+
+        .notebook-modal {
+            background-color: #151515;
+            width: 100%;
+            max-width: 580px;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .notebook-header {
+            background-color: #383838;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notebook-header h2 {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 800;
+            margin: 0;
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .notebook-close-x {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .notebook-close-x:hover {
+            color: #fba143;
+        }
+
+        .notebook-body {
+            padding: 60px 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 80px;
+        }
+
+        .notebook-body p {
+            color: #cccccc;
+            font-size: 16px;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .notebook-btn {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .notebook-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                gap: 16px;
+                align-items: center;
+                padding: 16px;
+                top: 16px;
+                width: calc(100% - 32px);
+            }
+
+            .center-container {
+                margin-top: 160px;
+            }
+
+            .tb-title {
+                font-size: 18px;
+            }
+
+            .main-title {
+                font-size: 36px;
+            }
+
+            .main-desc {
+                font-size: 14px;
+            }
+
+            .robot-onboarding.show {
+                top: auto !important;
+                left: 50% !important;
+                bottom: 20px !important;
+                transform: translateX(-50%) !important;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .main-title {
+                font-size: 32px;
+            }
+
+            .btn-start {
+                padding: 14px 32px;
+                font-size: 13px;
+            }
+
+            .points-dropdown {
+                width: 300px;
+                right: 0;
+            }
+
+            .points-pill.active {
+                width: 300px;
+            }
+
+            .notebook-body {
+                padding: 40px 20px;
+                gap: 50px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Global Tutorial Dark Backdrop -->
+    <div class="tutorial-backdrop" id="tutorialBackdrop"></div>
+
+    <!-- Notebook Modal Overlay -->
+    <div class="notebook-overlay" id="notebookOverlay">
+        <div class="notebook-modal">
+            <div class="notebook-header">
+                <h2>Notebook</h2>
+                <button class="notebook-close-x" onclick="closeNotebookModal()">&times;</button>
+            </div>
+            <div class="notebook-body">
+                <p>Your notebook is currently empty. Speak to residents to gather information.</p>
+                <button class="notebook-btn" onclick="closeNotebookModal()">Close Notebook</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <div class="top-bar" id="topBarNav">
+        <div class="tb-left">
+            <div class="tb-icons">
+                <img src="Explore map button.png" alt="Map Button" id="mapIcon" onclick="handleMapClick()">
+                <img src="Notebook button.png" alt="Notebook Button" id="notebookIcon" onclick="handleNotebookClick()">
+            </div>
+            <div class="tb-title">TEMBEATOWN</div>
+        </div>
+
+        <div class="tb-right">
+            <!-- Points Wrapper connects pill, dropdown, and the tutorial mouse -->
+            <div class="points-wrapper" id="pointsWrapper">
+
+                <div class="points-pill" id="pointsPill" onclick="togglePointsDropdown(event)">
+                    <div class="points-bolt-circle">
+                        <svg class="points-bolt" viewBox="0 0 24 24">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                        </svg>
+                    </div>
+                    <span class="points-text">0 Points</span>
+                    <div class="help-coin-wrapper" title="Help">
+                        <div class="help-coin-bg"></div>
+                        <div class="help-coin-inner">?</div>
+                    </div>
+                </div>
+
+                <!-- Redesigned Points Dropdown Menu -->
+                <div class="points-dropdown" id="pointsDropdown">
+                    <div class="pd-row">
+                        <div class="pd-row-left">
+                            <img src="Ideas and opportunities coin.png" alt="Ideas and opportunities icon">
+                            <span>Ideas and opportunities</span>
+                        </div>
+                        <span class="pd-pts">0 Pts</span>
+                    </div>
+                    <div class="pd-divider"></div>
+                    <div class="pd-row">
+                        <div class="pd-row-left">
+                            <img src="Resources coin.png" alt="Resources icon">
+                            <span>Resources</span>
+                        </div>
+                        <span class="pd-pts">0 Pts</span>
+                    </div>
+                    <div class="pd-divider"></div>
+                    <div class="pd-row">
+                        <div class="pd-row-left">
+                            <img src="Into Action coin.png" alt="Into action icon">
+                            <span>Into action</span>
+                        </div>
+                        <span class="pd-pts">0 Pts</span>
+                    </div>
+                </div>
+
+                <!-- Bouncing White Cursor for Tutorial -->
+                <svg id="tutorialMouse" class="tutorial-mouse" viewBox="0 0 24 24" fill="#ffffff" stroke="#111827"
+                    stroke-width="1.5">
+                    <path d="M5 3l15 9-6 2 3 7-3 1-3-7-4 5V3z" />
+                </svg>
+            </div>
+
+            <button class="exit-btn" id="exitIconBtn" onclick="goBack()" title="Exit to Quest">
+                <img src="assets_reflect/Exit icon.png" alt="Exit">
+            </button>
+        </div>
+    </div>
+
+    <!-- Robot Onboarding Popup -->
+    <div class="robot-onboarding" id="robotPopup">
+        <img src="Mwenza_ipad.png" alt="Mwenza Robot" class="robot-img" onerror="this.style.display='none'">
+        <div class="speech-box" id="robotText">
+            Welcome! I am going to explain how the Explore game works. Let me know if you'd like to skip my lesson. I'll
+            be quick!
+        </div>
+        <button class="btn-okay" id="btnPrimary" onclick="goToStepExit()">OKAY</button>
+        <button class="btn-nothanks" id="btnSecondary" onclick="dismissRobot()">NO THANK YOU</button>
+    </div>
+
+    <!-- Center Content -->
+    <div class="center-container">
+        <div class="golden-line"></div>
+
+        <img src="assets_challenge/Explore Magnifying glass.png" alt="Explore Icon" class="main-icon">
+
+        <div class="pathway-subtitle">TEMBEATOWN</div>
+
+        <h1 class="main-title">EXPLORE HEALTH</h1>
+
+        <p class="main-desc">
+            Explore places in the village, collect items, and talk to people to solve the town's problems like an
+            entrepreneur. Use the skills you have learned so far!
+        </p>
+
+        <button class="btn-start" onclick="startExplore()">BEGIN EXPLORING</button>
+
+        <div class="golden-line"></div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        let userName = urlParams.get('user') || urlParams.get('newuser');
+
+        let tutorialStep = 1;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const popup = document.getElementById('robotPopup');
+            document.getElementById('tutorialBackdrop').style.display = 'block';
+            setTimeout(() => {
+                popup.classList.add('show');
+            }, 300);
+        });
+
+        function goBack() {
+            const dest = userName ? `quest.html?user=${encodeURIComponent(userName)}` : 'quest.html';
+            window.location.href = dest;
+        }
+
+        function startExplore() {
+            window.location.href = 'https://martin-wya.github.io/Wav-Explore-Play/?user=${encodeURIComponent(userName)}&redirect=https://martin-wya.github.io/Wav-Platform/quest.html?user=${encodeURIComponent(userName)}';
+            //window.location.href = `http://127.0.0.1:5500/build/index.html?username=${encodeURIComponent(userName)}&redirect=file:///D:/WYA/Wavumbuzi/Prototyping/From%20Lizzy/Wavumbuzi%202.0/Wavumbuzi%202.0/quest.html`;
+        }
+
+        function handleNotebookClick() {
+            document.getElementById('notebookOverlay').classList.add('show');
+        }
+
+        function closeNotebookModal() {
+            document.getElementById('notebookOverlay').classList.remove('show');
+        }
+
+        function positionModal(targetId, placement = 'bottom') {
+            const modal = document.getElementById('robotPopup');
+
+            if (!targetId) {
+                modal.style.top = '50%';
+                modal.style.left = '50%';
+                modal.style.transform = 'translate(-50%, -50%)';
+                return;
+            }
+
+            const targetEl = document.getElementById(targetId);
+            const rect = targetEl.getBoundingClientRect();
+            const scrollY = window.pageYOffset;
+            const scrollX = window.pageXOffset;
+
+            let top, left;
+
+            if (placement === 'left') {
+                top = scrollY + rect.top + (rect.height / 2) - (modal.offsetHeight / 2) + 20;
+                left = scrollX + rect.left - modal.offsetWidth - 20;
+            } else {
+                top = scrollY + rect.bottom + 110;
+                left = scrollX + rect.left + (rect.width / 2) - (modal.offsetWidth / 2);
+            }
+
+            if (left < 20) left = 20;
+            if (left + modal.offsetWidth > window.innerWidth - 20) left = window.innerWidth - modal.offsetWidth - 20;
+
+            modal.style.transform = 'none';
+            modal.style.top = top + 'px';
+            modal.style.left = left + 'px';
+        }
+
+        // --- STEP 1.5: Highlight Exit Icon Only ---
+        function goToStepExit() {
+            tutorialStep = 1.5;
+
+            const robotText = document.getElementById('robotText');
+            robotText.style.opacity = 0;
+
+            document.getElementById('btnSecondary').classList.add('hidden');
+
+            // Highlight ONLY the exit icon button cleanly above the darkness
+            document.getElementById('exitIconBtn').classList.add('highlight-icon');
+
+            positionModal('exitIconBtn');
+
+            setTimeout(() => {
+                robotText.innerText = "This is where you can close the game. You can close it, log out of Wavumbuzi, and come back later any time. You will be able to continue your game where you left off.";
+                robotText.style.opacity = 1;
+
+                const btnPrimary = document.getElementById('btnPrimary');
+                btnPrimary.innerText = "CONTINUE";
+                btnPrimary.onclick = nextTutorialStep;
+            }, 400);
+        }
+
+        // --- STEP 2: Highlight Points Bar Only ---
+        function nextTutorialStep() {
+            tutorialStep = 2;
+
+            const robotText = document.getElementById('robotText');
+            robotText.style.opacity = 0;
+
+            document.getElementById('btnPrimary').classList.add('hidden');
+            document.getElementById('exitIconBtn').classList.remove('highlight-icon');
+
+            // Highlight ONLY the points wrapper layout safely above the backdrop overlay
+            document.getElementById('pointsWrapper').classList.add('on-top');
+            document.getElementById('pointsPill').classList.add('highlight-element');
+
+            positionModal('pointsWrapper');
+
+            setTimeout(() => {
+                robotText.innerText = "This is where you can see how many points you have earned in this activity. Click it now to see your points.";
+                robotText.style.opacity = 1;
+                document.getElementById('tutorialMouse').style.display = 'block';
+            }, 400);
+        }
+
+        // --- Dropdown Management ---
+        function togglePointsDropdown(e) {
+            e.stopPropagation();
+
+            if (tutorialStep < 2) return;
+
+            const dropdown = document.getElementById('pointsDropdown');
+            const pill = document.getElementById('pointsPill');
+
+            dropdown.classList.toggle('show');
+
+            if (dropdown.classList.contains('show')) {
+                pill.classList.add('active');
+            } else {
+                pill.classList.remove('active');
+            }
+
+            // Progress Tutorial from Step 2 -> Step 3 (Opening the box)
+            if (tutorialStep === 2 && dropdown.classList.contains('show')) {
+                tutorialStep = 3;
+
+                document.getElementById('tutorialMouse').style.display = 'none';
+
+                const robotText = document.getElementById('robotText');
+                robotText.style.opacity = 0;
+
+                positionModal('pointsDropdown', 'left');
+
+                setTimeout(() => {
+                    robotText.innerText = "Remember, you can win points for making good decisions, but you can also lose points for making poor decisions. It all depends on how you use your skills, so read carefully! Click the points box again to close it.";
+                    robotText.style.opacity = 1;
+                }, 400);
+            }
+            // Progress Tutorial from Step 3 -> Step 4 (Closing the box)
+            else if (tutorialStep === 3 && !dropdown.classList.contains('show')) {
+                goToStep4();
+            }
+        }
+
+        // --- STEP 4: Notebook Icon Only ---
+        function goToStep4() {
+            tutorialStep = 4;
+            const wrapper = document.getElementById('pointsWrapper');
+            const pill = document.getElementById('pointsPill');
+
+            wrapper.classList.remove('on-top');
+            pill.classList.remove('highlight-element');
+
+            const robotText = document.getElementById('robotText');
+            robotText.style.opacity = 0;
+
+            positionModal('notebookIcon');
+
+            setTimeout(() => {
+                robotText.innerText = "The notebook is where we will keep track of everything you learn in Tembeatown. There is nothing in it yet, but you will start collecting information when you speak to people in the town.";
+                robotText.style.opacity = 1;
+
+                document.getElementById('notebookIcon').classList.add('highlight-icon');
+
+                const btnPrimary = document.getElementById('btnPrimary');
+                btnPrimary.innerText = "CONTINUE";
+                btnPrimary.onclick = goToStep5;
+                btnPrimary.classList.remove('hidden');
+            }, 400);
+        }
+
+        // --- STEP 5: Map Icon Only ---
+        function goToStep5() {
+            tutorialStep = 5;
+
+            const robotText = document.getElementById('robotText');
+            robotText.style.opacity = 0;
+
+            document.getElementById('btnPrimary').classList.add('hidden');
+            document.getElementById('notebookIcon').classList.remove('highlight-icon');
+
+            positionModal('mapIcon');
+
+            setTimeout(() => {
+                robotText.innerText = "At any point in the game, you can click this map to go to the map of Tembeatown. You can use the map to go to any of the places in any order. Try to speak to all the people many times to move forward in your story. When you're ready, click this map to get started!";
+                robotText.style.opacity = 1;
+
+                document.getElementById('mapIcon').classList.add('highlight-icon');
+            }, 400);
+        }
+
+        function handleMapClick() {
+            if (tutorialStep === 5) {
+                dismissRobot();
+                startExplore();
+            } else if (tutorialStep > 5 || tutorialStep === 1) {
+                startExplore();
+            }
+        }
+
+        window.addEventListener('click', function (e) {
+            const wrapper = document.getElementById('pointsWrapper');
+            const dropdown = document.getElementById('pointsDropdown');
+            const pill = document.getElementById('pointsPill');
+
+            if (wrapper && dropdown && !wrapper.contains(e.target)) {
+                if (dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                    pill.classList.remove('active');
+                    if (tutorialStep === 3) {
+                        goToStep4();
+                    }
+                }
+            }
+        });
+
+        function dismissRobot() {
+            const popup = document.getElementById('robotPopup');
+            popup.classList.remove('show');
+            document.getElementById('tutorialBackdrop').style.display = 'none';
+            document.getElementById('pointsWrapper').classList.remove('on-top');
+            document.getElementById('pointsPill').classList.remove('highlight-element');
+            document.getElementById('exitIconBtn').classList.remove('highlight-icon');
+            document.getElementById('notebookIcon').classList.remove('highlight-icon');
+            document.getElementById('mapIcon').classList.remove('highlight-icon');
+            document.getElementById('tutorialMouse').style.display = 'none';
+            document.getElementById('pointsDropdown').classList.remove('show');
+            document.getElementById('pointsPill').classList.remove('active');
+        }
+    </script>
+</body>
+
+</html>

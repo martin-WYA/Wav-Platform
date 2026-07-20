@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wavumbuzi - Reflect | Health</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            /* Smooth dark gradient mimicking the screenshot background */
+            background: linear-gradient(135deg, #0d2731 0%, #3a1c0d 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            padding: 40px 24px 80px 24px;
+            position: relative;
+        }
+
+        /* --- EXIT BUTTON --- */
+        .exit-btn {
+            position: absolute;
+            top: 40px;
+            right: 48px;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .exit-btn:hover {
+            transform: scale(1.05) translateX(2px);
+            opacity: 0.9;
+        }
+        .exit-btn img {
+            width: 32px;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        /* --- HEADER SECTION --- */
+        .page-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .header-icon {
+            width: 70px;
+            height: auto;
+            object-fit: contain;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
+        }
+        .header-sub {
+            color: #fba143;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .header-title {
+            color: #ffffff;
+            font-size: 40px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        /* --- MAIN REFLECT CARD --- */
+        .reflect-card {
+            width: 100%;
+            max-width: 950px;
+            background-color: #e2ede5; /* Soft green/grey base */
+            border-radius: 12px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* 1. TOP SECTION (SKY & CHARACTER) */
+        .rc-top {
+            background-image: url('assets_reflect/Hero%20Sky%20BG%20copy.png');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            min-height: 320px;
+            border-radius: 12px 12px 0 0;
+            padding: 40px 50px;
+            display: flex;
+            align-items: center;
+            overflow: hidden; /* Clips the character beautifully at the divider */
+        }
+
+        .speech-bubble {
+            background-color: #ffffff;
+            border: 1.5px solid #111827;
+            border-radius: 12px;
+            padding: 32px 40px;
+            font-size: 14.5px;
+            color: #111827;
+            line-height: 1.6;
+            font-weight: 500;
+            max-width: 55%;
+            position: relative;
+            z-index: 3;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+        }
+        .speech-bubble p { margin-bottom: 24px; }
+        .speech-bubble p:last-child { margin-bottom: 0; }
+
+        /* The Speech Pointer */
+        .speech-bubble::before, .speech-bubble::after {
+            content: '';
+            position: absolute;
+            top: 70%;
+            border-style: solid;
+            transform: translateY(-50%);
+        }
+        .speech-bubble::before {
+            right: -21px; /* The border piece */
+            border-width: 15px 0 25px 22px;
+            border-color: transparent transparent transparent #111827;
+        }
+        .speech-bubble::after {
+            right: -18px; /* The inner white piece */
+            border-width: 14px 0 23px 20px;
+            border-color: transparent transparent transparent #ffffff;
+        }
+
+        .dr-ros {
+            position: absolute;
+            bottom: -5px; /* Sits right on the bottom line */
+            right: 80px;
+            width: 320px;
+            height: auto;
+            z-index: 2;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));
+        }
+
+        /* 2. DIVIDER BANNER */
+        .rc-divider {
+            height: 24px;
+            background: url('assets_reflect/Decorative%20footer%20banner%20copy.png') repeat-x center;
+            background-size: auto 100%;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            z-index: 10;
+        }
+
+        /* 3. MIDDLE INSTRUCTIONS SECTION */
+        .rc-middle {
+            padding: 50px 64px;
+            font-size: 15px;
+            color: #111827;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+        .rc-middle ul {
+            margin: 20px 0 24px 32px;
+            padding: 0;
+        }
+        .rc-middle li {
+            margin-bottom: 8px;
+            padding-left: 8px;
+        }
+        .rc-middle li::marker {
+            color: #111827;
+        }
+
+        /* 4. DARK BANNER */
+        .rc-dark {
+            background-color: #2b3e45; /* Dark teal */
+            padding: 50px 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,0.05), inset 0 -5px 15px rgba(0,0,0,0.05);
+        }
+
+        .rc-dark p {
+            color: #ffffff;
+            position: relative;
+            z-index: 5;
+            line-height: 1.5;
+        }
+        .dark-main-text { font-size: 18px; font-weight: 700; }
+        .dark-sub-text { font-size: 18px; font-weight: 800; }
+
+        /* Mandalas inside the dark banner */
+        .mandala {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 120px;
+            height: 120px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 1;
+        }
+        .mandala-left { 
+            left: -60px; 
+            background-image: url('assets_reflect/Left%20Wav%20decor%20element%20on%20white%20copy.png');
+        }
+        .mandala-right { 
+            right: -60px; 
+            background-image: url('assets_reflect/Right%20Wav%20decor%20element%20on%20white%20copy.png');
+        }
+
+        /* 5. FOOTER BUTTON */
+        .rc-footer {
+            background-color: #d8e5db;
+            border-radius: 0 0 12px 12px;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .btn-ready { 
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%); 
+            border: none; 
+            color: #111827; 
+            padding: 14px 40px; 
+            border-radius: 30px; 
+            font-size: 14px; 
+            font-weight: 800; 
+            letter-spacing: 0.5px; 
+            cursor: pointer; 
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.3); 
+            transition: all 0.2s ease; 
+        }
+        .btn-ready:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 16px rgba(232, 133, 36, 0.4); 
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 900px) {
+            .speech-bubble { max-width: 70%; }
+            .dr-ros { width: 260px; right: 40px; }
+        }
+        @media (max-width: 768px) {
+            .exit-btn { top: 24px; right: 24px; }
+            .rc-top { flex-direction: column; padding: 40px 24px 0 24px; text-align: center; }
+            .speech-bubble { max-width: 100%; margin-bottom: 24px; }
+            
+            /* Move pointer to the bottom for mobile */
+            .speech-bubble::before { right: auto; left: 50%; top: auto; bottom: -20px; transform: translateX(-50%); border-width: 20px 20px 0 0; border-color: #111827 transparent transparent transparent; }
+            .speech-bubble::after { right: auto; left: 50%; top: auto; bottom: -17px; transform: translateX(-50%); border-width: 18px 18px 0 0; border-color: #ffffff transparent transparent transparent; }
+            
+            .dr-ros { position: relative; bottom: auto; right: auto; width: 220px; margin-top: 16px; margin-bottom: -5px; } /* Ensures she touches the divider */
+            
+            .rc-middle { padding: 40px 24px; }
+            .rc-dark { padding: 40px 24px; }
+            .rc-footer { justify-content: center; padding: 24px; }
+            .btn-ready { width: 100%; }
+        }
+        @media (max-width: 480px) {
+            .header-title { font-size: 32px; }
+            .header-icon { width: 60px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Exit Button -> Back to Quest -->
+    <a href="quest.html" class="exit-btn" title="Exit Reflection">
+        <img src="assets_reflect/Exit%20icon.png" alt="Exit">
+    </a>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <img src="assets_reflect/Reflect%20mirror%20copy.png" alt="Reflect Mirror" class="header-icon">
+        <div class="header-sub">Wavumbuzi Challenge 2028</div>
+        <h1 class="header-title">REFLECT ON HEALTH</h1>
+    </header>
+
+    <!-- Main Card -->
+    <main class="reflect-card">
+        
+        <!-- Top Section -->
+        <div class="rc-top">
+            <div class="speech-bubble">
+                <p>You have finished Discover and Explore. Now it is time to think about what you learnt. You will reflect on a problem you care about in your own community.</p>
+                <p>At the end, you will post a problem that can be solved by thinking like an entrepreneur on the community board. You can always review Discover and Explore to help you remember the things that you learnt.</p>
+            </div>
+            
+            <img src="assets_quest/Dr%20Ros%20illustration.png" class="dr-ros" alt="Dr Ros">
+        </div>
+
+        <!-- Pattern Divider -->
+        <div class="rc-divider"></div>
+
+        <!-- Middle Text Section -->
+        <div class="rc-middle">
+            <p>Before you begin, remember that you will only score points if your submission is accepted. To make sure your submission is accepted, you must:</p>
+            <ul>
+                <li>Use your own words.</li>
+                <li>Not include exact addresses, phone numbers, or full names.</li>
+                <li>Answer the questions carefully.</li>
+            </ul>
+            <p>You can always review Discover and Explore to help you remember what you learnt.</p>
+        </div>
+
+        <!-- Dark Highlight Banner -->
+        <div class="rc-dark">
+            <div class="mandala mandala-left"></div>
+            <div class="mandala mandala-right"></div>
+            
+            <p class="dark-main-text">If you are selected as one of the top students to win the Challenge, a teacher will grade your work. So, be sure to do your best!</p>
+            <p class="dark-sub-text">Click I'M READY to begin your reflection.</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="rc-footer">
+            <button class="btn-ready" onclick="window.location.href='reflect_form.html'">I'M READY</button>
+        </div>
+
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wavumbuzi - Health Quest</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500;1,600;1,800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f2ead3 0%, #cde1db 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            padding-bottom: 60px;
+        }
+
+        /* --- TOP NAVIGATION --- */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 48px;
+            width: 100%;
+            z-index: 50;
+            flex-shrink: 0;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111827;
+            text-decoration: none;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #e88524;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 100%;
+            height: 3px;
+            background-color: #e88524;
+            border-radius: 2px;
+        }
+
+        .user-nav-group {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .bell-icon {
+            width: 20px;
+            height: 20px;
+            color: #111827;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .bell-icon:hover {
+            opacity: 0.7;
+        }
+
+        .profile-dropdown-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 30px;
+            transition: background 0.2s;
+        }
+
+        .profile-group:hover {
+            background-color: #f8fafc;
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #111827;
+            object-fit: cover;
+            background-color: #e2ecef;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+            user-select: none;
+        }
+
+        .chevron-down {
+            width: 14px;
+            height: 14px;
+            object-fit: contain;
+            transition: transform 0.2s ease;
+            transform: rotate(90deg);
+            filter: brightness(0);
+        }
+
+        .profile-dropdown-wrapper.open .chevron-down {
+            transform: rotate(270deg);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 180px;
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .dropdown-menu.show {
+            display: flex;
+            animation: slideDown 0.2s ease forwards;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-item {
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-align: left;
+            background: none;
+            width: 100%;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+            color: #e88524;
+            padding-left: 24px;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e2e8f0;
+            margin: 0;
+        }
+
+        /* --- BREADCRUMB & CONTAINER --- */
+        .page-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .breadcrumb {
+            font-size: 12px;
+            font-weight: 800;
+            color: #111827;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            align-self: flex-start;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb:hover {
+            color: #e88524;
+        }
+
+        .quest-container {
+            width: 100%;
+            background-color: #464036;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- 1. HEADER IMAGE & BADGES --- */
+        .quest-header-img {
+            width: 100%;
+            height: 260px;
+            background-image: url('assets_quest/Health%20Banner%20image.png');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .placeholder-badge {
+            position: absolute;
+            top: 0;
+            right: 48px;
+            width: 150px;
+            height: auto;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.4));
+        }
+
+        /* Hero Badge Container */
+        .hero-badge-container {
+            position: absolute;
+            right: 48px;
+            top: 0;
+            width: 170px;
+            display: none;
+            z-index: 10;
+        }
+
+        .hero-badge-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.4));
+            border-radius: 0 0 12px 12px;
+        }
+
+        /* --- 2. TITLE BANNER --- */
+        .quest-title-banner {
+            width: 100%;
+            background-color: #0b1a13;
+            background-image: url('assets_quest/Health%20quest%20banner%20BG.png');
+            background-size: cover;
+            background-position: center;
+            border-top: 4px solid #fba143;
+            padding: 40px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .title-left {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 500px;
+        }
+
+        .quest-h1 {
+            font-size: 42px;
+            font-weight: 800;
+            font-style: italic;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+            margin-bottom: 4px;
+        }
+
+        .quest-subtitle {
+            font-size: 14px;
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+
+        .leaderboard-link {
+            font-size: 12px;
+            font-weight: 700;
+            color: #fba143;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+
+        .leaderboard-link:hover {
+            color: #fcd34d;
+        }
+
+        .title-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
+            text-align: right;
+        }
+
+        .earned-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fba143;
+            font-style: italic;
+        }
+
+        .points-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 32px;
+            font-weight: 800;
+            color: #fba143;
+            line-height: 1;
+        }
+
+        .points-display img {
+            width: 20px;
+            height: auto;
+        }
+
+        .btn-continue {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 12px 32px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            margin-top: 8px;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .btn-continue:hover {
+            transform: translateY(-2px);
+        }
+
+        /* --- 3. WELCOME SECTION --- */
+        .welcome-section {
+            background-color: #464036;
+            padding: 40px 48px 0 48px;
+            display: flex;
+            align-items: flex-end;
+            position: relative;
+        }
+
+        .dr-ros {
+            width: 372px;
+            height: auto;
+            flex-shrink: 0;
+            display: block;
+            position: relative;
+            z-index: 2;
+            transform: translateX(-5%);
+        }
+
+        .speech-wrapper {
+            flex-grow: 1;
+            padding-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            margin-left: -75px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .speech-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 12px;
+            padding-left: 20px;
+        }
+
+        .speech-title-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .speech-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .speech-sub {
+            font-size: 12px;
+            font-weight: 600;
+            color: #cbd5e1;
+            font-style: italic;
+        }
+
+        .speech-arrows {
+            display: flex;
+            gap: 8px;
+        }
+
+        .speech-arrows img {
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .speech-arrows img:hover:not(.disabled) {
+            transform: scale(1.05);
+        }
+
+        .speech-arrows img.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            filter: none;
+        }
+
+        .speech-bubble {
+            background-color: #d1cfc9;
+            border-radius: 12px;
+            padding: 24px 32px 20px 32px;
+            position: relative;
+            color: #1f2937;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.6;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .carousel-content p {
+            margin-bottom: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .carousel-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            left: -14px;
+            top: 32px;
+            border-width: 14px 14px 14px 0;
+            border-style: solid;
+            border-color: transparent #d1cfc9 transparent transparent;
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1.2px solid #111827;
+            background-color: transparent;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .dot.active {
+            background-color: #fba143;
+        }
+
+        /* --- 4. TIMELINE SECTION --- */
+        .timeline-section {
+            background-color: #55636a;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        /* Completed State Row Styling (GOLD) */
+        .quest-container.completed .timeline-section {
+            background-color: #2b1d14;
+        }
+
+        .quest-container.completed .timeline-row:nth-child(1) {
+            background-color: #4a2c1f;
+            border-color: #351e13;
+        }
+
+        .quest-container.completed .timeline-row:nth-child(2) {
+            background-color: #3d2315;
+            border-color: #27140b;
+        }
+
+        .quest-container.completed .timeline-row:nth-child(3) {
+            background-color: #2b160a;
+            border-color: transparent;
+        }
+
+        .timeline-row {
+            display: flex;
+            align-items: center;
+            padding: 40px 48px;
+            position: relative;
+            gap: 32px;
+            border-bottom: 8px solid #2d3b43;
+        }
+
+        .timeline-row:last-child {
+            border-bottom: none;
+        }
+
+        /* Custom Connecting Lines */
+        .line-up {
+            position: absolute;
+            left: 99px;
+            top: 0;
+            height: 40px;
+            width: 2px;
+            z-index: 1;
+        }
+
+        .line-down {
+            position: absolute;
+            left: 99px;
+            top: 144px;
+            bottom: -8px;
+            width: 2px;
+            z-index: 1;
+        }
+
+        .bg-orange {
+            background-color: #fba143;
+        }
+
+        .bg-grey {
+            background-color: #83929b;
+        }
+
+        /* Timeline Nodes */
+        .node-wrapper {
+            width: 104px;
+            height: 104px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+            background-color: #27343b;
+        }
+
+        .node-active {
+            border: 3px solid #fba143;
+        }
+
+        .node-inactive {
+            border: 3px solid #83929b;
+        }
+
+        .node-icon-active {
+            width: 56px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .node-icon-inactive {
+            width: 20px;
+            height: auto;
+            object-fit: contain;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .node-content-locked {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            color: #ffffff;
+            padding: 0 8px;
+        }
+
+        .locked-points {
+            font-size: 9px;
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: 0.2px;
+        }
+
+        /* Text Content */
+        .tl-text {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .tl-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .tl-desc {
+            font-size: 14px;
+            color: #cfd8dc;
+            font-weight: 500;
+            line-height: 1.5;
+            max-width: 500px;
+        }
+
+        /* Action Area (Buttons & Tags) */
+        .tl-action {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
+            min-width: 140px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .btn-tl-active {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 12px 32px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.3);
+            transition: transform 0.2s;
+            width: 100%;
+            text-transform: uppercase;
+        }
+
+        .btn-tl-active:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-tl-inactive {
+            background: #9d8c72;
+            border: none;
+            color: #3a3225;
+            padding: 12px 32px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: not-allowed;
+            width: 100%;
+            text-transform: uppercase;
+        }
+
+        .btn-tl-outline {
+            background: transparent;
+            border: 1.5px solid #a89f91;
+            color: #d1c7b8;
+            padding: 12px 32px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+
+        .btn-tl-outline:hover {
+            border-color: #fba143;
+            color: #fba143;
+        }
+
+        .tag-available {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 4px 10px;
+            border-radius: 4px;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-available img {
+            width: 12px;
+            height: 12px;
+            filter: brightness(0) invert(1);
+        }
+
+        .completed-tag {
+            font-size: 12px;
+            color: #fba143;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            margin-left: 12px;
+            vertical-align: middle;
+            display: none;
+        }
+
+        /* --- 5. COMPLETION BANNER WITH EMBEDDED SPINNING RAYS --- */
+        .completion-banner {
+            background: radial-gradient(circle at bottom center, #8c3a10 0%, #2b1d14 100%);
+            padding: 60px 40px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 8px solid #fba143;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cb-title {
+            font-size: 30px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cb-desc {
+            font-size: 15px;
+            font-weight: 500;
+            color: #e2e8f0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .banner-rays-overlay {
+            position: absolute;
+            top: -150%;
+            left: -50%;
+            width: 200%;
+            height: 400%;
+            background: repeating-conic-gradient(from 0deg, rgba(160, 59, 6, 0.2) 0deg 10deg, rgba(107, 33, 0, 0.2) 10deg 20deg);
+            animation: spinRays 35s linear infinite;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* --- MODAL STYLES --- */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(17, 24, 39, 0.65);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.show {
+            opacity: 1;
+        }
+
+        .dialog-card {
+            background: linear-gradient(180deg, #cde3ec 0%, #e0eef4 100%);
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            padding: 40px 32px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            text-align: center;
+            transform: translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .overlay.show .dialog-card {
+            transform: translateY(0);
+        }
+
+        .dialog-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .dialog-desc {
+            font-size: 15px;
+            color: #4b5563;
+            font-weight: 500;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .btn-solid-modal {
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border: none;
+            color: #111827;
+            padding: 14px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(232, 133, 36, 0.2);
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .btn-solid-modal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(232, 133, 36, 0.4);
+        }
+
+        /* Specific Hourglass Loading Styles */
+        .loading-card {
+            background: linear-gradient(90deg, #d3e5e0 0%, #f4ebd9 100%);
+            border-radius: 16px;
+            padding: 40px 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            max-width: 500px;
+            width: 100%;
+            border: none;
+            z-index: 5005;
+            position: relative;
+        }
+
+        .loading-card img {
+            width: 100px;
+            height: auto;
+            margin-bottom: 24px;
+            animation: pulse 1.2s infinite alternate ease-in-out;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+        }
+
+        .loading-card p {
+            font-size: 18px;
+            color: #111827;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        /* --- UNLOCK NOTIFICATION MODAL (BOTTOM LEFT CORNER) --- */
+        .unlock-notification-container {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 6000;
+            /* Stays securely above the award overlay! */
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .unlock-notification-container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .robot-guide-img {
+            position: absolute;
+            top: -85px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 105px;
+            height: auto;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.25));
+            animation: floatRobot 3s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes floatRobot {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-8px);
+            }
+        }
+
+        /* --- AWARD LOADING MODAL --- */
+        .award-loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(17, 26, 34, 0.95);
+            z-index: 5000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .award-loading-overlay.show {
+            opacity: 1;
+        }
+
+        .rays-container {
+            position: relative;
+            width: 450px;
+            height: 450px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .css-rays {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-conic-gradient(from 0deg, #a03b06 0deg 10deg, #6b2100 10deg 20deg);
+            animation: spinRays 25s linear infinite;
+            border-radius: 50%;
+            -webkit-mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 0) 65%);
+            mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 0) 65%);
+        }
+
+        @keyframes spinRays {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .award-badge-img {
+            position: relative;
+            z-index: 2;
+            width: 140px;
+            height: auto;
+            animation: pulseBadge 1.5s infinite alternate ease-in-out;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
+        }
+
+        @keyframes pulseBadge {
+            0% {
+                transform: scale(0.95);
+            }
+
+            100% {
+                transform: scale(1.05);
+            }
+        }
+
+        .loading-text-award {
+            color: #fba143;
+            font-size: 16px;
+            font-weight: 800;
+            margin-top: 32px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            animation: pulseText 1.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseText {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 850px) {
+            .quest-title-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 24px;
+                padding: 32px;
+            }
+
+            .title-right {
+                align-items: flex-start;
+                text-align: left;
+            }
+
+            .welcome-section {
+                flex-direction: column;
+                padding: 32px 24px 0 24px;
+                align-items: center;
+                text-align: center;
+                gap: 24px;
+            }
+
+            .speech-wrapper {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .dr-ros {
+                width: 300px;
+                transform: none;
+            }
+
+            .speech-header {
+                flex-direction: column;
+                align-items: center;
+                gap: 16px;
+                padding-left: 0;
+            }
+
+            .speech-bubble::before {
+                top: -14px;
+                left: 50%;
+                transform: translateX(-50%);
+                border-width: 0 14px 14px 14px;
+                border-color: transparent transparent #d1cfc9 transparent;
+            }
+
+            .timeline-row {
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+                padding: 32px 24px;
+                gap: 24px;
+            }
+
+            .tl-action {
+                align-items: center;
+                width: 100%;
+                max-width: 250px;
+            }
+
+            .line-up,
+            .line-down {
+                display: none;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .top-nav {
+                padding: 16px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .quest-h1 {
+                font-size: 32px;
+            }
+
+            .quest-header-img {
+                height: 180px;
+            }
+
+            .placeholder-badge {
+                width: 100px;
+                top: 0;
+                right: 24px;
+            }
+
+            .hero-badge-container {
+                right: 24px;
+                top: 0;
+                width: 120px;
+                padding: 16px 12px;
+            }
+
+            .unlock-notification-container {
+                left: 50%;
+                bottom: 20px;
+                transform: translateX(-50%) translateY(20px);
+            }
+
+            .unlock-notification-container.show {
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Coming Soon Modal Overlay -->
+    <div id="comingSoonModal" class="overlay">
+        <div class="dialog-card">
+            <h3 class="dialog-title">Oops...</h3>
+            <p class="dialog-desc">This part of Wavumbuzi is not available yet, but thank you for your interest!</p>
+            <button class="btn-solid-modal" onclick="closeComingSoonModal()">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- Generic Quest Loading Modal -->
+    <div id="questLoadingModal" class="overlay">
+        <div class="loading-card">
+            <img src="assets_reflect/hourglass.png" alt="Loading">
+            <p id="loadingText">Quest loading...</p>
+        </div>
+    </div>
+
+    <!-- Dynamic Unlock Notification Modal (Corner Anchor) -->
+    <div id="unlockNotificationModal" class="unlock-notification-container">
+        <!-- Replaced standard dialog card padding to securely fit beneath the absolute robot image, removed secondary paragraph text -->
+        <div class="dialog-card"
+            style="background: linear-gradient(180deg, #d1eaf0 0%, #eef7f9 100%); position: relative; padding: 75px 24px 32px 24px; margin: 0; width: 100%; border: none;">
+            <img src="Mwenza_ipad.png" alt="Robot Guide" class="robot-guide-img" onerror="this.style.display='none'">
+            <h3 class="dialog-title" id="unlockTitle"
+                style="font-size: 18px; color: #111827; margin-bottom: 24px; font-weight: 800; line-height: 1.4;">
+                Content Unlocked!</h3>
+
+            <div style="display: flex; gap: 12px; width: 100%;">
+                <button class="btn-solid-modal"
+                    style="background: #94a3b8; color: #ffffff; flex: 1; box-shadow: none; padding: 12px 10px; font-size: 12px;"
+                    onclick="closeUnlockModal()">OKAY</button>
+                <button class="btn-solid-modal" style="flex: 1; padding: 12px 10px; font-size: 12px;"
+                    id="btnTakeMeThere">TAKE ME THERE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Beautiful Data Loading Modal (Dynamic Award Animation) -->
+    <div id="awardLoadingModal" class="award-loading-overlay">
+        <div class="rays-container">
+            <div class="css-rays"></div>
+            <img id="award-overlay-img" src="assets_quest/Award%20overlay%20Gold%20badge.png" class="award-badge-img"
+                alt="Award Overlay">
+        </div>
+        <p class="loading-text-award">Award Unlocked!</p>
+    </div>
+
+    <!-- Top Navigation -->
+    <header class="top-nav">
+        <img src="assets_challenge/Wavumbuzi_logo.png" alt="Wavumbuzi Logo" class="logo-img"
+            onerror="this.alt='Wavumbuzi'">
+
+        <div class="nav-links">
+            <a class="nav-link active" href="challenge.html">2028 Challenge</a>
+            <a class="nav-link" href="profile.html">My profile</a>
+        </div>
+
+        <div class="user-nav-group">
+            <svg class="bell-icon" onclick="showComingSoon()" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+
+            <div class="profile-dropdown-wrapper" id="profileDropdownWrapper">
+                <div class="profile-group" onclick="toggleDropdown(event)">
+                    <img src="new_user.png" id="navAvatar" class="profile-avatar" alt="User Profile">
+                    <span class="profile-name" id="navNameDisplay">User</span>
+                    <img src="assets_challenge/Arrow%20icon.png" class="chevron-down" alt="Dropdown">
+                </div>
+
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <a href="profile.html" class="dropdown-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        My Profile
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="logOut()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Log Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="page-wrapper">
+        <a href="challenge.html" class="breadcrumb">&lt; BACK TO 2028 CHALLENGE</a>
+
+        <div class="quest-container" id="quest-container">
+
+            <!-- 1. Header Image -->
+            <div class="quest-header-img">
+                <img src="assets_quest/Placeholder%20badge.png" alt="Earn your health badge" class="placeholder-badge"
+                    id="placeholder-badge">
+                <div class="hero-badge-container" id="hero-badge-container">
+                    <img id="hero-badge-img" src="assets_quest/Health%20challenge%20gold%20award.png" alt="Quest Badge">
+                </div>
+            </div>
+
+            <!-- 2. Title Banner -->
+            <div class="quest-title-banner">
+                <div class="title-left">
+                    <h1 class="quest-h1">2028 HEALTH QUEST</h1>
+                    <p class="quest-subtitle">Earn points to get on the leaderboard and unlock your health badges.</p>
+                    <a class="leaderboard-link" onclick="showComingSoon()">CLICK HERE TO SEE THE LEADERBOARD &gt;</a>
+                </div>
+                <div class="title-right">
+                    <div class="earned-label">In this Quest you have earned</div>
+                    <div class="points-display">
+                        <img src="assets_quest/Points%20icon.png" alt="Points">
+                        <span id="hero-points-text" style="min-width: 160px; text-align: left;">0 points</span>
+                    </div>
+                    <button class="btn-continue" id="hero-cta-btn" onclick="navigateToDiscover()">CONTINUE</button>
+                </div>
+            </div>
+
+            <!-- 3. Welcome Section -->
+            <div class="welcome-section">
+                <img src="assets_quest/Dr%20Ros%20illustration.png" alt="Dr Ros" class="dr-ros">
+
+                <div class="speech-wrapper">
+                    <div class="speech-header">
+                        <div class="speech-title-box">
+                            <div class="speech-title">Welcome to the Health Quest!</div>
+                            <div class="speech-sub">Select the arrows to learn more.</div>
+                        </div>
+                        <div class="speech-arrows">
+                            <img src="assets_quest/Left%20Arrow%20button.png" id="arrow-prev" alt="Previous"
+                                onclick="prevPanel()">
+                            <img src="assets_quest/Right%20Arrow%20button.png" id="arrow-next" alt="Next"
+                                onclick="nextPanel()">
+                        </div>
+                    </div>
+
+                    <div class="speech-bubble">
+                        <div id="carousel-content" class="carousel-content">
+                            <!-- Injected via JavaScript -->
+                        </div>
+
+                        <div class="carousel-dots">
+                            <div class="dot active" onclick="setPanel(0)"></div>
+                            <div class="dot" onclick="setPanel(1)"></div>
+                            <div class="dot" onclick="setPanel(2)"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Timeline Section -->
+            <div class="timeline-section">
+
+                <!-- Discover -->
+                <div class="timeline-row" id="row-discover">
+                    <div class="line-down bg-orange"></div>
+                    <div class="node-wrapper node-active">
+                        <img src="assets_quest/Discover%20binoculars.png" alt="Discover" class="node-icon-active">
+                    </div>
+                    <div class="tl-text">
+                        <h3 class="tl-title">Discover</h3>
+                        <p class="tl-desc">Learn how entrepreneurs solved health problems in their communities.</p>
+                    </div>
+                    <div class="tl-action">
+                        <button class="btn-tl-active" id="btn-discover" onclick="navigateToDiscover()">DISCOVER</button>
+                    </div>
+                </div>
+
+                <!-- Explore -->
+                <div class="timeline-row row-inactive" id="row-explore">
+                    <div class="line-up bg-orange"></div>
+                    <div class="line-down bg-grey" id="line-down-explore"></div>
+                    <div class="node-wrapper node-inactive" id="node-explore">
+                        <div class="node-content-locked" id="node-content-explore">
+                            <img src="assets_quest/Lock%20icon.png" alt="Locked" class="node-icon-inactive">
+                            <span class="locked-points">300 POINTS<br>TO UNLOCK</span>
+                        </div>
+                    </div>
+                    <div class="tl-text">
+                        <h3 class="tl-title">Explore</h3>
+                        <p class="tl-desc">Use your entrepreneurial skills to solve problems in Tembeatown. You have to
+                            earn 300 points in the Health Quest to unlock this level, and you can replay it to earn more
+                            points.</p>
+                    </div>
+                    <div class="tl-action">
+                        <div class="tag-available" id="tag-avail-explore" style="display:none;">
+                            <img src="assets_quest/Calendar%20icon.png" alt="Calendar">
+                            AVAILABLE NOW
+                        </div>
+                        <button class="btn-tl-inactive" id="btn-explore">EXPLORE</button>
+                    </div>
+                </div>
+
+                <!-- Reflect -->
+                <div class="timeline-row row-inactive" id="row-reflect">
+                    <div class="line-up bg-grey" id="line-up-reflect"></div>
+                    <div class="node-wrapper node-inactive" id="node-reflect">
+                        <div class="node-content-locked" id="node-content-reflect">
+                            <img src="assets_quest/Lock%20icon.png" alt="Locked" class="node-icon-inactive">
+                            <span class="locked-points">500 POINTS<br>TO UNLOCK</span>
+                        </div>
+                    </div>
+                    <div class="tl-text">
+                        <h3 class="tl-title">Reflect <span class="completed-tag" id="tag-reflect">✓ COMPLETED</span>
+                        </h3>
+                        <p class="tl-desc">Reflect on how you can use your entrepreneurial skills to make a difference
+                            in your own community. You have to earn 500 points in the Health Quest to unlock this level,
+                            and can earn up to 1000 points by completing it.</p>
+                    </div>
+                    <div class="tl-action">
+                        <div class="tag-available" id="tag-avail-reflect" style="display:none;">
+                            <img src="assets_quest/Calendar%20icon.png" alt="Calendar">
+                            AVAILABLE NOW
+                        </div>
+                        <button class="btn-tl-inactive" id="btn-reflect">REFLECT</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Completion Banner -->
+            <div class="completion-banner" id="completion-banner">
+                <div class="banner-rays-overlay"></div>
+                <h2 class="cb-title">Well done, you've completed the Health Quest!</h2>
+                <p class="cb-desc">You can replay the Explore activity in this Quest to continue to earn more points.
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTyvz2azkYILUbhFaWlQOZ454b9E_flwAlQ41cIhjacIfFop8Ter193nojY47uALI/exec';
+
+        // --- Populate User Data ---
+        const urlParams = new URLSearchParams(window.location.search);
+        let userName = urlParams.get('user') || urlParams.get('newuser');
+        let userAvatar = "new_user.png";
+
+        const savedData = localStorage.getItem('wavumbuzi_user_data_complete');
+        if (savedData) {
+            try {
+                const parsedData = JSON.parse(savedData);
+                if (parsedData && parsedData.fullName && !userName) {
+                    userName = parsedData.fullName;
+                }
+                if (parsedData && parsedData.avatar) {
+                    userAvatar = parsedData.avatar;
+                }
+            } catch (e) { }
+        }
+
+        const safeUserKey = (userName || "default").replace(/\s+/g, '_').toLowerCase();
+
+        // --- Retain Parameters and Route Functions ---
+        function navigateToDiscover() {
+            const dest = userName ? `discover_load.html?user=${encodeURIComponent(userName)}` : 'discover_load.html';
+            window.location.href = dest;
+        }
+
+        function navigateToExplore() {
+            const dest = userName ? `explore_load.html?user=${encodeURIComponent(userName)}` : 'explore_load.html';
+            window.location.href = dest;
+        }
+
+        // --- Content Unlock Notification Infrastructure ---
+        function triggerUnlockNotification(tierName, titleText, elementTargetId, showAfterDelay = 0) {
+            const modal = document.getElementById('unlockNotificationModal');
+            const titleLabel = document.getElementById('unlockTitle');
+            const targetBtn = document.getElementById('btnTakeMeThere');
+            const lockStorageKey = `wavumbuzi_unlocked_alert_${tierName}_${safeUserKey}`;
+
+            // Check if user has already seen this specific level unlock announcement
+            if (localStorage.getItem(lockStorageKey)) return;
+
+            titleLabel.innerText = titleText;
+            targetBtn.onclick = () => {
+                closeUnlockModal();
+                const targetElement = document.getElementById(elementTargetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            };
+
+            // Stage modal animation (with optional delay if waiting for a badge overlay to finish)
+            setTimeout(() => {
+                modal.style.display = 'block';
+                setTimeout(() => modal.classList.add('show'), 50);
+            }, showAfterDelay);
+
+            // Log viewing persistence state
+            localStorage.setItem(lockStorageKey, 'true');
+        }
+
+        function closeUnlockModal() {
+            const modal = document.getElementById('unlockNotificationModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 400); // Wait for transition
+        }
+
+        // --- Modals Logic ---
+        function showQuestLoadingModal() {
+            const modal = document.getElementById('questLoadingModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+
+        function hideQuestLoadingModal() {
+            const modal = document.getElementById('questLoadingModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function showAwardLoadingModal() {
+            const modal = document.getElementById('awardLoadingModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+
+        function hideAwardLoadingModal() {
+            const modal = document.getElementById('awardLoadingModal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        function showComingSoon() {
+            const modal = document.getElementById('comingSoonModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('show'), 10);
+            }
+        }
+
+        function closeComingSoonModal() {
+            const modal = document.getElementById('comingSoonModal');
+            if (modal) {
+                modal.classList.remove('show');
+                setTimeout(() => modal.style.display = 'none', 300);
+            }
+        }
+
+        // --- Core Page Logic ---
+        window.addEventListener('DOMContentLoaded', () => {
+            if (userName) {
+                const nameParts = userName.trim().split(/\s+/);
+                let firstName = nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1).toLowerCase();
+                let lastInitial = nameParts.length > 1 ? " " + nameParts[nameParts.length - 1].charAt(0).toUpperCase() : "";
+                document.getElementById('navNameDisplay').innerText = firstName + lastInitial;
+                document.getElementById('navAvatar').src = userAvatar;
+            }
+
+            updateCarousel();
+
+            // Trigger spinning numbers animation
+            const pointsVal = document.getElementById('hero-points-text');
+            let spinInterval;
+            if (pointsVal) {
+                spinInterval = setInterval(() => {
+                    pointsVal.innerText = (Math.floor(Math.random() * 8999) + 1000) + " points";
+                }, 50);
+            }
+
+            // Show generic loading modal while checking spreadsheet
+            showQuestLoadingModal();
+
+            // Fetch live submissions and user points concurrently
+            Promise.all([
+                fetch(APP_SCRIPT_URL + '?action=getUserData&user=' + encodeURIComponent(userName || "")).then(res => res.json()).catch(() => ({ success: false, points: 0 })),
+                fetch(APP_SCRIPT_URL + '?action=getReflections').then(res => res.json()).catch(() => ({ success: false, reflections: [] }))
+            ]).then(([userData, reflectData]) => {
+
+                if (spinInterval) clearInterval(spinInterval); // Stop spinning
+
+                const points = userData.success ? (userData.points || 0) : 0;
+                if (pointsVal) pointsVal.innerText = points + " points";
+
+                const hasCompleted = reflectData.success && reflectData.reflections && reflectData.reflections.find(r => r.user.toLowerCase() === (userName || "").toLowerCase());
+
+                hideQuestLoadingModal();
+
+                if (hasCompleted) {
+                    // ==========================================
+                    // GOLD STATE (Reflect Completed)
+                    // ==========================================
+                    document.getElementById('quest-container').classList.add('completed');
+                    document.getElementById('placeholder-badge').style.display = 'none';
+
+                    const badgeContainer = document.getElementById('hero-badge-container');
+                    badgeContainer.style.display = 'block';
+                    document.getElementById('hero-badge-img').src = "assets_quest/Health%20challenge%20gold%20award.png";
+
+                    // Top banner hero CTA directs to explore
+                    document.getElementById('hero-cta-btn').innerText = "PLAY AGAIN";
+                    document.getElementById('hero-cta-btn').onclick = () => navigateToExplore();
+
+                    const btnDiscover = document.getElementById('btn-discover');
+                    btnDiscover.innerText = "REVIEW DISCOVER";
+                    btnDiscover.className = "btn-tl-outline";
+                    btnDiscover.onclick = () => navigateToDiscover();
+
+                    // Explore Active
+                    document.getElementById('row-explore').classList.remove('row-inactive');
+                    document.getElementById('line-down-explore').classList.remove('bg-grey');
+                    document.getElementById('line-down-explore').classList.add('bg-orange');
+
+                    const nodeExplore = document.getElementById('node-explore');
+                    nodeExplore.classList.remove('node-inactive');
+                    nodeExplore.classList.add('node-active');
+                    nodeExplore.innerHTML = '<img src="assets_challenge/Explore%20Magnifying%20glass.png" alt="Explore" class="node-icon-active">';
+
+                    document.getElementById('tag-avail-explore').style.display = 'inline-flex';
+                    const btnExplore = document.getElementById('btn-explore');
+                    btnExplore.innerText = "REPLAY EXPLORE";
+                    btnExplore.className = "btn-tl-active";
+                    btnExplore.onclick = () => navigateToExplore();
+
+                    // Reflect Active & Completed
+                    document.getElementById('row-reflect').classList.remove('row-inactive');
+                    document.getElementById('line-up-reflect').classList.remove('bg-grey');
+                    document.getElementById('line-up-reflect').classList.add('bg-orange');
+
+                    const nodeReflect = document.getElementById('node-reflect');
+                    nodeReflect.classList.remove('node-inactive');
+                    nodeReflect.classList.add('node-active');
+                    nodeReflect.innerHTML = '<img src="assets_challenge/Reflect%20mirror.png" alt="Reflect" class="node-icon-active">';
+
+                    document.getElementById('tag-reflect').style.display = 'inline-block';
+                    document.getElementById('tag-avail-reflect').style.display = 'inline-flex';
+
+                    const btnReflect = document.getElementById('btn-reflect');
+                    btnReflect.innerText = "REVIEW REFLECT";
+                    btnReflect.className = "btn-tl-outline";
+                    btnReflect.onclick = () => window.location.href = "community.html";
+
+                    document.getElementById('completion-banner').style.display = "flex";
+
+                    // Set Award Modal Overlay to Gold
+                    document.getElementById('award-overlay-img').src = "assets_quest/Award%20overlay%20Gold%20badge.png";
+
+                    // Only show celebration overlay badge once
+                    if (!localStorage.getItem('wavumbuzi_award_gold_seen_' + safeUserKey)) {
+                        setTimeout(() => {
+                            showAwardLoadingModal();
+                            setTimeout(() => hideAwardLoadingModal(), 2500);
+                        }, 500);
+                        localStorage.setItem('wavumbuzi_award_gold_seen_' + safeUserKey, 'true');
+                    }
+
+                } else if (points >= 500) {
+                    // ==========================================
+                    // SILVER STATE (500+ points, Reflect NOT Completed)
+                    // ==========================================
+                    document.getElementById('placeholder-badge').style.display = 'none';
+
+                    const badgeContainer = document.getElementById('hero-badge-container');
+                    badgeContainer.style.display = 'block';
+                    document.getElementById('hero-badge-img').src = "assets_quest/Health%20challenge%20Silver%20award.png";
+
+                    document.getElementById('hero-cta-btn').onclick = () => navigateToExplore();
+
+                    // Explore Active
+                    document.getElementById('row-explore').classList.remove('row-inactive');
+                    document.getElementById('line-down-explore').classList.remove('bg-grey');
+                    document.getElementById('line-down-explore').classList.add('bg-orange');
+
+                    const nodeExplore = document.getElementById('node-explore');
+                    nodeExplore.classList.remove('node-inactive');
+                    nodeExplore.classList.add('node-active');
+                    nodeExplore.innerHTML = '<img src="assets_challenge/Explore%20Magnifying%20glass.png" alt="Explore" class="node-icon-active">';
+
+                    document.getElementById('tag-avail-explore').style.display = 'inline-flex';
+                    const btnExplore = document.getElementById('btn-explore');
+                    btnExplore.innerText = "EXPLORE";
+                    btnExplore.className = "btn-tl-active";
+                    btnExplore.onclick = () => navigateToExplore();
+
+                    // Reflect Unlocked (Active Button, but Ring remains inactive/grey)
+                    document.getElementById('row-reflect').classList.remove('row-inactive');
+                    document.getElementById('line-up-reflect').classList.remove('bg-grey');
+                    document.getElementById('line-up-reflect').classList.add('bg-orange');
+
+                    const nodeReflect = document.getElementById('node-reflect');
+                    nodeReflect.innerHTML = '<img src="assets_challenge/Reflect%20mirror.png" alt="Reflect" class="node-icon-active">';
+
+                    document.getElementById('tag-avail-reflect').style.display = 'inline-flex';
+
+                    const btnReflect = document.getElementById('btn-reflect');
+                    btnReflect.innerText = "REFLECT";
+                    btnReflect.className = "btn-tl-active";
+                    btnReflect.onclick = () => window.location.href = "reflect.html";
+
+                    // Set Award Modal Overlay to Silver
+                    document.getElementById('award-overlay-img').src = "assets_quest/Award%20overlay%20Silver%20badge.png";
+
+                    // Celebrate Reflect card unlock (Waits 3.5s for overlay)
+                    triggerUnlockNotification("reflect_level", "You have unlocked the Reflect content!", "row-reflect", 3500);
+
+                    if (!localStorage.getItem('wavumbuzi_award_silver_seen_' + safeUserKey)) {
+                        setTimeout(() => {
+                            showAwardLoadingModal();
+                            setTimeout(() => hideAwardLoadingModal(), 2500);
+                        }, 500);
+                        localStorage.setItem('wavumbuzi_award_silver_seen_' + safeUserKey, 'true');
+                    }
+
+                } else if (points >= 300) {
+                    // ==========================================
+                    // BRONZE STATE (300+ points, Reflect NOT Completed)
+                    // ==========================================
+                    document.getElementById('placeholder-badge').style.display = 'none';
+
+                    const badgeContainer = document.getElementById('hero-badge-container');
+                    badgeContainer.style.display = 'block';
+                    document.getElementById('hero-badge-img').src = "assets_quest/Health%20challenge%20bronze%20award.png";
+
+                    document.getElementById('hero-cta-btn').onclick = () => navigateToExplore();
+
+                    // Explore Active
+                    document.getElementById('row-explore').classList.remove('row-inactive');
+                    document.getElementById('line-down-explore').classList.remove('bg-grey');
+                    document.getElementById('line-down-explore').classList.add('bg-orange');
+
+                    const nodeExplore = document.getElementById('node-explore');
+                    nodeExplore.classList.remove('node-inactive');
+                    nodeExplore.classList.add('node-active');
+                    nodeExplore.innerHTML = '<img src="assets_challenge/Explore%20Magnifying%20glass.png" alt="Explore" class="node-icon-active">';
+
+                    document.getElementById('tag-avail-explore').style.display = 'inline-flex';
+                    const btnExplore = document.getElementById('btn-explore');
+                    btnExplore.innerText = "EXPLORE";
+                    btnExplore.className = "btn-tl-active";
+                    btnExplore.onclick = () => navigateToExplore();
+
+                    // Reflect lines show progression path even though it is locked
+                    document.getElementById('line-up-reflect').classList.remove('bg-grey');
+                    document.getElementById('line-up-reflect').classList.add('bg-orange');
+
+                    // Set Award Modal Overlay to Bronze
+                    document.getElementById('award-overlay-img').src = "assets_quest/Award%20overlay%20Bronze%20badge.png";
+
+                    // Celebrate Explore card unlock (Waits 3.5s for overlay)
+                    triggerUnlockNotification("explore_level", "You have unlocked the Explore content!", "row-explore", 3500);
+
+                    if (!localStorage.getItem('wavumbuzi_award_bronze_seen_' + safeUserKey)) {
+                        setTimeout(() => {
+                            showAwardLoadingModal();
+                            setTimeout(() => hideAwardLoadingModal(), 2500);
+                        }, 500);
+                        localStorage.setItem('wavumbuzi_award_bronze_seen_' + safeUserKey, 'true');
+                    }
+
+                } else {
+                    // ==========================================
+                    // DEFAULT STATE (Under 300 points)
+                    // ==========================================
+                    // Celebrate Discover card unlock immediately since there is no badge overlay here
+                    triggerUnlockNotification("discover_level", "You have unlocked the Discover content!", "row-discover", 500);
+                }
+
+            }).catch(e => {
+                console.error('Error fetching data:', e);
+                if (spinInterval) clearInterval(spinInterval);
+                if (pointsVal) pointsVal.innerText = "0 points";
+                hideQuestLoadingModal();
+            });
+        });
+
+        // Dropdown Logic
+        function toggleDropdown(e) {
+            e.stopPropagation();
+            const wrapper = document.getElementById('profileDropdownWrapper');
+            const menu = document.getElementById('dropdownMenu');
+
+            wrapper.classList.toggle('open');
+            menu.classList.toggle('show');
+        }
+
+        window.addEventListener('click', function (e) {
+            const wrapper = document.getElementById('profileDropdownWrapper');
+            const menu = document.getElementById('dropdownMenu');
+            if (wrapper && !wrapper.contains(e.target)) {
+                wrapper.classList.remove('open');
+                menu.classList.remove('show');
+            }
+        });
+
+        function logOut() {
+            window.location.href = "login.html";
+        }
+
+        // Carousel Logic
+        const panels = [
+            "<p>Hello! My name is Dr Ros, and I’m here to teach you about entrepreneurship in Health.</p><p>Have you had to miss school because you were feeling unwell? Or has someone in your family needed help from a doctor or nurse but found it hard to get to a clinic? Staying healthy is about getting the help you need, when you need it.</p>",
+            "<p>In many places, that is not always possible. Some people live far from clinics. Others cannot afford the help they need. And mental health &ndash; how we feel and think &ndash; is often forgotten or ignored.</p><p>In this quest, you will meet entrepreneurs and their teams who saw these problems and decided to act. They found ways to get urgent help to their communities faster, give people better mental health services, and make healthcare easier to access. They used their skills to make a difference.</p>",
+            "<p>Along the way, you will explore the problems they chose to solve, make choices that could help people get the care they need, and practise using entrepreneurial skills so you can make a difference too!</p>"
+        ];
+
+        let currentPanel = 0;
+
+        function updateCarousel() {
+            const contentDiv = document.getElementById('carousel-content');
+            if (contentDiv) {
+                contentDiv.innerHTML = "";
+                setTimeout(() => {
+                    contentDiv.innerHTML = panels[currentPanel];
+                }, 10);
+
+                const dots = document.querySelectorAll('.dot');
+                dots.forEach((dot, index) => {
+                    if (index === currentPanel) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+
+                const btnPrev = document.getElementById('arrow-prev');
+                const btnNext = document.getElementById('arrow-next');
+
+                if (currentPanel === 0) {
+                    btnPrev.classList.add('disabled');
+                } else {
+                    btnPrev.classList.remove('disabled');
+                }
+
+                if (currentPanel === panels.length - 1) {
+                    btnNext.classList.add('disabled');
+                } else {
+                    btnNext.classList.remove('disabled');
+                }
+            }
+        }
+
+        function nextPanel() {
+            if (currentPanel < panels.length - 1) {
+                currentPanel++;
+                updateCarousel();
+            }
+        }
+
+        function prevPanel() {
+            if (currentPanel > 0) {
+                currentPanel--;
+                updateCarousel();
+            }
+        }
+
+        function setPanel(index) {
+            currentPanel = index;
+            updateCarousel();
+        }
+    </script>
+</body>
+
+</html>
