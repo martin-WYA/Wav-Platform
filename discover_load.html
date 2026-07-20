@@ -472,7 +472,17 @@
         }
 
         function startDiscover() {
-            window.location.href = `https://martin-wya.github.io/WavDiscover/?user=${encodeURIComponent(userName)}&redirect=https://martin-wya.github.io/Wav-Platform/quest.html?user=${encodeURIComponent(userName)}`;
+            const base_discover_url = "https://martin-wya.github.io/Wav-Discover-Play/";
+            const discover_url = new URL(base_discover_url);
+            const returnURLbase = "https://martin-wya.github.io/Wav-Platform/quest.html";
+            const returnURL = new URL(returnURLbase);
+            if (userName) {
+                returnURL.searchParams.set("user", userName);
+                discover_url.searchParams.set("user", userName);
+            }
+            discover_url.searchParams.set("redirect", returnURL.toString());
+            window.location.href = discover_url.toString();
+            //window.location.href = `https://martin-wya.github.io/WavDiscover/?user=${encodeURIComponent(userName)}&redirect=https://martin-wya.github.io/Wav-Platform/quest.html?user=${encodeURIComponent(userName)}`;
         }
 
         // --- Dynamic Robot Positioning Helper ---
