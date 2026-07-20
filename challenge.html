@@ -1562,7 +1562,7 @@
                     <div class="quest-info-wrap">
                         <h3 class="quest-title">2028 HEALTH QUEST</h3>
                         <div class="quest-date">You have earned 600 points in this Quest so far!</div>
-                        <button class="btn-solid" onclick="window.location.href='quest.html'">CONTINUE</button>
+                        <button class="btn-solid" onclick="navigateToQuests()">CONTINUE</button>
                     </div>
                     <div class="quest-badge-box">
                         <img src="assets_challenge/Health%20badge.png" alt="Health Badge">
@@ -1951,6 +1951,11 @@
                     });
             }
         });
+
+        function navigateToQuests() {
+            const dest = userName ? `quest.html?user=${encodeURIComponent(userName)}` : 'quest.html';
+            window.location.href = dest;
+        }
 
         // Dropdown Logic
         function toggleDropdown(e) {
