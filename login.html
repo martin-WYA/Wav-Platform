@@ -49,7 +49,8 @@
             background-color: #f2f8fa;
             width: 100%;
             max-width: 800px;
-            max-height: 75vh;
+            max-height: 90vh;
+            /* Increased from 75vh to fill more window height */
             display: flex;
             flex-direction: column;
             border-radius: 20px;
@@ -110,6 +111,18 @@
             font-size: 15px;
             color: #4b5563;
             font-weight: 500;
+        }
+
+        .signup-link {
+            color: #e88524;
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color 0.2s;
+        }
+
+        .signup-link:hover {
+            color: #cf7015;
         }
 
         .search-container {
@@ -183,10 +196,26 @@
             align-items: center;
             cursor: pointer;
             transition: transform 0.15s ease;
+            position: relative;
         }
 
         .avatar-card:hover:not(.selected) {
             transform: translateY(-2px);
+        }
+
+        .badge-new {
+            position: absolute;
+            top: -6px;
+            right: 2px;
+            background-color: #ef4444;
+            color: #ffffff;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 3px 6px;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            pointer-events: none;
         }
 
         .avatar-img-wrapper {
@@ -368,7 +397,7 @@
 
             .reg-card {
                 padding: 24px 20px;
-                max-height: 85vh;
+                max-height: 95vh;
             }
 
             .teacher-link {
@@ -415,8 +444,9 @@
             <div class="school-name">KENYA HIGH SCHOOL</div>
 
             <div class="card-header">
-                <h1 class="card-title">Who is logging in?</h1>
-                <p class="card-desc">Tap your face.</p>
+                <h1 class="card-title">Find your name.</h1>
+                <p class="card-desc">If your name is not here yet, click here to <a href="register.html"
+                        class="signup-link">sign-up</a>.</p>
             </div>
 
             <div class="search-container">
@@ -435,7 +465,7 @@
             </div>
 
             <div class="button-row">
-                <button type="button" class="btn btn-signup" onclick="goToSignup()">SIGN UP</button>
+                <button type="button" class="btn btn-back" onclick="window.location.href='index.html'">GO BACK</button>
                 <button type="button" class="btn btn-next" id="nextBtn" onclick="goToPasswordScreen()"
                     disabled>NEXT</button>
             </div>
@@ -449,18 +479,15 @@
     <script>
         const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwTyvz2azkYILUbhFaWlQOZ454b9E_flwAlQ41cIhjacIfFop8Ter193nojY47uALI/exec";
 
-        // Auto-corrects legacy avatar paths saved in the database or local storage before folders were added
         function sanitizeAvatar(imgUrl) {
             if (!imgUrl) return "new_user.png";
             if (imgUrl.startsWith("http") || imgUrl.startsWith("data:")) return imgUrl;
             if (imgUrl === "new_user.png") return imgUrl;
 
-            // Re-map old Character block paths
             if (imgUrl.startsWith("Avatar-") && !imgUrl.includes("/")) {
                 return "assets_characters/" + imgUrl;
             }
 
-            // Re-map old fake user face paths
             const fakeFaces = [
                 "Aminate_Diallo.jpg", "Adeaze_Okafor.jpg", "Ibrahim_Touré.jpg",
                 "Fatou_Bah.jpg", "Aïcha_Sow.jpg", "Kojo_Asante.jpg",
@@ -481,7 +508,6 @@
         let newUserName = urlParams.get('newuser');
         let localAvatar = "new_user.png";
 
-        // Grab local storage data to pre-populate the grid instantly
         const savedData = localStorage.getItem('wavumbuzi_user_data_complete');
         if (savedData) {
             try {
@@ -503,7 +529,6 @@
             return name;
         }
 
-        // The default hardcoded list
         let students = [
             { name: "Aminate Diallo", img: "assets_login/Aminate_Diallo.jpg" },
             { name: "Adeaze Okafor", img: "assets_login/Adeaze_Okafor.jpg" },
@@ -528,17 +553,16 @@
             { name: "Kwame Mensah", img: "assets_login/Kwame_Mens....jpg" }
         ];
 
-        // Push new user to array using their custom avatar if they chose one
         if (newUserName) {
             const exists = students.find(s => s.name.toLowerCase() === newUserName.toLowerCase());
             if (!exists) {
                 students.push({
                     name: newUserName,
                     img: sanitizeAvatar(localAvatar),
-                    isNewUser: true
+                    isNewUser: true,
+                    timestamp: new Date().toISOString() // Locally generated mock timestamp for immediate hoisting
                 });
             } else {
-                // If they exist in hardcoded list, override their image with their local choice
                 if (localAvatar && localAvatar !== "new_user.png") {
                     exists.img = sanitizeAvatar(localAvatar);
                 }
@@ -547,9 +571,32 @@
 
         const gridContainer = document.getElementById('avatarGrid');
 
-        function renderStudents(list) {
+        function sortAndRenderStudents() {
+            const now = new Date().getTime();
+            const oneDay = 24 * 60 * 60 * 1000;
+
+            students.sort((a, b) => {
+                let aNew = false, bNew = false;
+
+                if (a.timestamp) {
+                    const aTime = new Date(a.timestamp).getTime();
+                    if (!isNaN(aTime) && (now - aTime) < oneDay) aNew = true;
+                }
+
+                if (b.timestamp) {
+                    const bTime = new Date(b.timestamp).getTime();
+                    if (!isNaN(bTime) && (now - bTime) < oneDay) bNew = true;
+                }
+
+                if (aNew && !bNew) return -1;
+                if (!aNew && bNew) return 1;
+
+                return a.name.localeCompare(b.name);
+            });
+
             gridContainer.innerHTML = '';
-            list.forEach((student, index) => {
+
+            students.forEach((student, index) => {
                 const card = document.createElement('div');
                 card.className = 'avatar-card';
                 card.id = `student_${index}`;
@@ -557,8 +604,18 @@
 
                 const displayName = formatName(student.name);
 
-                // Fallback directly to new_user.png if the image fails to load
+                let isNew = false;
+                if (student.timestamp) {
+                    const sTime = new Date(student.timestamp).getTime();
+                    if (!isNaN(sTime) && (now - sTime) < oneDay) {
+                        isNew = true;
+                    }
+                }
+
+                let badgeHtml = isNew ? `<div class="badge-new">NEW</div>` : '';
+
                 card.innerHTML = `
+                    ${badgeHtml}
                     <div class="avatar-img-wrapper">
                         <img src="${student.img}" alt="${student.name}" onerror="this.onerror=null; this.src='new_user.png';">
                     </div>
@@ -594,12 +651,9 @@
             });
         }
 
-        function goToSignup() { window.location.href = "register.html"; }
-
         function goToPasswordScreen() {
             if (!selectedStudent) return;
 
-            // Find the image URL for the selected student to pass it cleanly to the password screen
             const studentObj = students.find(s => s.name === selectedStudent);
             const imgParam = studentObj && studentObj.img ? "&img=" + encodeURIComponent(studentObj.img) : "";
 
@@ -638,18 +692,20 @@
                                 students.push({
                                     name: sheetUser.name,
                                     img: sanitizedImg,
-                                    isNewUser: true
+                                    isNewUser: true,
+                                    timestamp: sheetUser.timestamp // Expecting timestamp from App Script
                                 });
                             } else {
-                                // Overwrite existing placeholder with fetched custom image
                                 if (sheetUser.avatar && sheetUser.avatar !== "new_user.png") {
                                     exists.img = sanitizedImg;
+                                }
+                                if (sheetUser.timestamp) {
+                                    exists.timestamp = sheetUser.timestamp;
                                 }
                             }
                         });
 
-                        students.sort((a, b) => a.name.localeCompare(b.name));
-                        renderStudents(students);
+                        sortAndRenderStudents();
                     }
                     hideLoadingModal();
                 })
@@ -660,9 +716,8 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            students.sort((a, b) => a.name.localeCompare(b.name));
-            renderStudents(students);
-            fetchRoster(); // Pull in everyone else and their avatars from the live Google Sheet
+            sortAndRenderStudents();
+            fetchRoster();
         });
     </script>
 </body>
