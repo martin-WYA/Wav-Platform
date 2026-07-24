@@ -1671,6 +1671,19 @@
                             pointsVal.innerText = points;
                         }
 
+                        // --- FIX: Update the avatars using the live Sheet data ---
+                        if (userData.success && userData.avatar) {
+                            if (navAvatar) navAvatar.src = userData.avatar;
+                            if (mainAvatar) mainAvatar.src = userData.avatar;
+
+                            // Sync it to local storage so other pages get it immediately
+                            const localCache = JSON.parse(localStorage.getItem('wavumbuzi_user_data_complete') || "{}");
+                            localCache.fullName = userName;
+                            localCache.avatar = userData.avatar;
+                            localStorage.setItem('wavumbuzi_user_data_complete', JSON.stringify(localCache));
+                        }
+                        // ---------------------------------------------------------
+
                         let flags = {};
                         if (userData.success) {
                             try { flags = JSON.parse(userData.flags || "{}"); } catch (e) { }
@@ -1811,8 +1824,9 @@
 
         function handleEditClick() {
             endTour();
-            const param = userName ? "?user=" + encodeURIComponent(userName) : "";
-            window.location.href = "character_picker.html" + param;
+            //const param = userName ? "?user=" + encodeURIComponent(userName) : "";
+            //window.location.href = "character_picker.html" + param;
+            showComingSoon(); // Triggers the "Oops" modal instead of redirecting
         }
 
         // --- Dropdown Logic ---
