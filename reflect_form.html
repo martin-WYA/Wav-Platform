@@ -262,7 +262,7 @@
         .q-desc {
             font-size: 13px;
             color: #374151;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             line-height: 1.5;
             font-weight: 500;
         }
@@ -271,12 +271,12 @@
         input[type="text"] {
             width: 100%;
             border: 1px solid #d1d5db;
-            border-radius: 6px;
+            border-radius: 8px;
             padding: 14px;
-            font-size: 13px;
+            font-size: 13.5px;
             color: #111827;
             background-color: #ffffff;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
             font-weight: 500;
         }
 
@@ -284,12 +284,14 @@
         input[type="text"]:focus {
             border-color: #fba143;
             outline: none;
+            box-shadow: 0 0 0 3px rgba(251, 161, 67, 0.15);
         }
 
         textarea::placeholder,
         input[type="text"]::placeholder {
-            color: #9ca3af;
+            color: #4b5563;
             font-style: italic;
+            font-weight: 400;
         }
 
         textarea {
@@ -297,11 +299,37 @@
             resize: vertical;
         }
 
-        input[type="text"] {
+        /* --- QUESTION 3 FLOATING LABELS --- */
+        .floating-input-wrapper {
+            position: relative;
             margin-bottom: 12px;
+            width: 100%;
         }
 
-        input[type="text"]:last-child {
+        .floating-input-wrapper:last-child {
+            margin-bottom: 0;
+        }
+
+        .floating-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748b;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            position: absolute;
+            top: 12px;
+            left: 16px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .floating-input-wrapper input[type="text"] {
+            padding-top: 32px;
+            padding-bottom: 12px;
+            padding-left: 16px;
+            padding-right: 16px;
+            height: auto;
             margin-bottom: 0;
         }
 
@@ -727,14 +755,40 @@
                             <div class="q-title">Question 3</div>
                             <div class="q-desc">Now create your own project idea to solve this problem.</div>
 
-                            <input type="text" id="inp-idea" placeholder="My idea is called...">
-                            <input type="text" id="inp-prob" placeholder="The problem it solves is...">
-                            <input type="text" id="inp-people" placeholder="The people it helps are...">
-                            <input type="text" id="inp-sol" placeholder="The solution is...">
-                            <input type="text" id="inp-money"
-                                placeholder="The way it could earn or save money to support itself is...">
-                            <input type="text" id="inp-res" placeholder="The resources I can start with are...">
-                            <input type="text" id="inp-step" placeholder="The first small step is...">
+                            <div class="floating-input-wrapper">
+                                <label class="floating-label">WHAT IS YOUR IDEA CALLED?</label>
+                                <input type="text" id="inp-idea" placeholder="Write your answer">
+                            </div>
+
+                            <div class="floating-input-wrapper">
+                                <label class="floating-label">WHAT PROBLEM DOES IT SOLVE?</label>
+                                <input type="text" id="inp-prob" placeholder="Write your answer">
+                            </div>
+
+                            <div class="floating-input-wrapper">
+                                <label class="floating-label">WHICH PEOPLE DOES IT HELP?</label>
+                                <input type="text" id="inp-people" placeholder="Write your answer">
+                            </div>
+
+                            <div class="floating-input-wrapper">
+                                <label class="floating-label">WHAT IS THE SOLUTION?</label>
+                                <input type="text" id="inp-sol" placeholder="Write your answer">
+                            </div>
+
+                            <div class="floating-input-wrapper">
+                                <label class="floating-label">HOW COULD IT EARN OR SAVE MONEY TO SUPPORT ITSELF?</label>
+                                <input type="text" id="inp-money" placeholder="Write your answer">
+                            </div>
+
+                            <div class="floating-input-wrapper">
+                                <label class="floating-label">WHAT RESOURCES CAN YOU START WITH?</label>
+                                <input type="text" id="inp-res" placeholder="Write your answer">
+                            </div>
+
+                            <div class="floating-input-wrapper">
+                                <label class="floating-label">WHAT IS THE FIRST SMALL STEP?</label>
+                                <input type="text" id="inp-step" placeholder="Write your answer">
+                            </div>
                         </div>
                     </div>
 
@@ -802,7 +856,8 @@
                         </div>
                         <div class="preview-field"><b>The solution is...</b> <span id="prev-val-sol"></span></div>
                         <div class="preview-field"><b>The way it could earn or save money to support itself is...</b>
-                            <span id="prev-val-money"></span></div>
+                            <span id="prev-val-money"></span>
+                        </div>
                         <div class="preview-field"><b>The resources I can start with are...</b> <span
                                 id="prev-val-res"></span></div>
                         <div class="preview-field"><b>The first small step is...</b> <span id="prev-val-step"></span>
