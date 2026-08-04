@@ -1,10 +1,19 @@
+// ==========================================================================
+// UNIVERSAL HELPER: Case-Insensitive User Matching
+// ==========================================================================
+function isMatchingUser(sheetValue, inputUser) {
+  if (!sheetValue || !inputUser) return false;
+  return sheetValue.toString().trim().toLowerCase() === inputUser.toString().trim().toLowerCase();
+}
+
+// ==========================================================================
+// MAIN GET HANDLER
+// ==========================================================================
 function doGet(e) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName("Users") || ss.getSheets()[0];
 
-  // =========================================
   // Load Discover & Explore Game States
-  // =========================================
   if (e.parameter.action === 'loadDiscover') return handleLoadDiscover(e.parameter.user);
   if (e.parameter.action === 'loadExplore') return handleLoadExplore(e.parameter.user);
 
@@ -33,14 +42,12 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 
-  // ACTION 2: Get a Specific User's Data (Avatar, Points & Flags)
+  // ACTION 2: Get a Specific User's Data (Avatar, Total Combined Points & Flags)
   if (e.parameter.action === 'getUserData') {
     var user = e.parameter.user;
     if (!user) return ContentService.createTextOutput(JSON.stringify({ error: "No parameters provided" })).setMimeType(ContentService.MimeType.JSON);
 
-    var lowerUser = user.trim().toLowerCase();
-    var data = sheet.getDataRange().getValues(); // "Users" sheet
-
+    var data = sheet.getDataRange().getValues();
     var basePoints = 0;
     var avatar = "new_user.png";
     var flags = "{}";
@@ -48,7 +55,7 @@ function doGet(e) {
 
     // 1. Find user in the main Users sheet
     for (var i = data.length - 1; i >= 1; i--) {
-      if (data[i][1] && data[i][1].toString().trim().toLowerCase() === lowerUser) {
+      if (isMatchingUser(data[i][1], user)) {
         userFound = true;
         avatar = data[i][4] || "new_user.png";
         basePoints = Number(data[i][5]) || 0; // Column F
@@ -61,25 +68,25 @@ function doGet(e) {
       var discoverPoints = 0;
       var explorePoints = 0;
 
-      // 2. Fetch Discover Points
+      // 2. Fetch Discover Points (Only query if data rows exist)
       var discoverSheet = ss.getSheetByName("Discover");
-      if (discoverSheet) {
+      if (discoverSheet && discoverSheet.getLastRow() > 1) {
         var dData = discoverSheet.getDataRange().getValues();
         for (var j = dData.length - 1; j >= 1; j--) {
-          if (dData[j][0] && dData[j][0].toString().trim().toLowerCase() === lowerUser) {
-            discoverPoints = Number(dData[j][1]) || 0; // Total Points is Column B (Index 1)
+          if (isMatchingUser(dData[j][0], user)) {
+            discoverPoints = Number(dData[j][1]) || 0; // Column B (Index 1)
             break;
           }
         }
       }
 
-      // 3. Fetch Explore Points
+      // 3. Fetch Explore Points (Only query if data rows exist)
       var exploreSheet = ss.getSheetByName("Explore");
-      if (exploreSheet) {
+      if (exploreSheet && exploreSheet.getLastRow() > 1) {
         var eData = exploreSheet.getDataRange().getValues();
         for (var k = eData.length - 1; k >= 1; k--) {
-          if (eData[k][0] && eData[k][0].toString().trim().toLowerCase() === lowerUser) {
-            explorePoints = Number(eData[k][1]) || 0; // Total Points is Column B (Index 1)
+          if (isMatchingUser(eData[k][0], user)) {
+            explorePoints = Number(eData[k][1]) || 0; // Column B (Index 1)
             break;
           }
         }
@@ -102,7 +109,7 @@ function doGet(e) {
   // ACTION 3: Get all Reflections for the Community Board
   if (e.parameter.action === 'getReflections') {
     var reflectSheet = ss.getSheetByName("Reflections");
-    if (!reflectSheet) {
+    if (!reflectSheet || reflectSheet.getLastRow() <= 1) {
       return ContentService.createTextOutput(JSON.stringify({ success: true, reflections: [] })).setMimeType(ContentService.MimeType.JSON);
     }
 
@@ -125,7 +132,7 @@ function doGet(e) {
   if (userParam) {
     var data = sheet.getDataRange().getValues();
     for (var i = data.length - 1; i >= 1; i--) {
-      if (data[i][1] && data[i][1].toString().trim().toLowerCase() === userParam.trim().toLowerCase()) {
+      if (isMatchingUser(data[i][1], userParam)) {
         return ContentService.createTextOutput(JSON.stringify({
           success: true,
           sequence: data[i][3],
@@ -138,6 +145,9 @@ function doGet(e) {
   return ContentService.createTextOutput(JSON.stringify({ error: "User not found" })).setMimeType(ContentService.MimeType.JSON);
 }
 
+// ==========================================================================
+// MAIN POST HANDLER
+// ==========================================================================
 function doPost(e) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -165,7 +175,7 @@ function doPost(e) {
     if (data.action === 'saveUserFlags') {
       var rows = sheet.getDataRange().getValues();
       for (var i = rows.length - 1; i >= 1; i--) {
-        if (rows[i][1] && data.user && rows[i][1].toString().trim().toLowerCase() === data.user.toString().trim().toLowerCase()) {
+        if (isMatchingUser(rows[i][1], data.user)) {
           var existingFlagsStr = rows[i][6] || "{}";
           var existingFlags = {};
 
@@ -199,7 +209,7 @@ function doPost(e) {
       var alreadySubmitted = false;
       var reflectData = reflectSheet.getDataRange().getValues();
       for (var j = reflectData.length - 1; j >= 1; j--) {
-        if (reflectData[j][1] && reflectData[j][1].toString().trim().toLowerCase() === data.user.trim().toLowerCase()) {
+        if (isMatchingUser(reflectData[j][1], data.user)) {
           alreadySubmitted = true;
           break;
         }
@@ -212,7 +222,7 @@ function doPost(e) {
 
         var rows = sheet.getDataRange().getValues();
         for (var i = rows.length - 1; i >= 1; i--) {
-          if (rows[i][1] && rows[i][1].toString().trim().toLowerCase() === data.user.trim().toLowerCase()) {
+          if (isMatchingUser(rows[i][1], data.user)) {
             var currentPoints = Number(rows[i][5]) || 0;
             sheet.getRange(i + 1, 6).setValue(currentPoints + 1000);
             break;
@@ -226,7 +236,7 @@ function doPost(e) {
     if (data.action === 'updateAvatar') {
       var rows = sheet.getDataRange().getValues();
       for (var i = rows.length - 1; i >= 1; i--) {
-        if (rows[i][1] && rows[i][1].toString().trim().toLowerCase() === data.fullName.trim().toLowerCase()) {
+        if (isMatchingUser(rows[i][1], data.fullName)) {
           sheet.getRange(i + 1, 5).setValue(data.avatar);
           return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
         }
@@ -237,8 +247,6 @@ function doPost(e) {
     // =========================================
     // DEFAULT ACTION: Registration
     // =========================================
-    // If the payload has no specific action, it is treated as a new registration. 
-    // We explicitly check for pictographicPassword to prevent rogue payloads from crashing the script.
     if (!data.action || data.action === 'register') {
       if (!data.pictographicPassword) {
         throw new Error("Missing pictographicPassword in registration payload. Payload received: " + JSON.stringify(data));
@@ -247,7 +255,6 @@ function doPost(e) {
       return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    // If an action was sent but is not recognized by any IF statements above:
     throw new Error("Unrecognized action received: " + data.action + " | Full payload: " + JSON.stringify(data));
 
   } catch (globalError) {
@@ -270,8 +277,7 @@ function handleLoadExplore(user) {
 
   var dataRange = sheet.getDataRange().getValues();
   for (var i = 1; i < dataRange.length; i++) {
-    if (dataRange[i][0] && dataRange[i][0].toString().trim().toLowerCase() === user.trim().toLowerCase()) {
-      // Index 5 targets the newly shifted "Save Data JSON" column
+    if (isMatchingUser(dataRange[i][0], user)) {
       return ContentService.createTextOutput(JSON.stringify({ status: 'success', data: dataRange[i][5] })).setMimeType(ContentService.MimeType.JSON);
     }
   }
@@ -282,7 +288,6 @@ function handleSaveExplore(data) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName("Explore");
 
-  // Include the new 7-column header structure
   if (!sheet) {
     sheet = ss.insertSheet("Explore");
     sheet.appendRow(["Full Name", "Total Points", "Points Breakdown", "Ending Reached", "Self Review", "Save Data JSON", "Last Updated"]);
@@ -294,16 +299,12 @@ function handleSaveExplore(data) {
   var review = data.review ? JSON.stringify(data.review) : "N/A";
   var timestamp = new Date();
 
-  // =======================================
-  // CALCULATE TOTAL POINTS & BREAKDOWN
-  // =======================================
   var totalPoints = 0;
   var pointsBreakdown = "{}";
 
   if (data.points) {
     if (typeof data.points === 'object') {
       pointsBreakdown = JSON.stringify(data.points);
-      // Loop through category numbers and sum them
       for (var key in data.points) {
         if (typeof data.points[key] === 'number') {
           totalPoints += data.points[key];
@@ -319,13 +320,13 @@ function handleSaveExplore(data) {
   var rowIndex = -1;
 
   for (var i = 1; i < dataRange.length; i++) {
-    if (dataRange[i][0] && dataRange[i][0].toString().trim().toLowerCase() === fullName.trim().toLowerCase()) {
+    if (isMatchingUser(dataRange[i][0], fullName)) {
       rowIndex = i + 1;
       break;
     }
   }
 
-  // Write exactly 7 columns of data
+  // Batched 7-column write
   if (rowIndex > -1) {
     sheet.getRange(rowIndex, 1, 1, 7).setValues([[fullName, totalPoints, pointsBreakdown, ending, review, data.saveData, timestamp]]);
   } else {
@@ -346,7 +347,7 @@ function handleLoadDiscover(user) {
 
   var dataRange = sheet.getDataRange().getValues();
   for (var i = 1; i < dataRange.length; i++) {
-    if (dataRange[i][0] && dataRange[i][0].toString().trim().toLowerCase() === user.trim().toLowerCase()) {
+    if (isMatchingUser(dataRange[i][0], user)) {
       return ContentService.createTextOutput(JSON.stringify({ status: 'success', data: dataRange[i][5] })).setMimeType(ContentService.MimeType.JSON);
     }
   }
@@ -369,18 +370,25 @@ function handleSaveDiscover(data) {
   var rowIndex = -1;
 
   for (var i = 1; i < dataRange.length; i++) {
-    if (dataRange[i][0] && dataRange[i][0].toString().trim().toLowerCase() === fullName.trim().toLowerCase()) {
+    if (isMatchingUser(dataRange[i][0], fullName)) {
       rowIndex = i + 1;
       break;
     }
   }
 
-  if (rowIndex > -1) sheet.getRange(rowIndex, 1, 1, 7).setValues([[fullName, data.points || 0, data.coins || 0, data.categoryPoints || "{}", data.categoryCoins || "{}", data.saveData, timestamp]]);
-  else sheet.appendRow([fullName, data.points || 0, data.coins || 0, data.categoryPoints || "{}", data.categoryCoins || "{}", data.saveData, timestamp]);
+  // Batched 7-column write
+  if (rowIndex > -1) {
+    sheet.getRange(rowIndex, 1, 1, 7).setValues([[fullName, data.points || 0, data.coins || 0, data.categoryPoints || "{}", data.categoryCoins || "{}", data.saveData, timestamp]]);
+  } else {
+    sheet.appendRow([fullName, data.points || 0, data.coins || 0, data.categoryPoints || "{}", data.categoryCoins || "{}", data.saveData, timestamp]);
+  }
 
   return ContentService.createTextOutput(JSON.stringify({ status: 'success' })).setMimeType(ContentService.MimeType.JSON);
 }
 
+// ==========================================================================
+// ERROR & EVENT LOGGER
+// ==========================================================================
 function logToSpreadsheet(type, message) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
