@@ -23,7 +23,8 @@ function doGet(e) {
           seen.add(lowerName);
           users.push({
             name: name.toString().trim(),
-            avatar: avatar ? avatar.toString().trim() : "new_user.png"
+            avatar: avatar ? avatar.toString().trim() : "new_user.png",
+            timestamp: data[i][0]
           });
         }
       }
@@ -270,7 +271,8 @@ function handleLoadExplore(user) {
   var dataRange = sheet.getDataRange().getValues();
   for (var i = 1; i < dataRange.length; i++) {
     if (dataRange[i][0] && dataRange[i][0].toString().trim().toLowerCase() === user.trim().toLowerCase()) {
-      return ContentService.createTextOutput(JSON.stringify({ status: 'success', data: dataRange[i][4] })).setMimeType(ContentService.MimeType.JSON);
+      // Index 5 targets the newly shifted "Save Data JSON" column
+      return ContentService.createTextOutput(JSON.stringify({ status: 'success', data: dataRange[i][5] })).setMimeType(ContentService.MimeType.JSON);
     }
   }
   return ContentService.createTextOutput(JSON.stringify({ status: 'not_found' })).setMimeType(ContentService.MimeType.JSON);
@@ -280,17 +282,39 @@ function handleSaveExplore(data) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName("Explore");
 
+  // Include the new 7-column header structure
   if (!sheet) {
     sheet = ss.insertSheet("Explore");
-    sheet.appendRow(["Full Name", "Total Points", "Ending Reached", "Self Review", "Save Data JSON", "Last Updated"]);
+    sheet.appendRow(["Full Name", "Total Points", "Points Breakdown", "Ending Reached", "Self Review", "Save Data JSON", "Last Updated"]);
     sheet.setFrozenRows(1);
   }
 
   var fullName = data.user;
-  var points = data.points || 0;
   var ending = data.ending || "N/A";
   var review = data.review ? JSON.stringify(data.review) : "N/A";
   var timestamp = new Date();
+
+  // =======================================
+  // CALCULATE TOTAL POINTS & BREAKDOWN
+  // =======================================
+  var totalPoints = 0;
+  var pointsBreakdown = "{}";
+
+  if (data.points) {
+    if (typeof data.points === 'object') {
+      pointsBreakdown = JSON.stringify(data.points);
+      // Loop through category numbers and sum them
+      for (var key in data.points) {
+        if (typeof data.points[key] === 'number') {
+          totalPoints += data.points[key];
+        }
+      }
+    } else {
+      totalPoints = Number(data.points) || 0;
+      pointsBreakdown = data.points.toString();
+    }
+  }
+
   var dataRange = sheet.getDataRange().getValues();
   var rowIndex = -1;
 
@@ -301,8 +325,12 @@ function handleSaveExplore(data) {
     }
   }
 
-  if (rowIndex > -1) sheet.getRange(rowIndex, 1, 1, 6).setValues([[fullName, points, ending, review, data.saveData, timestamp]]);
-  else sheet.appendRow([fullName, points, ending, review, data.saveData, timestamp]);
+  // Write exactly 7 columns of data
+  if (rowIndex > -1) {
+    sheet.getRange(rowIndex, 1, 1, 7).setValues([[fullName, totalPoints, pointsBreakdown, ending, review, data.saveData, timestamp]]);
+  } else {
+    sheet.appendRow([fullName, totalPoints, pointsBreakdown, ending, review, data.saveData, timestamp]);
+  }
 
   return ContentService.createTextOutput(JSON.stringify({ status: 'success' })).setMimeType(ContentService.MimeType.JSON);
 }
