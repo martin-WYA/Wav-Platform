@@ -1060,7 +1060,7 @@
                 step: document.getElementById('inp-step').value
             };
 
-            // Local cache backup for instant rendering and optimistic completion
+            // 1. Save optimistically to local cache for instant rendering
             localStorage.setItem('wavumbuzi_reflect_submission', JSON.stringify(submissionData));
             try {
                 const localObj = JSON.parse(localStorage.getItem('wavumbuzi_user_data_complete') || "{}");
@@ -1068,33 +1068,30 @@
                 localStorage.setItem('wavumbuzi_user_data_complete', JSON.stringify(localObj));
             } catch (e) { }
 
-            // --- ADD THIS LINE: Persist completion flag to Google Sheets ---
+            // 2. Fire-and-forget: Persist completion flag to Google Sheets
             fetch(APP_SCRIPT_URL, {
-                method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'saveUserFlags', user: userName, flags: { hasCompletedReflect: true } })
             }).catch(e => console.error("Flag save failed", e));
-            // ---------------------------------------------------------------
 
-            fetchWithTimeout(APP_SCRIPT_URL, {
+            // 3. Fire-and-forget: Submit reflection payload to Google Sheets without hanging on CORS/redirects
+            fetch(APP_SCRIPT_URL, {
                 method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(submissionData)
-            }, 30000)
-                .then(response => response.json())
-                .then(data => {
-                    hideLoadingModal();
-                    setTimeout(() => {
-                        showSuccessModal();
-                        submitBtn.disabled = false;
-                    }, 300);
-                })
-                .catch(error => {
-                    console.error('Error saving post:', error);
-                    hideLoadingModal();
-                    setTimeout(() => {
-                        alert("The server took too long to respond due to a slow connection.\n\nYour reflection has been saved locally. Please try clicking SUBMIT again.");
-                        submitBtn.disabled = false;
-                    }, 300);
-                });
+            }).catch(e => console.error("Background reflection submit error:", e));
+
+            // 4. Display satisfying 1.2s decorative loading state, then trigger confetti & success modal!
+            setTimeout(() => {
+                hideLoadingModal();
+                setTimeout(() => {
+                    showSuccessModal();
+                    submitBtn.disabled = false;
+                }, 300);
+            }, 1200);
         }
 
         let confettiAnimationId;
