@@ -519,7 +519,6 @@
             width: 100%;
             height: 100%;
             background-color: rgba(17, 26, 34, 0.85);
-            /* Dark overlay */
             z-index: 4000;
             display: none;
             flex-direction: column;
@@ -918,6 +917,14 @@
     <script>
         const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTyvz2azkYILUbhFaWlQOZ454b9E_flwAlQ41cIhjacIfFop8Ter193nojY47uALI/exec';
 
+        // Helper to abort hanging fetch requests (15 seconds max)
+        function fetchWithTimeout(url, options = {}, timeoutMs = 30000) {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeoutMs);
+            return fetch(url, { ...options, signal: controller.signal })
+                .finally(() => clearTimeout(id));
+        }
+
         // --- 1. Populate User Data ---
         const urlParams = new URLSearchParams(window.location.search);
         let userName = urlParams.get('user') || "Akira N";
@@ -1053,26 +1060,38 @@
                 step: document.getElementById('inp-step').value
             };
 
-            // Local cache as backup for immediate rendering
+            // Local cache backup for instant rendering and optimistic completion
             localStorage.setItem('wavumbuzi_reflect_submission', JSON.stringify(submissionData));
+            try {
+                const localObj = JSON.parse(localStorage.getItem('wavumbuzi_user_data_complete') || "{}");
+                localObj.reflectCompleted = true;
+                localStorage.setItem('wavumbuzi_user_data_complete', JSON.stringify(localObj));
+            } catch (e) { }
 
+            // --- ADD THIS LINE: Persist completion flag to Google Sheets ---
             fetch(APP_SCRIPT_URL, {
+                method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'saveUserFlags', user: userName, flags: { hasCompletedReflect: true } })
+            }).catch(e => console.error("Flag save failed", e));
+            // ---------------------------------------------------------------
+
+            fetchWithTimeout(APP_SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify(submissionData)
-            })
+            }, 30000)
                 .then(response => response.json())
                 .then(data => {
                     hideLoadingModal();
                     setTimeout(() => {
                         showSuccessModal();
                         submitBtn.disabled = false;
-                    }, 300); // Wait for loading modal to fade out
+                    }, 300);
                 })
                 .catch(error => {
                     console.error('Error saving post:', error);
                     hideLoadingModal();
                     setTimeout(() => {
-                        alert("There was an error saving your post. Please try again.");
+                        alert("The server took too long to respond due to a slow connection.\n\nYour reflection has been saved locally. Please try clicking SUBMIT again.");
                         submitBtn.disabled = false;
                     }, 300);
                 });

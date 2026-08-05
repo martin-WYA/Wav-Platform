@@ -49,8 +49,7 @@
             background-color: #f2f8fa;
             width: 100%;
             max-width: 800px;
-            max-height: 83vh;
-            /* Increased from 75vh to fill more window height */
+            max-height: 90vh;
             display: flex;
             flex-direction: column;
             border-radius: 20px;
@@ -465,7 +464,8 @@
             </div>
 
             <div class="button-row">
-                <button type="button" class="btn btn-back" onclick="window.location.href='index.html'">GO BACK</button>
+                <button type="button" class="btn btn-signup" onclick="window.location.href='index.html'">GO
+                    BACK</button>
                 <button type="button" class="btn btn-next" id="nextBtn" onclick="goToPasswordScreen()"
                     disabled>NEXT</button>
             </div>
@@ -505,30 +505,11 @@
         }
 
         const urlParams = new URLSearchParams(window.location.search);
-        let newUserName = urlParams.get('newuser');
-        let localAvatar = "new_user.png";
-
-        const savedData = localStorage.getItem('wavumbuzi_user_data_complete');
-        if (savedData) {
-            try {
-                const parsedData = JSON.parse(savedData);
-                if (parsedData && parsedData.fullName && !newUserName) {
-                    newUserName = parsedData.fullName;
-                }
-                if (parsedData && parsedData.avatar) {
-                    localAvatar = sanitizeAvatar(parsedData.avatar);
-                }
-            } catch (e) { }
-        }
+        const newUserName = urlParams.get('newuser');
 
         let selectedStudent = null;
 
-        function formatName(name) {
-            if (!name) return "";
-            if (name.length > 12) return name.substring(0, 10) + "...";
-            return name;
-        }
-
+        // RESTORED BUILT-IN DEMO USERS
         let students = [
             { name: "Aminate Diallo", img: "assets_login/Aminate_Diallo.jpg" },
             { name: "Adeaze Okafor", img: "assets_login/Adeaze_Okafor.jpg" },
@@ -553,20 +534,18 @@
             { name: "Kwame Mensah", img: "assets_login/Kwame_Mens....jpg" }
         ];
 
-        if (newUserName) {
-            const exists = students.find(s => s.name.toLowerCase() === newUserName.toLowerCase());
-            if (!exists) {
-                students.push({
-                    name: newUserName,
-                    img: sanitizeAvatar(localAvatar),
-                    isNewUser: true,
-                    timestamp: new Date().toISOString() // Locally generated mock timestamp for immediate hoisting
-                });
-            } else {
-                if (localAvatar && localAvatar !== "new_user.png") {
-                    exists.img = sanitizeAvatar(localAvatar);
-                }
-            }
+        function formatName(name) {
+            if (!name) return "";
+            if (name.length > 12) return name.substring(0, 10) + "...";
+            return name;
+        }
+
+        // Helper to abort hanging fetch requests (16 seconds max for roster gateway)
+        function fetchWithTimeout(url, options = {}, timeoutMs = 30000) {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeoutMs);
+            return fetch(url, { ...options, signal: controller.signal })
+                .finally(() => clearTimeout(id));
         }
 
         const gridContainer = document.getElementById('avatarGrid');
@@ -617,7 +596,7 @@
                 card.innerHTML = `
                     ${badgeHtml}
                     <div class="avatar-img-wrapper">
-                        <img src="${student.img}" alt="${student.name}" onerror="this.onerror=null; this.src='new_user.png';">
+                        <img src="${student.img}" alt="${student.name}" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;100&quot; height=&quot;100&quot;><rect width=&quot;100&quot; height=&quot;100&quot; fill=&quot;%23e2ecef&quot;/></svg>';">
                     </div>
                     <div class="avatar-name" title="${student.name}">${displayName}</div>
                 `;
@@ -625,6 +604,15 @@
                 card.onclick = () => selectStudent(index, student.name);
                 gridContainer.appendChild(card);
             });
+
+            if (newUserName) {
+                const index = students.findIndex(s => s.name.toLowerCase() === newUserName.trim().toLowerCase());
+                if (index > -1) {
+                    selectStudent(index, students[index].name);
+                    const targetEl = document.getElementById(`student_${index}`);
+                    if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
         }
 
         function selectStudent(index, name) {
@@ -680,7 +668,8 @@
         function fetchRoster() {
             showLoadingModal();
             const fetchUrl = GOOGLE_SHEET_WEB_APP_URL + "?action=getRoster";
-            fetch(fetchUrl)
+
+            fetchWithTimeout(fetchUrl, {}, 30000)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success && data.users) {
@@ -692,8 +681,7 @@
                                 students.push({
                                     name: sheetUser.name,
                                     img: sanitizedImg,
-                                    isNewUser: true,
-                                    timestamp: sheetUser.timestamp // Expecting timestamp from App Script
+                                    timestamp: sheetUser.timestamp
                                 });
                             } else {
                                 if (sheetUser.avatar && sheetUser.avatar !== "new_user.png") {
@@ -706,18 +694,22 @@
                         });
 
                         sortAndRenderStudents();
+                    } else {
+                        throw new Error("Invalid server payload received");
                     }
                     hideLoadingModal();
                 })
                 .catch(err => {
-                    console.error("Error fetching roster from Google Sheets", err);
+                    console.error("Roster gateway timeout or failure:", err);
                     hideLoadingModal();
+                    alert("The server took too long to respond due to a slow connection.\n\nThe page will now reload so you can try again.");
+                    window.location.reload();
                 });
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            sortAndRenderStudents();
-            fetchRoster();
+            sortAndRenderStudents(); // Render demo users immediately on load
+            fetchRoster(); // Fetch from sheet and merge/sort seamlessly
         });
     </script>
 </body>

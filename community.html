@@ -889,7 +889,8 @@
 
             <div class="profile-dropdown-wrapper" id="profileDropdownWrapper">
                 <div class="profile-group" onclick="toggleDropdown(event)">
-                    <img src="new_user.png" id="navAvatar" class="profile-avatar" alt="User Profile">
+                    <img src="new_user.png" id="navAvatar" class="profile-avatar" alt="User Profile"
+                        onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;100&quot; height=&quot;100&quot;><rect width=&quot;100&quot; height=&quot;100&quot; fill=&quot;%23e2ecef&quot;/></svg>';">
                     <span class="profile-name" id="navNameDisplay">User</span>
                     <img src="assets_challenge/Arrow%20icon.png" class="chevron-down" alt="Dropdown">
                 </div>
@@ -1173,6 +1174,13 @@
             } catch (e) { }
         }
 
+        function fetchWithTimeout(url, options = {}, timeoutMs = 30000) {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeoutMs);
+            return fetch(url, { ...options, signal: controller.signal })
+                .finally(() => clearTimeout(id));
+        }
+
         // --- Modals Logic ---
         function showLoadingModal(text) {
             document.getElementById('loadingText').innerText = text;
@@ -1187,6 +1195,56 @@
             setTimeout(() => modal.style.display = 'none', 300);
         }
 
+        // Renders community reflections cleanly to the board
+        function renderReflections(reflections) {
+            const postList = document.getElementById('postListContainer');
+
+            // Remove any dynamically added cards from previous renders while keeping static demo cards #1 - #3
+            const existingDynamics = postList.querySelectorAll('.dynamic-card');
+            existingDynamics.forEach(card => card.remove());
+
+            if (reflections && reflections.length > 0) {
+                let currentRank = 4;
+
+                reflections.forEach(reflection => {
+                    const newCard = document.createElement('div');
+                    newCard.className = 'post-card collapsed dynamic-card';
+                    newCard.innerHTML = `
+                        <div class="post-header">
+                            <div class="ph-left">
+                                <span class="ph-rank">#${currentRank}</span>
+                                <img src="${reflection.avatar || 'new_user.png'}" class="ph-avatar" alt="Avatar">
+                                <div class="ph-info">
+                                    <div class="ph-title">${reflection.idea || 'My Awesome Idea'}</div>
+                                    <div class="ph-author">${reflection.user || 'User'}</div>
+                                </div>
+                            </div>
+                            <div class="ph-actions">
+                                <button class="btn-upvote" onclick="toggleUpvote(this, 0)">
+                                    <svg viewBox="0 0 24 24"><path d="M2 10h4v11H2zM21.46 11.59l-1.04-4.17A2.002 2.002 0 0 0 18.48 6H13V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v6l-2.06 2.06V21h10.29c.87 0 1.63-.55 1.9-1.38l2.3-9A2.006 2.006 0 0 0 21.46 11.59z"/></svg>
+                                    <span>0</span>
+                                </button>
+                                <button class="btn-toggle" onclick="toggleCard(this)">
+                                    <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="post-body">
+                            <div class="preview-field"><b>My idea is called...</b> ${reflection.idea}</div>
+                            <div class="preview-field"><b>The problem it solves is...</b> ${reflection.prob}</div>
+                            <div class="preview-field"><b>The people it helps are...</b> ${reflection.people}</div>
+                            <div class="preview-field"><b>The solution is...</b> ${reflection.sol}</div>
+                            <div class="preview-field"><b>The way it could earn or save money to support itself is...</b> ${reflection.money}</div>
+                            <div class="preview-field"><b>The resources I can start with are...</b> ${reflection.res}</div>
+                            <div class="preview-field"><b>The first small step is...</b> ${reflection.step}</div>
+                        </div>
+                    `;
+                    postList.appendChild(newCard);
+                    currentRank++;
+                });
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             if (userName) {
                 const nameParts = userName.trim().split(/\s+/);
@@ -1197,57 +1255,36 @@
                 document.getElementById('navAvatar').src = userAvatar;
             }
 
-            // Fetch dynamic posts from Google Spreadsheet
-            showLoadingModal("Fetching your posts...");
+            // 1. INSTANT LOCAL CACHE RENDER (0ms delay)
+            let hasCachedReflections = false;
+            const cachedPosts = localStorage.getItem('wavumbuzi_cached_reflections');
+            if (cachedPosts) {
+                try {
+                    const parsedPosts = JSON.parse(cachedPosts);
+                    if (Array.isArray(parsedPosts)) {
+                        hasCachedReflections = true;
+                        renderReflections(parsedPosts);
+                    }
+                } catch (e) { }
+            }
 
-            fetch(APP_SCRIPT_URL + '?action=getReflections')
+            // Only show loading modal if we have no cached reflections at all
+            if (!hasCachedReflections) {
+                showLoadingModal("Fetching your posts...");
+            }
+
+            // 2. SILENT BACKGROUND SERVER REVALIDATION
+            fetchWithTimeout(APP_SCRIPT_URL + '?action=getReflections', {}, 30000)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success && data.reflections && data.reflections.length > 0) {
-                        const postList = document.getElementById('postListContainer');
-                        let currentRank = 4;
-
-                        data.reflections.forEach(reflection => {
-                            const newCard = document.createElement('div');
-                            newCard.className = 'post-card collapsed';
-                            newCard.innerHTML = `
-                                <div class="post-header">
-                                    <div class="ph-left">
-                                        <span class="ph-rank">#${currentRank}</span>
-                                        <img src="${reflection.avatar || 'new_user.png'}" class="ph-avatar" alt="Avatar">
-                                        <div class="ph-info">
-                                            <div class="ph-title">${reflection.idea || 'My Awesome Idea'}</div>
-                                            <div class="ph-author">${reflection.user || 'User'}</div>
-                                        </div>
-                                    </div>
-                                    <div class="ph-actions">
-                                        <button class="btn-upvote" onclick="toggleUpvote(this, 0)">
-                                            <svg viewBox="0 0 24 24"><path d="M2 10h4v11H2zM21.46 11.59l-1.04-4.17A2.002 2.002 0 0 0 18.48 6H13V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v6l-2.06 2.06V21h10.29c.87 0 1.63-.55 1.9-1.38l2.3-9A2.006 2.006 0 0 0 21.46 11.59z"/></svg>
-                                            <span>0</span>
-                                        </button>
-                                        <button class="btn-toggle" onclick="toggleCard(this)">
-                                            <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="post-body">
-                                    <div class="preview-field"><b>My idea is called...</b> ${reflection.idea}</div>
-                                    <div class="preview-field"><b>The problem it solves is...</b> ${reflection.prob}</div>
-                                    <div class="preview-field"><b>The people it helps are...</b> ${reflection.people}</div>
-                                    <div class="preview-field"><b>The solution is...</b> ${reflection.sol}</div>
-                                    <div class="preview-field"><b>The way it could earn or save money to support itself is...</b> ${reflection.money}</div>
-                                    <div class="preview-field"><b>The resources I can start with are...</b> ${reflection.res}</div>
-                                    <div class="preview-field"><b>The first small step is...</b> ${reflection.step}</div>
-                                </div>
-                            `;
-                            postList.appendChild(newCard);
-                            currentRank++;
-                        });
-                    }
                     hideLoadingModal();
+                    if (data.success && data.reflections) {
+                        renderReflections(data.reflections);
+                        localStorage.setItem('wavumbuzi_cached_reflections', JSON.stringify(data.reflections));
+                    }
                 })
                 .catch(e => {
-                    console.error('Error loading submissions:', e);
+                    console.warn('Background community sync slow/unreachable. Retaining local state.', e);
                     hideLoadingModal();
                 });
         });

@@ -262,7 +262,6 @@
             filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.4));
         }
 
-        /* Hero Badge Container */
         .hero-badge-container {
             position: absolute;
             right: 48px;
@@ -536,7 +535,6 @@
             width: 100%;
         }
 
-        /* Completed State Row Styling (GOLD) */
         .quest-container.completed .timeline-section {
             background-color: #2b1d14;
         }
@@ -569,7 +567,6 @@
             border-bottom: none;
         }
 
-        /* Custom Connecting Lines */
         .line-up {
             position: absolute;
             left: 99px;
@@ -596,7 +593,6 @@
             background-color: #83929b;
         }
 
-        /* Timeline Nodes */
         .node-wrapper {
             width: 104px;
             height: 104px;
@@ -648,7 +644,6 @@
             letter-spacing: 0.2px;
         }
 
-        /* Text Content */
         .tl-text {
             flex-grow: 1;
             display: flex;
@@ -672,7 +667,6 @@
             max-width: 500px;
         }
 
-        /* Action Area (Buttons & Tags) */
         .tl-action {
             display: flex;
             flex-direction: column;
@@ -885,7 +879,6 @@
             box-shadow: 0 6px 16px rgba(232, 133, 36, 0.4);
         }
 
-        /* Specific Hourglass Loading Styles */
         .loading-card {
             background: linear-gradient(90deg, #d3e5e0 0%, #f4ebd9 100%);
             border-radius: 16px;
@@ -923,7 +916,6 @@
             bottom: 30px;
             left: 30px;
             z-index: 6000;
-            /* Stays securely above the award overlay! */
             display: none;
             opacity: 0;
             transform: translateY(20px);
@@ -1184,7 +1176,6 @@
 
     <!-- Dynamic Unlock Notification Modal (Corner Anchor) -->
     <div id="unlockNotificationModal" class="unlock-notification-container">
-        <!-- Replaced standard dialog card padding to securely fit beneath the absolute robot image, removed secondary paragraph text -->
         <div class="dialog-card"
             style="background: linear-gradient(180deg, #d1eaf0 0%, #eef7f9 100%); position: relative; padding: 75px 24px 32px 24px; margin: 0; width: 100%; border: none;">
             <img src="Mwenza_ipad.png" alt="Robot Guide" class="robot-guide-img" onerror="this.style.display='none'">
@@ -1231,7 +1222,8 @@
 
             <div class="profile-dropdown-wrapper" id="profileDropdownWrapper">
                 <div class="profile-group" onclick="toggleDropdown(event)">
-                    <img src="new_user.png" id="navAvatar" class="profile-avatar" alt="User Profile">
+                    <img src="new_user.png" id="navAvatar" class="profile-avatar" alt="User Profile"
+                        onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;100&quot; height=&quot;100&quot;><rect width=&quot;100&quot; height=&quot;100&quot; fill=&quot;%23e2ecef&quot;/></svg>';">
                     <span class="profile-name" id="navNameDisplay">User</span>
                     <img src="assets_challenge/Arrow%20icon.png" class="chevron-down" alt="Dropdown">
                 </div>
@@ -1407,7 +1399,6 @@
     <script>
         const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwTyvz2azkYILUbhFaWlQOZ454b9E_flwAlQ41cIhjacIfFop8Ter193nojY47uALI/exec';
 
-        // --- Populate User Data ---
         const urlParams = new URLSearchParams(window.location.search);
         let userName = urlParams.get('user') || urlParams.get('newuser');
         let userAvatar = "new_user.png";
@@ -1425,9 +1416,13 @@
             } catch (e) { }
         }
 
-        const safeUserKey = (userName || "default").replace(/\s+/g, '_').toLowerCase();
+        function fetchWithTimeout(url, options = {}, timeoutMs = 12000) {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeoutMs);
+            return fetch(url, { ...options, signal: controller.signal })
+                .finally(() => clearTimeout(id));
+        }
 
-        // --- Retain Parameters and Route Functions ---
         function navigateToDiscover() {
             const dest = userName ? `discover_load.html?user=${encodeURIComponent(userName)}` : 'discover_load.html';
             window.location.href = dest;
@@ -1445,11 +1440,9 @@
             }).catch(e => console.error("Flag save failed", e));
         }
 
-        // --- Content Unlock Notification Infrastructure ---
         function triggerUnlockNotification(tierName, titleText, elementTargetId, userFlags, showAfterDelay = 0) {
             const flagKey = `alert_${tierName}_unlocked`;
 
-            // If flag exists on the backend, do nothing
             if (userFlags[flagKey]) return;
 
             const modal = document.getElementById('unlockNotificationModal');
@@ -1465,13 +1458,11 @@
                 }
             };
 
-            // Stage modal animation (with optional delay if waiting for a badge overlay to finish)
             setTimeout(() => {
                 modal.style.display = 'block';
                 setTimeout(() => modal.classList.add('show'), 50);
             }, showAfterDelay);
 
-            // Log viewing persistence state
             let newFlag = {};
             newFlag[flagKey] = true;
             saveFlagToSheet(newFlag);
@@ -1480,10 +1471,9 @@
         function closeUnlockModal() {
             const modal = document.getElementById('unlockNotificationModal');
             modal.classList.remove('show');
-            setTimeout(() => modal.style.display = 'none', 400); // Wait for transition
+            setTimeout(() => modal.style.display = 'none', 400);
         }
 
-        // --- Modals Logic ---
         function showQuestLoadingModal() {
             const modal = document.getElementById('questLoadingModal');
             modal.style.display = 'flex';
@@ -1524,7 +1514,161 @@
             }
         }
 
-        // --- Core Page Logic ---
+        // Apply visual quest progression state cleanly
+        function applyQuestState(points, flags, hasCompleted) {
+            if (hasCompleted) {
+                document.getElementById('quest-container').classList.add('completed');
+                document.getElementById('placeholder-badge').style.display = 'none';
+
+                const badgeContainer = document.getElementById('hero-badge-container');
+                badgeContainer.style.display = 'block';
+                document.getElementById('hero-badge-img').src = "assets_quest/Health%20challenge%20gold%20award.png";
+
+                document.getElementById('hero-cta-btn').innerText = "PLAY AGAIN";
+                document.getElementById('hero-cta-btn').onclick = () => navigateToExplore();
+
+                const btnDiscover = document.getElementById('btn-discover');
+                btnDiscover.innerText = "REVIEW DISCOVER";
+                btnDiscover.className = "btn-tl-outline";
+                btnDiscover.onclick = () => navigateToDiscover();
+
+                document.getElementById('row-explore').classList.remove('row-inactive');
+                document.getElementById('line-down-explore').classList.remove('bg-grey');
+                document.getElementById('line-down-explore').classList.add('bg-orange');
+
+                const nodeExplore = document.getElementById('node-explore');
+                nodeExplore.classList.remove('node-inactive');
+                nodeExplore.classList.add('node-active');
+                nodeExplore.innerHTML = '<img src="assets_challenge/Explore%20Magnifying%20glass.png" alt="Explore" class="node-icon-active">';
+
+                document.getElementById('tag-avail-explore').style.display = 'inline-flex';
+                const btnExplore = document.getElementById('btn-explore');
+                btnExplore.innerText = "REPLAY EXPLORE";
+                btnExplore.className = "btn-tl-active";
+                btnExplore.onclick = () => navigateToExplore();
+
+                document.getElementById('row-reflect').classList.remove('row-inactive');
+                document.getElementById('line-up-reflect').classList.remove('bg-grey');
+                document.getElementById('line-up-reflect').classList.add('bg-orange');
+
+                const nodeReflect = document.getElementById('node-reflect');
+                nodeReflect.classList.remove('node-inactive');
+                nodeReflect.classList.add('node-active');
+                nodeReflect.innerHTML = '<img src="assets_challenge/Reflect%20mirror.png" alt="Reflect" class="node-icon-active">';
+
+                document.getElementById('tag-reflect').style.display = 'inline-block';
+                document.getElementById('tag-avail-reflect').style.display = 'inline-flex';
+
+                const btnReflect = document.getElementById('btn-reflect');
+                btnReflect.innerText = "REVIEW REFLECT";
+                btnReflect.className = "btn-tl-outline";
+                btnReflect.onclick = () => window.location.href = "community.html";
+
+                document.getElementById('completion-banner').style.display = "flex";
+                document.getElementById('award-overlay-img').src = "assets_quest/Award%20overlay%20Gold%20badge.png";
+
+                if (!flags.awardGoldSeen) {
+                    setTimeout(() => {
+                        showAwardLoadingModal();
+                        setTimeout(() => hideAwardLoadingModal(), 2500);
+                    }, 500);
+                    saveFlagToSheet({ awardGoldSeen: true });
+                }
+
+            } else if (points >= 550) {
+                document.getElementById('placeholder-badge').style.display = 'none';
+
+                const badgeContainer = document.getElementById('hero-badge-container');
+                badgeContainer.style.display = 'block';
+                document.getElementById('hero-badge-img').src = "assets_quest/Health%20challenge%20Silver%20award.png";
+
+                document.getElementById('hero-cta-btn').onclick = () => navigateToExplore();
+
+                document.getElementById('row-explore').classList.remove('row-inactive');
+                document.getElementById('line-down-explore').classList.remove('bg-grey');
+                document.getElementById('line-down-explore').classList.add('bg-orange');
+
+                const nodeExplore = document.getElementById('node-explore');
+                nodeExplore.classList.remove('node-inactive');
+                nodeExplore.classList.add('node-active');
+                nodeExplore.innerHTML = '<img src="assets_challenge/Explore%20Magnifying%20glass.png" alt="Explore" class="node-icon-active">';
+
+                document.getElementById('tag-avail-explore').style.display = 'inline-flex';
+                const btnExplore = document.getElementById('btn-explore');
+                btnExplore.innerText = "EXPLORE";
+                btnExplore.className = "btn-tl-active";
+                btnExplore.onclick = () => navigateToExplore();
+
+                document.getElementById('row-reflect').classList.remove('row-inactive');
+                document.getElementById('line-up-reflect').classList.remove('bg-grey');
+                document.getElementById('line-up-reflect').classList.add('bg-orange');
+
+                const nodeReflect = document.getElementById('node-reflect');
+                nodeReflect.innerHTML = '<img src="assets_challenge/Reflect%20mirror.png" alt="Reflect" class="node-icon-active">';
+
+                document.getElementById('tag-avail-reflect').style.display = 'inline-flex';
+
+                const btnReflect = document.getElementById('btn-reflect');
+                btnReflect.innerText = "REFLECT";
+                btnReflect.className = "btn-tl-active";
+                btnReflect.onclick = () => window.location.href = "reflect.html";
+
+                document.getElementById('award-overlay-img').src = "assets_quest/Award%20overlay%20Silver%20badge.png";
+
+                triggerUnlockNotification("reflect_level", "You have unlocked the Reflect content!", "row-reflect", flags, 3500);
+
+                if (!flags.awardSilverSeen) {
+                    setTimeout(() => {
+                        showAwardLoadingModal();
+                        setTimeout(() => hideAwardLoadingModal(), 2500);
+                    }, 500);
+                    saveFlagToSheet({ awardSilverSeen: true });
+                }
+
+            } else if (points >= 300) {
+                document.getElementById('placeholder-badge').style.display = 'none';
+
+                const badgeContainer = document.getElementById('hero-badge-container');
+                badgeContainer.style.display = 'block';
+                document.getElementById('hero-badge-img').src = "assets_quest/Health%20challenge%20bronze%20award.png";
+
+                document.getElementById('hero-cta-btn').onclick = () => navigateToExplore();
+
+                document.getElementById('row-explore').classList.remove('row-inactive');
+                document.getElementById('line-down-explore').classList.remove('bg-grey');
+                document.getElementById('line-down-explore').classList.add('bg-orange');
+
+                const nodeExplore = document.getElementById('node-explore');
+                nodeExplore.classList.remove('node-inactive');
+                nodeExplore.classList.add('node-active');
+                nodeExplore.innerHTML = '<img src="assets_challenge/Explore%20Magnifying%20glass.png" alt="Explore" class="node-icon-active">';
+
+                document.getElementById('tag-avail-explore').style.display = 'inline-flex';
+                const btnExplore = document.getElementById('btn-explore');
+                btnExplore.innerText = "EXPLORE";
+                btnExplore.className = "btn-tl-active";
+                btnExplore.onclick = () => navigateToExplore();
+
+                document.getElementById('line-up-reflect').classList.remove('bg-grey');
+                document.getElementById('line-up-reflect').classList.add('bg-orange');
+
+                document.getElementById('award-overlay-img').src = "assets_quest/Award%20overlay%20Bronze%20badge.png";
+
+                triggerUnlockNotification("explore_level", "You have unlocked the Explore content!", "row-explore", flags, 3500);
+
+                if (!flags.awardBronzeSeen) {
+                    setTimeout(() => {
+                        showAwardLoadingModal();
+                        setTimeout(() => hideAwardLoadingModal(), 2500);
+                    }, 500);
+                    saveFlagToSheet({ awardBronzeSeen: true });
+                }
+
+            } else {
+                triggerUnlockNotification("discover_level", "You have unlocked the Discover content!", "row-discover", flags, 500);
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             if (userName) {
                 const nameParts = userName.trim().split(/\s+/);
@@ -1536,223 +1680,66 @@
 
             updateCarousel();
 
-            // Trigger spinning numbers animation
             const pointsVal = document.getElementById('hero-points-text');
-            let spinInterval;
-            if (pointsVal) {
-                spinInterval = setInterval(() => {
-                    pointsVal.innerText = (Math.floor(Math.random() * 8999) + 1000) + " points";
-                }, 50);
+
+            // 1. INSTANT LOCAL CACHE RENDER (0ms delay)
+            let hasCachedData = false;
+            let cachedFlags = {};
+            try {
+                const fStr = localStorage.getItem('wavumbuzi_user_flags');
+                if (fStr) cachedFlags = JSON.parse(fStr);
+            } catch (e) { }
+
+            if (savedData) {
+                try {
+                    const parsed = JSON.parse(savedData);
+                    if (parsed && parsed.points !== undefined) {
+                        hasCachedData = true;
+                        pointsVal.innerText = parsed.points + " points";
+                        const hasCompletedLocal = parsed.reflectCompleted || cachedFlags.hasCompletedReflect || false;
+                        applyQuestState(parsed.points, cachedFlags, hasCompletedLocal);
+                    }
+                } catch (e) { }
             }
 
-            // Show generic loading modal while checking spreadsheet
-            showQuestLoadingModal();
+            // Only display loading modal if local cache was completely empty
+            if (!hasCachedData) {
+                showQuestLoadingModal();
+            }
 
-            // Fetch live submissions and user points concurrently
-            Promise.all([
-                fetch(APP_SCRIPT_URL + '?action=getUserData&user=' + encodeURIComponent(userName || "")).then(res => res.json()).catch(() => ({ success: false, points: 0, flags: "{}" })),
-                fetch(APP_SCRIPT_URL + '?action=getReflections').then(res => res.json()).catch(() => ({ success: false, reflections: [] }))
-            ]).then(([userData, reflectData]) => {
+            // 2. SINGLE SILENT BACKGROUND SERVER REVALIDATION (Zero getReflections collision!)
+            fetchWithTimeout(APP_SCRIPT_URL + '?action=getUserData&user=' + encodeURIComponent(userName || ""), {}, 12000)
+                .then(res => res.json())
+                .then(userData => {
+                    hideQuestLoadingModal();
 
-                if (spinInterval) clearInterval(spinInterval); // Stop spinning
+                    if (userData.success) {
+                        const points = userData.points || 0;
+                        if (pointsVal) pointsVal.innerText = points + " points";
 
-                const points = userData.success ? (userData.points || 0) : 0;
-                if (pointsVal) pointsVal.innerText = points + " points";
+                        let flags = {};
+                        try { flags = JSON.parse(userData.flags || "{}"); } catch (e) { }
 
-                let flags = {};
-                if (userData.success) {
-                    try { flags = JSON.parse(userData.flags || "{}"); } catch (e) { }
-                }
+                        const hasCompleted = flags.hasCompletedReflect || false;
 
-                const hasCompleted = reflectData.success && reflectData.reflections && reflectData.reflections.find(r => r.user.toLowerCase() === (userName || "").toLowerCase());
+                        // Apply verified server state
+                        applyQuestState(points, flags, hasCompleted);
 
-                hideQuestLoadingModal();
-
-                if (hasCompleted) {
-                    // ==========================================
-                    // GOLD STATE (Reflect Completed)
-                    // ==========================================
-                    document.getElementById('quest-container').classList.add('completed');
-                    document.getElementById('placeholder-badge').style.display = 'none';
-
-                    const badgeContainer = document.getElementById('hero-badge-container');
-                    badgeContainer.style.display = 'block';
-                    document.getElementById('hero-badge-img').src = "assets_quest/Health%20challenge%20gold%20award.png";
-
-                    // Top banner hero CTA directs to explore
-                    document.getElementById('hero-cta-btn').innerText = "PLAY AGAIN";
-                    document.getElementById('hero-cta-btn').onclick = () => navigateToExplore();
-
-                    const btnDiscover = document.getElementById('btn-discover');
-                    btnDiscover.innerText = "REVIEW DISCOVER";
-                    btnDiscover.className = "btn-tl-outline";
-                    btnDiscover.onclick = () => navigateToDiscover();
-
-                    // Explore Active
-                    document.getElementById('row-explore').classList.remove('row-inactive');
-                    document.getElementById('line-down-explore').classList.remove('bg-grey');
-                    document.getElementById('line-down-explore').classList.add('bg-orange');
-
-                    const nodeExplore = document.getElementById('node-explore');
-                    nodeExplore.classList.remove('node-inactive');
-                    nodeExplore.classList.add('node-active');
-                    nodeExplore.innerHTML = '<img src="assets_challenge/Explore%20Magnifying%20glass.png" alt="Explore" class="node-icon-active">';
-
-                    document.getElementById('tag-avail-explore').style.display = 'inline-flex';
-                    const btnExplore = document.getElementById('btn-explore');
-                    btnExplore.innerText = "REPLAY EXPLORE";
-                    btnExplore.className = "btn-tl-active";
-                    btnExplore.onclick = () => navigateToExplore();
-
-                    // Reflect Active & Completed
-                    document.getElementById('row-reflect').classList.remove('row-inactive');
-                    document.getElementById('line-up-reflect').classList.remove('bg-grey');
-                    document.getElementById('line-up-reflect').classList.add('bg-orange');
-
-                    const nodeReflect = document.getElementById('node-reflect');
-                    nodeReflect.classList.remove('node-inactive');
-                    nodeReflect.classList.add('node-active');
-                    nodeReflect.innerHTML = '<img src="assets_challenge/Reflect%20mirror.png" alt="Reflect" class="node-icon-active">';
-
-                    document.getElementById('tag-reflect').style.display = 'inline-block';
-                    document.getElementById('tag-avail-reflect').style.display = 'inline-flex';
-
-                    const btnReflect = document.getElementById('btn-reflect');
-                    btnReflect.innerText = "REVIEW REFLECT";
-                    btnReflect.className = "btn-tl-outline";
-                    btnReflect.onclick = () => window.location.href = "community.html";
-
-                    document.getElementById('completion-banner').style.display = "flex";
-
-                    // Set Award Modal Overlay to Gold
-                    document.getElementById('award-overlay-img').src = "assets_quest/Award%20overlay%20Gold%20badge.png";
-
-                    // Only show celebration overlay badge once
-                    if (!flags.awardGoldSeen) {
-                        setTimeout(() => {
-                            showAwardLoadingModal();
-                            setTimeout(() => hideAwardLoadingModal(), 2500);
-                        }, 500);
-                        saveFlagToSheet({ awardGoldSeen: true });
+                        // Refresh localStorage cache
+                        try {
+                            const localObj = JSON.parse(localStorage.getItem('wavumbuzi_user_data_complete') || "{}");
+                            localObj.points = points;
+                            if (hasCompleted) localObj.reflectCompleted = true;
+                            if (userData.avatar) localObj.avatar = userData.avatar;
+                            localStorage.setItem('wavumbuzi_user_data_complete', JSON.stringify(localObj));
+                            localStorage.setItem('wavumbuzi_user_flags', JSON.stringify(flags));
+                        } catch (e) { }
                     }
-
-                } else if (points >= 550) {
-                    // ==========================================
-                    // SILVER STATE (550+ points, Reflect NOT Completed)
-                    // ==========================================
-                    document.getElementById('placeholder-badge').style.display = 'none';
-
-                    const badgeContainer = document.getElementById('hero-badge-container');
-                    badgeContainer.style.display = 'block';
-                    document.getElementById('hero-badge-img').src = "assets_quest/Health%20challenge%20Silver%20award.png";
-
-                    document.getElementById('hero-cta-btn').onclick = () => navigateToExplore();
-
-                    // Explore Active
-                    document.getElementById('row-explore').classList.remove('row-inactive');
-                    document.getElementById('line-down-explore').classList.remove('bg-grey');
-                    document.getElementById('line-down-explore').classList.add('bg-orange');
-
-                    const nodeExplore = document.getElementById('node-explore');
-                    nodeExplore.classList.remove('node-inactive');
-                    nodeExplore.classList.add('node-active');
-                    nodeExplore.innerHTML = '<img src="assets_challenge/Explore%20Magnifying%20glass.png" alt="Explore" class="node-icon-active">';
-
-                    document.getElementById('tag-avail-explore').style.display = 'inline-flex';
-                    const btnExplore = document.getElementById('btn-explore');
-                    btnExplore.innerText = "EXPLORE";
-                    btnExplore.className = "btn-tl-active";
-                    btnExplore.onclick = () => navigateToExplore();
-
-                    // Reflect Unlocked (Active Button, but Ring remains inactive/grey)
-                    document.getElementById('row-reflect').classList.remove('row-inactive');
-                    document.getElementById('line-up-reflect').classList.remove('bg-grey');
-                    document.getElementById('line-up-reflect').classList.add('bg-orange');
-
-                    const nodeReflect = document.getElementById('node-reflect');
-                    nodeReflect.innerHTML = '<img src="assets_challenge/Reflect%20mirror.png" alt="Reflect" class="node-icon-active">';
-
-                    document.getElementById('tag-avail-reflect').style.display = 'inline-flex';
-
-                    const btnReflect = document.getElementById('btn-reflect');
-                    btnReflect.innerText = "REFLECT";
-                    btnReflect.className = "btn-tl-active";
-                    btnReflect.onclick = () => window.location.href = "reflect.html";
-
-                    // Set Award Modal Overlay to Silver
-                    document.getElementById('award-overlay-img').src = "assets_quest/Award%20overlay%20Silver%20badge.png";
-
-                    // Celebrate Reflect card unlock (Waits 3.5s for overlay)
-                    triggerUnlockNotification("reflect_level", "You have unlocked the Reflect content!", "row-reflect", flags, 3500);
-
-                    if (!flags.awardSilverSeen) {
-                        setTimeout(() => {
-                            showAwardLoadingModal();
-                            setTimeout(() => hideAwardLoadingModal(), 2500);
-                        }, 500);
-                        saveFlagToSheet({ awardSilverSeen: true });
-                    }
-
-                } else if (points >= 300) {
-                    // ==========================================
-                    // BRONZE STATE (300+ points, Reflect NOT Completed)
-                    // ==========================================
-                    document.getElementById('placeholder-badge').style.display = 'none';
-
-                    const badgeContainer = document.getElementById('hero-badge-container');
-                    badgeContainer.style.display = 'block';
-                    document.getElementById('hero-badge-img').src = "assets_quest/Health%20challenge%20bronze%20award.png";
-
-                    document.getElementById('hero-cta-btn').onclick = () => navigateToExplore();
-
-                    // Explore Active
-                    document.getElementById('row-explore').classList.remove('row-inactive');
-                    document.getElementById('line-down-explore').classList.remove('bg-grey');
-                    document.getElementById('line-down-explore').classList.add('bg-orange');
-
-                    const nodeExplore = document.getElementById('node-explore');
-                    nodeExplore.classList.remove('node-inactive');
-                    nodeExplore.classList.add('node-active');
-                    nodeExplore.innerHTML = '<img src="assets_challenge/Explore%20Magnifying%20glass.png" alt="Explore" class="node-icon-active">';
-
-                    document.getElementById('tag-avail-explore').style.display = 'inline-flex';
-                    const btnExplore = document.getElementById('btn-explore');
-                    btnExplore.innerText = "EXPLORE";
-                    btnExplore.className = "btn-tl-active";
-                    btnExplore.onclick = () => navigateToExplore();
-
-                    // Reflect lines show progression path even though it is locked
-                    document.getElementById('line-up-reflect').classList.remove('bg-grey');
-                    document.getElementById('line-up-reflect').classList.add('bg-orange');
-
-                    // Set Award Modal Overlay to Bronze
-                    document.getElementById('award-overlay-img').src = "assets_quest/Award%20overlay%20Bronze%20badge.png";
-
-                    // Celebrate Explore card unlock (Waits 3.5s for overlay)
-                    triggerUnlockNotification("explore_level", "You have unlocked the Explore content!", "row-explore", flags, 3500);
-
-                    if (!flags.awardBronzeSeen) {
-                        setTimeout(() => {
-                            showAwardLoadingModal();
-                            setTimeout(() => hideAwardLoadingModal(), 2500);
-                        }, 500);
-                        saveFlagToSheet({ awardBronzeSeen: true });
-                    }
-
-                } else {
-                    // ==========================================
-                    // DEFAULT STATE (Under 300 points)
-                    // ==========================================
-                    // Celebrate Discover card unlock immediately since there is no badge overlay here
-                    triggerUnlockNotification("discover_level", "You have unlocked the Discover content!", "row-discover", flags, 500);
-                }
-
-            }).catch(e => {
-                console.error('Error fetching data:', e);
-                if (spinInterval) clearInterval(spinInterval);
-                if (pointsVal) pointsVal.innerText = "0 points";
-                hideQuestLoadingModal();
-            });
+                })
+                .catch(e => {
+                    console.warn('Background quest sync slow/unreachable. Retaining local state.', e);
+                    hideQuestLoadingModal();
+                });
         });
 
         // Dropdown Logic

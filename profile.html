@@ -1358,7 +1358,8 @@
             <!-- Dynamic Dropdown Wrapper -->
             <div class="profile-dropdown-wrapper" id="profileDropdownWrapper">
                 <div class="profile-group" onclick="toggleDropdown(event)">
-                    <img src="new_user.png" id="navAvatar" class="profile-avatar" alt="User Profile">
+                    <img src="new_user.png" id="navAvatar" class="profile-avatar" alt="User Profile"
+                        onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;100&quot; height=&quot;100&quot;><rect width=&quot;100&quot; height=&quot;100&quot; fill=&quot;%23e2ecef&quot;/></svg>';">
                     <span class="profile-name" id="navNameDisplay">User</span>
                     <img src="assets_challenge/Arrow%20icon.png" class="chevron-down" alt="Dropdown">
                 </div>
@@ -1628,6 +1629,96 @@
             } catch (e) { }
         }
 
+        // Helper to abort hanging background requests silently
+        function fetchWithTimeout(url, options = {}, timeoutMs = 30000) {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeoutMs);
+            return fetch(url, { ...options, signal: controller.signal })
+                .finally(() => clearTimeout(id));
+        }
+
+        // Applies visible UI changes for points, badges, strength area, and portfolio
+        function applyProfileState(points, hasCompleted) {
+            const pointsVal = document.getElementById('profileTotalPoints');
+            if (pointsVal) {
+                pointsVal.innerText = points;
+            }
+
+            if (points >= 500 || hasCompleted) {
+                const hexContainer = document.querySelector('.hexagon-container');
+                if (hexContainer) {
+                    hexContainer.innerHTML = `
+                        <img src="assets_profile/INTO-ACTION_Strength-Area-Block.png" alt="Into Action" style="width: 100%; max-width: 250px; height: auto; margin-bottom: 24px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));">
+                        <div style="display: flex; gap: 12px; width: 100%; padding-bottom: 32px; border-bottom: 1px solid rgba(255,255,255,0.1); justify-content: space-between;">
+                            <img src="assets_profile/Into-Action_Taking-action-and-initiative-coin.png" alt="Taking Action & Initiative" style="width: 31%; height: auto; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));">
+                            <img src="assets_profile/Into-Action_Working-with-others-coin.png" alt="Working with Others" style="width: 31%; height: auto; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));">
+                            <img src="assets_profile/Into-Action_Mobilising-others-coin.png" alt="Mobilising Others" style="width: 31%; height: auto; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));">
+                        </div>
+                    `;
+                }
+
+                const skillCategories = document.querySelectorAll('.skills-list > div');
+                if (skillCategories.length === 3) {
+                    skillCategories[0].querySelectorAll('.skill-pts').forEach(el => {
+                        el.innerText = (Math.floor(Math.random() * 4) + 1) + 'pts';
+                    });
+                    skillCategories[1].querySelectorAll('.skill-pts').forEach(el => {
+                        el.innerText = (Math.floor(Math.random() * 4) + 1) + 'pts';
+                    });
+                    skillCategories[2].querySelectorAll('.skill-pts').forEach(el => {
+                        el.innerText = (Math.floor(Math.random() * 6) + 15) + 'pts';
+                    });
+                }
+            }
+
+            if (points >= 300) {
+                const box1 = document.getElementById('achievement-box-1');
+                if (box1) {
+                    box1.classList.add('unlocked');
+                    box1.innerHTML = `
+                        <img src="assets_quest/Award%20overlay%20Bronze%20badge.png" class="badge-img" alt="Bronze Badge">
+                        <div style="text-align: center; position: relative; z-index: 2; width: 100%; padding: 0 4px;">
+                            <div class="ach-title-top">2028 Health Quest</div>
+                            <div class="ach-title-bot">Bronze League award</div>
+                        </div>
+                    `;
+                }
+            }
+            if (points >= 500) {
+                const box2 = document.getElementById('achievement-box-2');
+                if (box2) {
+                    box2.classList.add('unlocked');
+                    box2.innerHTML = `
+                        <img src="assets_quest/Award%20overlay%20Silver%20badge.png" class="badge-img" alt="Silver Badge">
+                        <div style="text-align: center; position: relative; z-index: 2; width: 100%; padding: 0 4px;">
+                            <div class="ach-title-top">2028 Health Quest</div>
+                            <div class="ach-title-bot">Silver League award</div>
+                        </div>
+                    `;
+                }
+            }
+            if (hasCompleted) {
+                const box3 = document.getElementById('achievement-box-3');
+                if (box3) {
+                    box3.classList.add('unlocked');
+                    box3.innerHTML = `
+                        <img src="assets_quest/Award%20overlay%20Gold%20badge.png" class="badge-img" alt="Gold Badge">
+                        <div style="text-align: center; position: relative; z-index: 2; width: 100%; padding: 0 4px;">
+                            <div class="ach-title-top">2028 Health Quest</div>
+                            <div class="ach-title-bot">Gold League award</div>
+                        </div>
+                    `;
+                }
+
+                const portfolioBox1 = document.getElementById('portfolio-box-1');
+                if (portfolioBox1) {
+                    portfolioBox1.innerHTML = '<img src="assets_profile/2028%20Score%20card.png" alt="2028 Score Card" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover; display: block;">';
+                    portfolioBox1.style.backgroundColor = 'transparent';
+                    portfolioBox1.style.border = 'none';
+                }
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             if (userName) {
                 const nameParts = userName.trim().split(/\s+/);
@@ -1646,142 +1737,94 @@
                 const mainAvatar = document.getElementById('mainAvatar');
                 if (mainAvatar) mainAvatar.src = userAvatar;
 
-                // --- Scoreboard Spinning Tracker ---
-                const pointsVal = document.getElementById('profileTotalPoints');
-                let spinInterval;
-
-                if (pointsVal) {
-                    spinInterval = setInterval(() => {
-                        pointsVal.innerText = Math.floor(Math.random() * 8999) + 1000;
-                    }, 50);
+                // 1. INSTANT LOCAL CACHE RENDER (0ms delay)
+                let hasCachedData = false;
+                if (savedData) {
+                    try {
+                        const parsed = JSON.parse(savedData);
+                        if (parsed && parsed.points !== undefined) {
+                            hasCachedData = true;
+                            let cachedFlags = {};
+                            try {
+                                const fStr = localStorage.getItem('wavumbuzi_user_flags');
+                                if (fStr) cachedFlags = JSON.parse(fStr);
+                            } catch (e) { }
+                            const hasCompletedLocal = parsed.reflectCompleted || cachedFlags.hasCompletedReflect || false;
+                            applyProfileState(parsed.points, hasCompletedLocal);
+                        }
+                    } catch (e) { }
                 }
 
-                showProfileLoadingModal();
-
-                Promise.all([
-                    fetch(APP_SCRIPT_URL + '?action=getUserData&user=' + encodeURIComponent(userName)).then(res => res.json()).catch(() => ({ success: false, points: 0, flags: "{}" })),
-                    fetch(APP_SCRIPT_URL + '?action=getReflections').then(res => res.json()).catch(() => ({ success: false, reflections: [] }))
-                ])
-                    .then(([userData, reflectData]) => {
-                        hideProfileLoadingModal();
-                        if (spinInterval) clearInterval(spinInterval);
-
-                        const points = userData.success ? (userData.points || 0) : 0;
-                        if (pointsVal) {
-                            pointsVal.innerText = points;
-                        }
-
-                        // --- FIX: Update the avatars using the live Sheet data ---
-                        if (userData.success && userData.avatar) {
-                            if (navAvatar) navAvatar.src = userData.avatar;
-                            if (mainAvatar) mainAvatar.src = userData.avatar;
-
-                            // Sync it to local storage so other pages get it immediately
-                            const localCache = JSON.parse(localStorage.getItem('wavumbuzi_user_data_complete') || "{}");
-                            localCache.fullName = userName;
-                            localCache.avatar = userData.avatar;
-                            localStorage.setItem('wavumbuzi_user_data_complete', JSON.stringify(localCache));
-                        }
-                        // ---------------------------------------------------------
-
-                        let flags = {};
-                        if (userData.success) {
-                            try { flags = JSON.parse(userData.flags || "{}"); } catch (e) { }
-                        }
-
-                        if (!flags.hasSeenProfileTour) {
+                // Check local flag cache instantly for zero-delay tour modal
+                let cachedFlags = {};
+                try {
+                    const fStr = localStorage.getItem('wavumbuzi_user_flags');
+                    if (fStr) {
+                        cachedFlags = JSON.parse(fStr);
+                        if (!cachedFlags.hasSeenProfileTour) {
                             setTimeout(startTour, 600);
+                            cachedFlags.hasSeenProfileTour = true;
+                            localStorage.setItem('wavumbuzi_user_flags', JSON.stringify(cachedFlags));
                             fetch(APP_SCRIPT_URL, {
                                 method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ action: 'saveUserFlags', user: userName, flags: { hasSeenProfileTour: true } })
-                            });
+                            }).catch(e => console.error(e));
                         }
+                    }
+                } catch (e) { }
 
-                        const hasCompleted = reflectData.success && reflectData.reflections && reflectData.reflections.find(r => r.user.toLowerCase() === (userName || "").toLowerCase());
+                // Only show loading modal if local cache was completely empty
+                if (!hasCachedData) {
+                    showProfileLoadingModal();
+                }
 
-                        // Strength Area Updates (Triggers at 500+ points or if Reflect is completed)
-                        if (points >= 500 || hasCompleted) {
-                            const hexContainer = document.querySelector('.hexagon-container');
-                            if (hexContainer) {
-                                hexContainer.innerHTML = `
-                            <img src="assets_profile/INTO-ACTION_Strength-Area-Block.png" alt="Into Action" style="width: 100%; max-width: 250px; height: auto; margin-bottom: 24px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));">
-                            <div style="display: flex; gap: 12px; width: 100%; padding-bottom: 32px; border-bottom: 1px solid rgba(255,255,255,0.1); justify-content: space-between;">
-                                <img src="assets_profile/Into-Action_Taking-action-and-initiative-coin.png" alt="Taking Action & Initiative" style="width: 31%; height: auto; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));">
-                                <img src="assets_profile/Into-Action_Working-with-others-coin.png" alt="Working with Others" style="width: 31%; height: auto; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));">
-                                <img src="assets_profile/Into-Action_Mobilising-others-coin.png" alt="Mobilising Others" style="width: 31%; height: auto; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));">
-                            </div>
-                        `;
-                            }
+                // 2. SINGLE SILENT BACKGROUND SERVER REVALIDATION (Zero getReflections collision!)
+                fetchWithTimeout(APP_SCRIPT_URL + '?action=getUserData&user=' + encodeURIComponent(userName), {}, 30000)
+                    .then(res => res.json())
+                    .then(userData => {
+                        hideProfileLoadingModal();
 
-                            // Generate Random Skill Points
-                            const skillCategories = document.querySelectorAll('.skills-list > div');
-                            if (skillCategories.length === 3) {
-                                skillCategories[0].querySelectorAll('.skill-pts').forEach(el => {
-                                    el.innerText = (Math.floor(Math.random() * 4) + 1) + 'pts';
-                                });
-                                skillCategories[1].querySelectorAll('.skill-pts').forEach(el => {
-                                    el.innerText = (Math.floor(Math.random() * 4) + 1) + 'pts';
-                                });
-                                skillCategories[2].querySelectorAll('.skill-pts').forEach(el => {
-                                    el.innerText = (Math.floor(Math.random() * 6) + 15) + 'pts';
-                                });
-                            }
-                        }
+                        // STRICT GUARD: Only update UI and overwrite localStorage if server lookup succeeded!
+                        if (userData.success) {
+                            const points = userData.points || 0;
 
-                        // Check for thresholds and unlock badges
-                        if (points >= 300) {
-                            const box1 = document.getElementById('achievement-box-1');
-                            if (box1) {
-                                box1.classList.add('unlocked');
-                                box1.innerHTML = `
-                            <img src="assets_quest/Award%20overlay%20Bronze%20badge.png" class="badge-img" alt="Bronze Badge">
-                            <div style="text-align: center; position: relative; z-index: 2; width: 100%; padding: 0 4px;">
-                                <div class="ach-title-top">2028 Health Quest</div>
-                                <div class="ach-title-bot">Bronze League award</div>
-                            </div>
-                        `;
-                            }
-                        }
-                        if (points >= 500) {
-                            const box2 = document.getElementById('achievement-box-2');
-                            if (box2) {
-                                box2.classList.add('unlocked');
-                                box2.innerHTML = `
-                            <img src="assets_quest/Award%20overlay%20Silver%20badge.png" class="badge-img" alt="Silver Badge">
-                            <div style="text-align: center; position: relative; z-index: 2; width: 100%; padding: 0 4px;">
-                                <div class="ach-title-top">2028 Health Quest</div>
-                                <div class="ach-title-bot">Silver League award</div>
-                            </div>
-                        `;
-                            }
-                        }
-                        if (hasCompleted) {
-                            const box3 = document.getElementById('achievement-box-3');
-                            if (box3) {
-                                box3.classList.add('unlocked');
-                                box3.innerHTML = `
-                            <img src="assets_quest/Award%20overlay%20Gold%20badge.png" class="badge-img" alt="Gold Badge">
-                            <div style="text-align: center; position: relative; z-index: 2; width: 100%; padding: 0 4px;">
-                                <div class="ach-title-top">2028 Health Quest</div>
-                                <div class="ach-title-bot">Gold League award</div>
-                            </div>
-                        `;
+                            let flags = {};
+                            try { flags = JSON.parse(userData.flags || "{}"); } catch (e) { }
+
+                            const hasCompleted = flags.hasCompletedReflect || false;
+                            applyProfileState(points, hasCompleted);
+
+                            if (userData.avatar) {
+                                if (navAvatar) navAvatar.src = userData.avatar;
+                                if (mainAvatar) mainAvatar.src = userData.avatar;
                             }
 
-                            // Unlock Score Card Graphic
-                            const portfolioBox1 = document.getElementById('portfolio-box-1');
-                            if (portfolioBox1) {
-                                portfolioBox1.innerHTML = '<img src="assets_profile/2028%20Score%20card.png" alt="2028 Score Card" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover; display: block;">';
-                                portfolioBox1.style.backgroundColor = 'transparent';
-                                portfolioBox1.style.border = 'none';
+                            // Tour trigger check using verified server flags
+                            if (!cachedFlags.hasSeenProfileTour && !flags.hasSeenProfileTour) {
+                                setTimeout(startTour, 600);
+                                flags.hasSeenProfileTour = true;
+                                localStorage.setItem('wavumbuzi_user_flags', JSON.stringify(flags));
+                                fetch(APP_SCRIPT_URL, {
+                                    method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ action: 'saveUserFlags', user: userName, flags: { hasSeenProfileTour: true } })
+                                }).catch(e => console.error(e));
                             }
+
+                            // Refresh localStorage cache ONLY when server validation succeeded
+                            try {
+                                const localCache = JSON.parse(localStorage.getItem('wavumbuzi_user_data_complete') || "{}");
+                                localCache.fullName = userName;
+                                localCache.points = points;
+                                if (hasCompleted) localCache.reflectCompleted = true;
+                                if (userData.avatar) localCache.avatar = userData.avatar;
+                                localStorage.setItem('wavumbuzi_user_data_complete', JSON.stringify(localCache));
+                                localStorage.setItem('wavumbuzi_user_flags', JSON.stringify(flags));
+                            } catch (e) { }
                         }
                     })
                     .catch(err => {
-                        console.error("Error fetching points:", err);
+                        console.warn("Background profile sync slow/unreachable. Retaining local state.", err);
                         hideProfileLoadingModal();
-                        if (spinInterval) clearInterval(spinInterval);
-                        if (pointsVal) pointsVal.innerText = 0;
                     });
 
             } else {
@@ -1824,9 +1867,7 @@
 
         function handleEditClick() {
             endTour();
-            //const param = userName ? "?user=" + encodeURIComponent(userName) : "";
-            //window.location.href = "character_picker.html" + param;
-            showComingSoon(); // Triggers the "Oops" modal instead of redirecting
+            showComingSoon();
         }
 
         // --- Dropdown Logic ---

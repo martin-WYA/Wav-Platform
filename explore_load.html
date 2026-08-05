@@ -41,7 +41,6 @@
             background-size: 30px 30px;
             pointer-events: none;
             z-index: -1;
-            /* Placed behind layout layers so top-bar doesn't need trapping z-indices */
         }
 
         /* --- GLOBAL TUTORIAL BACKDROP --- */
@@ -71,10 +70,8 @@
             align-items: center;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            /* Removed fixed z-index trap so child elements can freely scale above the backdrop layer */
         }
 
-        /* Dynamically elevates targeted elements cleanly through the dark backdrop layout */
         .on-top {
             position: relative;
             z-index: 1600 !important;
@@ -106,7 +103,6 @@
             transform: translateY(-2px);
         }
 
-        /* Highlight animation that pulls icons safely above the darkness */
         .highlight-icon {
             position: relative;
             z-index: 1600 !important;
@@ -172,7 +168,6 @@
             border-color: rgba(251, 161, 67, 0.3);
         }
 
-        /* Pulses golden yellow to encourage clicking during tutorial */
         .highlight-element {
             box-shadow: 0 0 0 2px #fba143, 0 0 20px rgba(251, 161, 67, 0.6) !important;
             animation: pulseHighlight 1.5s infinite alternate;
@@ -321,7 +316,6 @@
             box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
         }
 
-        /* Animated Pointer Hand/Cursor */
         .tutorial-mouse {
             position: absolute;
             bottom: -20px;
@@ -558,7 +552,6 @@
             background: rgba(17, 24, 39, 0.05);
         }
 
-        /* Hide utility class */
         .hidden {
             display: none !important;
         }
@@ -757,7 +750,7 @@
                             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                         </svg>
                     </div>
-                    <span class="points-text">0 Points</span>
+                    <span class="points-text" id="pointsTextDisplay">0 Points</span>
                     <div class="help-coin-wrapper" title="Help">
                         <div class="help-coin-bg"></div>
                         <div class="help-coin-inner">?</div>
@@ -841,7 +834,22 @@
 
         let tutorialStep = 1;
 
+        // --- Execute Step 1 on Load & Read Cached LocalStorage Data ---
         window.addEventListener('DOMContentLoaded', () => {
+            const savedData = localStorage.getItem('wavumbuzi_user_data_complete');
+            if (savedData) {
+                try {
+                    const parsedData = JSON.parse(savedData);
+                    if (parsedData && parsedData.fullName && !userName) {
+                        userName = parsedData.fullName;
+                    }
+                    if (parsedData && parsedData.points !== undefined) {
+                        const pointsEl = document.getElementById('pointsTextDisplay');
+                        if (pointsEl) pointsEl.innerText = parsedData.points + " Points";
+                    }
+                } catch (e) { }
+            }
+
             const popup = document.getElementById('robotPopup');
             document.getElementById('tutorialBackdrop').style.display = 'block';
             setTimeout(() => {
@@ -917,7 +925,6 @@
 
             document.getElementById('btnSecondary').classList.add('hidden');
 
-            // Highlight ONLY the exit icon button cleanly above the darkness
             document.getElementById('exitIconBtn').classList.add('highlight-icon');
 
             positionModal('exitIconBtn');
@@ -942,7 +949,6 @@
             document.getElementById('btnPrimary').classList.add('hidden');
             document.getElementById('exitIconBtn').classList.remove('highlight-icon');
 
-            // Highlight ONLY the points wrapper layout safely above the backdrop overlay
             document.getElementById('pointsWrapper').classList.add('on-top');
             document.getElementById('pointsPill').classList.add('highlight-element');
 
@@ -972,7 +978,6 @@
                 pill.classList.remove('active');
             }
 
-            // Progress Tutorial from Step 2 -> Step 3 (Opening the box)
             if (tutorialStep === 2 && dropdown.classList.contains('show')) {
                 tutorialStep = 3;
 
@@ -988,7 +993,6 @@
                     robotText.style.opacity = 1;
                 }, 400);
             }
-            // Progress Tutorial from Step 3 -> Step 4 (Closing the box)
             else if (tutorialStep === 3 && !dropdown.classList.contains('show')) {
                 goToStep4();
             }

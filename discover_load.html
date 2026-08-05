@@ -19,7 +19,6 @@
         }
 
         body {
-            /* Simulates the rich dark blue to reddish-brown gradient */
             background: linear-gradient(120deg, #0a1f2e 0%, #151b1f 40%, #521c08 100%);
             min-height: 100vh;
             display: flex;
@@ -38,12 +37,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            /* A subtle geometric CSS pattern to mimic the background texture */
             background-image: radial-gradient(rgba(255, 255, 255, 0.03) 2px, transparent 2px);
             background-size: 30px 30px;
             pointer-events: none;
             z-index: -1;
-            /* Placed behind layout layers so navigation child objects scale freely */
         }
 
         /* --- GLOBAL TUTORIAL BACKDROP --- */
@@ -67,10 +64,8 @@
             display: flex;
             align-items: center;
             gap: 24px;
-            /* Removed trapping z-index rules */
         }
 
-        /* Dynamically elevates targeted containers above the backdrop layout */
         .on-top {
             z-index: 1600 !important;
             position: relative;
@@ -88,7 +83,6 @@
             transition: box-shadow 0.3s ease;
         }
 
-        /* Pulses golden yellow to encourage user tracking during tutorial */
         .highlight-element {
             box-shadow: 0 0 0 2px #fba143, 0 0 20px rgba(251, 161, 67, 0.6) !important;
             animation: pulseHighlight 1.5s infinite alternate;
@@ -164,7 +158,6 @@
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
 
-        /* Highlight animation that pulls icons safely above the darkness */
         .highlight-icon {
             position: relative;
             z-index: 1600 !important;
@@ -414,7 +407,7 @@
             <svg class="points-bolt" viewBox="0 0 24 24">
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
             </svg>
-            <span class="points-text">0 Points</span>
+            <span class="points-text" id="pointsTextDisplay">0 Points</span>
             <div class="help-coin" title="Help">?</div>
         </div>
 
@@ -445,19 +438,32 @@
             Welcome! I am going to explain how the Discover game works. Let me know if you'd like to skip my lesson.
             I'll be quick!
         </div>
-        <button class="btn-okay" id="btnPrimary" onclick="goToStepExit()">OKAY</button>
-        <button class="btn-nothanks" id="btnSecondary" onclick="dismissRobot()">NO THANK YOU</button>
+        <button class="btn-okay" id="btnPrimary" onclick="goToStepExit()">START TOUR</button>
+        <button class="btn-nothanks" id="btnSecondary" onclick="dismissRobot()">SKIP TOUR</button>
     </div>
 
     <script>
-        // Extract URL Parameters for passing to the next page
         const urlParams = new URLSearchParams(window.location.search);
         let userName = urlParams.get('user') || urlParams.get('newuser');
 
         let tutorialStep = 1;
 
-        // --- Execute Step 1 on Load ---
+        // --- Execute Step 1 on Load & Read Cached LocalStorage Data ---
         window.addEventListener('DOMContentLoaded', () => {
+            const savedData = localStorage.getItem('wavumbuzi_user_data_complete');
+            if (savedData) {
+                try {
+                    const parsedData = JSON.parse(savedData);
+                    if (parsedData && parsedData.fullName && !userName) {
+                        userName = parsedData.fullName;
+                    }
+                    if (parsedData && parsedData.points !== undefined) {
+                        const pointsEl = document.getElementById('pointsTextDisplay');
+                        if (pointsEl) pointsEl.innerText = parsedData.points + " Points";
+                    }
+                } catch (e) { }
+            }
+
             const popup = document.getElementById('robotPopup');
             document.getElementById('tutorialBackdrop').style.display = 'block';
             setTimeout(() => {
@@ -519,8 +525,6 @@
             robotText.style.opacity = 0;
 
             document.getElementById('btnSecondary').classList.add('hidden');
-
-            // Highlight the exit button clearly above the darkness
             document.getElementById('exitIconBtn').classList.add('highlight-icon');
 
             positionModal('exitIconBtn');
@@ -542,7 +546,6 @@
             const robotText = document.getElementById('robotText');
             robotText.style.opacity = 0;
 
-            // Swap highlights from Exit to Points
             document.getElementById('exitIconBtn').classList.remove('highlight-icon');
             document.getElementById('pointsPillWrapper').classList.add('on-top');
             document.getElementById('pointsPillWrapper').classList.add('highlight-element');

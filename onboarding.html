@@ -1,14 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wavumbuzi - Onboarding</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500;1,600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500;1,600&display=swap"
+        rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             background-color: #d8edf4;
             background-image: url('Mwenza_background.jpg');
@@ -19,94 +29,257 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; 
+            overflow: hidden;
         }
 
         /* Top Navigation Header */
-        .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 24px 48px; width: 100%; z-index: 50; }
-        .logo-img { height: 40px; width: auto; object-fit: contain; }
-        
-        .user-nav-group { display: flex; align-items: center; gap: 24px; }
-        .bell-icon { width: 20px; height: 20px; color: #111827; cursor: pointer; transition: opacity 0.2s; }
-        .bell-icon:hover { opacity: 0.7; }
-        
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 48px;
+            width: 100%;
+            z-index: 50;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .user-nav-group {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .bell-icon {
+            width: 20px;
+            height: 20px;
+            color: #111827;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .bell-icon:hover {
+            opacity: 0.7;
+        }
+
         /* --- PROFILE DROPDOWN --- */
-        .profile-dropdown-wrapper { position: relative; display: inline-block; }
-        .profile-group { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 4px; border-radius: 30px; transition: background 0.2s; }
-        .profile-group:hover { background-color: rgba(255,255,255,0.5); }
-        .profile-avatar { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #111827; object-fit: cover; background-color: #ffffff; }
-        .profile-name { font-size: 14px; font-weight: 600; color: #111827; user-select: none;}
-        .chevron-down { width: 16px; height: 16px; color: #111827; transition: transform 0.2s ease; }
+        .profile-dropdown-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 30px;
+            transition: background 0.2s;
+        }
+
+        .profile-group:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #111827;
+            object-fit: cover;
+            background-color: #ffffff;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+            user-select: none;
+        }
+
+        .chevron-down {
+            width: 16px;
+            height: 16px;
+            color: #111827;
+            transition: transform 0.2s ease;
+        }
 
         .dropdown-menu {
-            position: absolute; top: calc(100% + 10px); right: 0;
-            background: #ffffff; border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            width: 180px; overflow: hidden;
-            display: none; flex-direction: column; z-index: 100;
-            border: 1px solid rgba(0,0,0,0.05);
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 180px;
+            overflow: hidden;
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
-        .dropdown-menu.show { display: flex; animation: slideDown 0.2s ease forwards; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .dropdown-menu.show {
+            display: flex;
+            animation: slideDown 0.2s ease forwards;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
         .dropdown-item {
-            padding: 14px 20px; font-size: 14px; font-weight: 600; color: #1f2937;
-            text-decoration: none; display: flex; align-items: center; gap: 12px;
-            cursor: pointer; transition: all 0.2s; border: none; text-align: left; background: none; width: 100%;
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-align: left;
+            background: none;
+            width: 100%;
         }
-        .dropdown-item:hover { background-color: #f8fafc; color: #e88524; padding-left: 24px; }
-        .dropdown-divider { height: 1px; background-color: #e2e8f0; margin: 0; }
-        .profile-dropdown-wrapper.open .chevron-down { transform: rotate(180deg); }
+
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+            color: #e88524;
+            padding-left: 24px;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e2e8f0;
+            margin: 0;
+        }
+
+        .profile-dropdown-wrapper.open .chevron-down {
+            transform: rotate(180deg);
+        }
 
         /* Main Content Area */
-        .main-content { display: flex; flex-grow: 1; width: 100%; position: relative; align-items: center; justify-content: flex-end; padding-right: 10%; }
+        .main-content {
+            display: flex;
+            flex-grow: 1;
+            width: 100%;
+            position: relative;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10%;
+        }
 
         /* Large Robot Animation */
         .large-robot {
-            position: absolute; left: 5%; bottom: 5%; width: 400px; height: auto; z-index: 10;
-            opacity: 0; transform: translateY(100px);
+            position: absolute;
+            left: 5%;
+            bottom: 5%;
+            width: 400px;
+            height: auto;
+            z-index: 10;
+            opacity: 0;
+            transform: translateY(100px);
             animation: slideUpRobot 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.2s, floatRobot 4s ease-in-out infinite 1s;
         }
 
-        @keyframes slideUpRobot { to { opacity: 1; transform: translateY(0); } }
-        @keyframes floatRobot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes slideUpRobot {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes floatRobot {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
 
         /* Chat Container & Layout */
         .chat-container {
-            width: 100%; max-width: 520px; 
-            height: 75vh; /* Lock height to prevent jumping */
-            min-height: 550px; /* Ensure it doesn't squish on tiny laptops */
+            width: 100%;
+            max-width: 520px;
+            height: 75vh;
+            min-height: 550px;
             background: linear-gradient(180deg, #cde3ec 0%, #e0eef4 100%);
-            border-radius: 20px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            position: relative; z-index: 20;
-            opacity: 0; transform: scale(0.95) translateY(20px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 20;
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
             animation: popInChat 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.8s;
-            display: flex; flex-direction: column;
+            display: flex;
+            flex-direction: column;
             border: 2px solid rgba(255, 255, 255, 0.6);
         }
-        @keyframes popInChat { to { opacity: 1; transform: scale(1) translateY(0); } }
 
-        /* The scrollable area for chat bubbles */
+        @keyframes popInChat {
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
         .chat-scroll-area {
             flex-grow: 1;
             overflow-y: auto;
             padding-bottom: 24px;
-            /* Hide scrollbar for a cleaner look, or style it */
-            scrollbar-width: none; 
+            scrollbar-width: none;
             -ms-overflow-style: none;
         }
-        .chat-scroll-area::-webkit-scrollbar { display: none; }
+
+        .chat-scroll-area::-webkit-scrollbar {
+            display: none;
+        }
 
         /* Small Robot Avatar on Chat Box */
         .chat-avatar-badge {
-            position: absolute; top: 24px; left: -32px; width: 64px; height: 64px;
+            position: absolute;
+            top: 24px;
+            left: -32px;
+            width: 64px;
+            height: 64px;
             background: radial-gradient(circle, #fcd34d 0%, #d97706 100%);
-            border-radius: 50%; border: 4px solid #cde3ec;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: -4px 4px 12px rgba(0,0,0,0.1); overflow: hidden; z-index: 25;
+            border-radius: 50%;
+            border: 4px solid #cde3ec;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: -4px 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            z-index: 25;
             transition: top 0.3s ease;
         }
-        .chat-avatar-badge img { width: 150%; height: 150%; object-fit: cover; object-position: center 20%; }
+
+        .chat-avatar-badge img {
+            width: 150%;
+            height: 150%;
+            object-fit: cover;
+            object-position: center 20%;
+        }
 
         /* Message Bubbles - Base Styles */
         .msg-row {
@@ -118,39 +291,75 @@
             transform: translateY(10px);
             animation: slideUpMsg 0.4s ease forwards;
         }
-        @keyframes slideUpMsg { to { opacity: 1; transform: translateY(0); } }
 
-        .bot-msg-row { justify-content: flex-start; }
-        .user-msg-row { justify-content: flex-end; align-items: flex-start; gap: 12px;}
+        @keyframes slideUpMsg {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bot-msg-row {
+            justify-content: flex-start;
+        }
+
+        .user-msg-row {
+            justify-content: flex-end;
+            align-items: flex-start;
+            gap: 12px;
+        }
 
         /* Bot Bubbles */
         .chat-bubble {
             background-color: #ffffff;
             border-radius: 16px;
-            padding: 24px 32px 24px 48px; /* Left padding for badge overlap */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            padding: 24px 32px 24px 48px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
             max-width: 90%;
         }
+
         .bot-msg-row:not(:first-child) .chat-bubble {
-            padding-left: 32px; /* Standard padding if no badge overlap */
-            margin-left: 16px; /* Align with first message text */
+            padding-left: 32px;
+            margin-left: 16px;
         }
 
-        .chat-greeting { font-size: 20px; font-weight: 800; color: #111827; margin-bottom: 16px; letter-spacing: -0.3px; }
-        .chat-body { font-size: 15px; color: #1f2937; line-height: 1.6; font-weight: 500; }
-        .chat-body p { margin-bottom: 12px; }
-        .chat-body p:last-child { margin-bottom: 0; }
-        .chat-body strong { font-weight: 800; color: #111827; }
+        .chat-greeting {
+            font-size: 20px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 16px;
+            letter-spacing: -0.3px;
+        }
+
+        .chat-body {
+            font-size: 15px;
+            color: #1f2937;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .chat-body p {
+            margin-bottom: 12px;
+        }
+
+        .chat-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .chat-body strong {
+            font-weight: 800;
+            color: #111827;
+        }
 
         /* User Bubbles */
         .user-bubble {
-            background-color: #0284c7; 
+            background-color: #0284c7;
             color: #ffffff;
             border-radius: 12px;
             padding: 16px 24px;
             font-size: 15px;
             font-weight: 500;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             max-width: 75%;
             text-align: right;
             line-height: 1.5;
@@ -159,9 +368,9 @@
         .user-avatar-icon {
             width: 48px;
             height: 48px;
-            background-color: #d1fae5; 
+            background-color: #d1fae5;
             border-radius: 50%;
-            border: 3px solid #064e3b; 
+            border: 3px solid #064e3b;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -177,17 +386,39 @@
             display: flex;
             gap: 6px;
             align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            margin-left: 16px; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            margin-left: 16px;
             width: fit-content;
         }
+
         .dot {
-            width: 8px; height: 8px; background-color: #1f2937; border-radius: 50%;
+            width: 8px;
+            height: 8px;
+            background-color: #1f2937;
+            border-radius: 50%;
             animation: bounce 1.4s infinite ease-in-out both;
         }
-        .dot:nth-child(1) { animation-delay: -0.32s; }
-        .dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        .dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
 
         /* Fixed Bottom Options Area */
         .options-area {
@@ -202,72 +433,183 @@
             transition: all 0.3s ease;
         }
 
-        .options-hint { text-align: right; font-size: 13px; font-style: italic; font-weight: 600; color: #111827; margin-bottom: 8px; padding-right: 8px; }
-
-        .option-btn {
-            background-color: #ffffff; border: 2px solid #ffffff; border-radius: 30px;
-            padding: 8px 8px 8px 24px; display: flex; align-items: center; justify-content: space-between;
-            cursor: pointer; box-shadow: 0 6px 16px rgba(139, 69, 19, 0.1);
-            transition: all 0.2s ease; text-align: left;
-            opacity: 0; transform: translateX(20px);
+        .options-hint {
+            text-align: right;
+            font-size: 13px;
+            font-style: italic;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 8px;
+            padding-right: 8px;
         }
 
-        .animate-in { animation: slideInRight 0.4s forwards; }
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
+        .option-btn {
+            background-color: #ffffff;
+            border: 2px solid #ffffff;
+            border-radius: 30px;
+            padding: 8px 8px 8px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(139, 69, 19, 0.1);
+            transition: all 0.2s ease;
+            text-align: left;
+            opacity: 0;
+            transform: translateX(20px);
+        }
 
-        @keyframes slideInRight { to { opacity: 1; transform: translateX(0); } }
+        .animate-in {
+            animation: slideInRight 0.4s forwards;
+        }
 
-        .option-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(139, 69, 19, 0.15); border-color: #fba143; }
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
 
-        .option-text { font-size: 14px; font-weight: 700; color: #111827; padding-right: 16px; }
-        
-        .option-arrow-bg { width: 36px; height: 36px; background: linear-gradient(135deg, #fba143 0%, #e88524 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 6px rgba(232, 133, 36, 0.4); }
-        .option-arrow-bg svg { width: 18px; height: 18px; color: #111827; stroke-width: 2.5px; }
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes slideInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .option-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 69, 19, 0.15);
+            border-color: #fba143;
+        }
+
+        .option-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111827;
+            padding-right: 16px;
+        }
+
+        .option-arrow-bg {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #fba143 0%, #e88524 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(232, 133, 36, 0.4);
+        }
+
+        .option-arrow-bg svg {
+            width: 18px;
+            height: 18px;
+            color: #111827;
+            stroke-width: 2.5px;
+        }
 
         /* Responsive Design */
         @media (max-width: 900px) {
-            .large-robot { width: 300px; left: -20px; }
-            .chat-container { margin-right: 0; max-width: 450px; }
+            .large-robot {
+                width: 300px;
+                left: -20px;
+            }
+
+            .chat-container {
+                margin-right: 0;
+                max-width: 450px;
+            }
         }
 
         @media (max-width: 768px) {
-            body { overflow-y: auto; }
-            .top-nav { padding: 16px 20px; }
-            .main-content { flex-direction: column; justify-content: flex-start; padding: 20px; gap: 40px; }
-            .large-robot { position: relative; left: auto; bottom: auto; width: 250px; margin: 0 auto; order: -1; animation: slideUpRobot 0.8s forwards 0.2s; }
-            .chat-container { max-width: 100%; height: 65vh; min-height: 500px; }
-            .chat-avatar-badge { left: 50%; transform: translateX(-50%); top: -32px; }
-            .chat-bubble { padding: 32px 24px 24px 24px; text-align: center; }
-            .bot-msg-row:not(:first-child) .chat-bubble { padding-left: 24px; margin-left: 0; }
-            .typing-indicator { margin: 0 auto; }
-            .options-area { padding: 24px; }
+            body {
+                overflow-y: auto;
+            }
+
+            .top-nav {
+                padding: 16px 20px;
+            }
+
+            .main-content {
+                flex-direction: column;
+                justify-content: flex-start;
+                padding: 20px;
+                gap: 40px;
+            }
+
+            .large-robot {
+                position: relative;
+                left: auto;
+                bottom: auto;
+                width: 250px;
+                margin: 0 auto;
+                order: -1;
+                animation: slideUpRobot 0.8s forwards 0.2s;
+            }
+
+            .chat-container {
+                max-width: 100%;
+                height: 65vh;
+                min-height: 500px;
+            }
+
+            .chat-avatar-badge {
+                left: 50%;
+                transform: translateX(-50%);
+                top: -32px;
+            }
+
+            .chat-bubble {
+                padding: 32px 24px 24px 24px;
+                text-align: center;
+            }
+
+            .bot-msg-row:not(:first-child) .chat-bubble {
+                padding-left: 24px;
+                margin-left: 0;
+            }
+
+            .typing-indicator {
+                margin: 0 auto;
+            }
+
+            .options-area {
+                padding: 24px;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <header class="top-nav">
         <img src="Wavumbuzi_logo.png" alt="Wavumbuzi Logo" class="logo-img" onerror="this.alt='Wavumbuzi Challenge'">
 
         <div class="user-nav-group">
-            <svg class="bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            <svg class="bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
             </svg>
-            
+
             <!-- Dynamic Dropdown Wrapper -->
             <div class="profile-dropdown-wrapper" id="profileDropdownWrapper">
                 <div class="profile-group" onclick="toggleDropdown(event)">
-                    <img src="new_user.png" id="navAvatar" class="profile-avatar" alt="User Profile" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'><rect width=\\'100\\' height=\\'100\\' fill=\\'%23e2ecef\\'/></svg>'">
+                    <img src="new_user.png" id="navAvatar" class="profile-avatar" alt="User Profile"
+                        onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;100&quot; height=&quot;100&quot;><rect width=&quot;100&quot; height=&quot;100&quot; fill=&quot;%23e2ecef&quot;/></svg>'">
                     <span class="profile-name" id="navNameDisplay">User</span>
-                    <svg class="chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
                 </div>
-                
+
                 <div class="dropdown-menu" id="dropdownMenu">
                     <a href="profile.html" class="dropdown-item">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
@@ -275,7 +617,8 @@
                     </a>
                     <div class="dropdown-divider"></div>
                     <button class="dropdown-item" onclick="logOut()">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                             <polyline points="16 17 21 12 16 7"></polyline>
                             <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -288,11 +631,11 @@
     </header>
 
     <main class="main-content">
-        
+
         <img src="Mwenza_Welcome.png" alt="Mwenza Robot" class="large-robot" onerror="this.style.display='none'">
 
         <div class="chat-container">
-            
+
             <div class="chat-avatar-badge" id="chatBadge">
                 <img src="Mwenza_Welcome.png" alt="Mwenza Face" onerror="this.style.display='none'">
             </div>
@@ -302,33 +645,43 @@
                     <div class="chat-bubble">
                         <div class="chat-greeting" id="chatGreeting">Welcome to Wavumbuzi, User!</div>
                         <div class="chat-body">
-                            <p>My name is Mwenza. I am here to help you explore Wavumbuzi and learn about <strong>entrepreneurship</strong>.</p>
+                            <p>My name is Mwenza. I am here to help you explore Wavumbuzi and learn about
+                                <strong>entrepreneurship</strong>.
+                            </p>
                             <p>Have you learnt about entrepreneurship with Wavumbuzi before?</p>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="msg-row bot-msg-row" id="typingIndicatorRow" style="display: none;">
                     <div class="typing-indicator" id="typingIndicator">
-                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
                     </div>
                 </div>
             </div>
 
             <div class="options-area" id="optionsArea">
                 <div class="options-hint">Choose an option.</div>
-                
+
                 <button class="option-btn animate-in delay-1" onclick="handleChoice1('yes')">
                     <span class="option-text">Yes, I have done the Wavumbuzi Challenge before.</span>
                     <div class="option-arrow-bg">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
                     </div>
                 </button>
 
                 <button class="option-btn animate-in delay-2" onclick="handleChoice1('no')">
                     <span class="option-text">I am not sure, please explain, Mwenza!</span>
                     <div class="option-arrow-bg">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
                     </div>
                 </button>
             </div>
@@ -339,21 +692,32 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         let userName = urlParams.get('newuser') || urlParams.get('user');
-        
+
         if (!userName) {
             const savedData = localStorage.getItem('wavumbuzi_user_data_complete');
             if (savedData) {
                 try {
                     const parsedData = JSON.parse(savedData);
                     if (parsedData && parsedData.fullName) userName = parsedData.fullName;
-                } catch (e) {}
+                } catch (e) { }
             }
         }
 
-        let userFirstName = "Akira"; 
+        let userFirstName = "Akira";
 
         function getAvatarImage(name) {
-            if(!name) return "new_user.png";
+            if (!name) return "new_user.png";
+
+            try {
+                const savedData = localStorage.getItem('wavumbuzi_user_data_complete');
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    if (parsedData && parsedData.fullName && parsedData.fullName.toLowerCase() === name.toLowerCase().trim()) {
+                        if (parsedData.avatar) return parsedData.avatar;
+                    }
+                }
+            } catch (e) { }
+
             const mapping = {
                 "aminate diallo": "Aminate_Diallo.jpg", "adeaze okafor": "Adeaze_Okafor.jpg", "ibrahim touré": "Ibrahim_Touré.jpg",
                 "fatou bah": "Fatou_Bah.jpg", "aïcha sow": "Aïcha_Sow.jpg", "kojo asante": "Kojo_Asante.jpg",
@@ -363,15 +727,15 @@
                 "ihirwe uwera": "Ihirwe_Uwera.jpg", "kagame muhire": "Kagame_Muhire.jpg", "gapira uwase": "Gapira_Uwase.jpg",
                 "gapira uwase 1": "Gapira_Uwase-1.jpg", "isimbi mugabo": "Isimbi_Mugabo.jpg", "kwame mensah": "Kwame_Mens....jpg"
             };
-            return mapping[name.toLowerCase().trim()] || "new_user.png"; 
+            return mapping[name.toLowerCase().trim()] || "new_user.png";
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            if(userName) {
+            if (userName) {
                 const nameParts = userName.trim().split(/\s+/);
                 userFirstName = nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1).toLowerCase();
                 let lastInitial = nameParts.length > 1 ? " " + nameParts[nameParts.length - 1].charAt(0).toUpperCase() : "";
-                
+
                 document.getElementById('navNameDisplay').innerText = userFirstName + lastInitial;
                 document.getElementById('chatGreeting').innerText = `Welcome to Wavumbuzi, ${userFirstName}!`;
                 document.getElementById('navAvatar').src = getAvatarImage(userName);
@@ -393,10 +757,10 @@
             }
         }
 
-        window.addEventListener('click', function(e) {
+        window.addEventListener('click', function (e) {
             const wrapper = document.getElementById('profileDropdownWrapper');
             const menu = document.getElementById('dropdownMenu');
-            
+
             if (wrapper && menu && !wrapper.contains(e.target)) {
                 wrapper.classList.remove('open');
                 menu.classList.remove('show');
@@ -445,7 +809,7 @@
 
         function renderOptions(optionsArray) {
             optionsArea.innerHTML = '<div class="options-hint">Choose an option.</div>';
-            
+
             optionsArray.forEach((opt, index) => {
                 const btn = document.createElement('button');
                 btn.className = `option-btn animate-in delay-${index + 1}`;
@@ -476,11 +840,11 @@
 
         async function handleChoice1(choice) {
             optionsArea.innerHTML = '';
-            
-            const text = choice === 'yes' 
-                ? "Yes, I have done the Wavumbuzi Challenge before." 
+
+            const text = choice === 'yes'
+                ? "Yes, I have done the Wavumbuzi Challenge before."
                 : "I am not sure, please explain, Mwenza!";
-            
+
             appendUserMessage(text);
 
             if (choice === 'yes') {
@@ -502,7 +866,7 @@
 
             for (let i = 0; i < messages.length; i++) {
                 showTyping();
-                await new Promise(resolve => setTimeout(resolve, 3000)); 
+                await new Promise(resolve => setTimeout(resolve, 3000));
                 hideTyping();
                 appendBotMessage(`<p>${messages[i]}</p>`);
 
@@ -524,4 +888,5 @@
 
     </script>
 </body>
+
 </html>
