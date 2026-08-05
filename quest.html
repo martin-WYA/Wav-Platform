@@ -910,6 +910,18 @@
             margin: 0;
         }
 
+        @keyframes pulse {
+            0% {
+                transform: scale(0.92);
+                opacity: 0.85;
+            }
+
+            100% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+        }
+
         /* --- UNLOCK NOTIFICATION MODAL (BOTTOM LEFT CORNER) --- */
         .unlock-notification-container {
             position: fixed;
@@ -1166,7 +1178,7 @@
         </div>
     </div>
 
-    <!-- Generic Quest Loading Modal -->
+    <!-- Generic Quest Loading Modal (Always displays while live score is fetched) -->
     <div id="questLoadingModal" class="overlay">
         <div class="loading-card">
             <img src="assets_reflect/hourglass.png" alt="Loading">
@@ -1416,7 +1428,7 @@
             } catch (e) { }
         }
 
-        function fetchWithTimeout(url, options = {}, timeoutMs = 12000) {
+        function fetchWithTimeout(url, options = {}, timeoutMs = 30000) {
             const controller = new AbortController();
             const id = setTimeout(() => controller.abort(), timeoutMs);
             return fetch(url, { ...options, signal: controller.signal })
@@ -1486,6 +1498,18 @@
             setTimeout(() => modal.style.display = 'none', 300);
         }
 
+        function handleQuestLoadError(err) {
+            hideQuestLoadingModal();
+            setTimeout(() => {
+                const isTimeout = err && err.name === 'AbortError';
+                const msg = isTimeout
+                    ? "The server took too long to respond due to a slow connection.\n\nPlease check your connection and click OK to reload."
+                    : "We could not connect to the server to load your quest progress.\n\nPlease check your connection and click OK to reload.";
+                alert(msg);
+                window.location.reload();
+            }, 300);
+        }
+
         function showAwardLoadingModal() {
             const modal = document.getElementById('awardLoadingModal');
             modal.style.display = 'flex';
@@ -1516,6 +1540,9 @@
 
         // Apply visual quest progression state cleanly
         function applyQuestState(points, flags, hasCompleted) {
+            const pointsVal = document.getElementById('hero-points-text');
+            if (pointsVal) pointsVal.innerText = points + " points";
+
             if (hasCompleted) {
                 document.getElementById('quest-container').classList.add('completed');
                 document.getElementById('placeholder-badge').style.display = 'none';
@@ -1680,42 +1707,17 @@
 
             updateCarousel();
 
-            const pointsVal = document.getElementById('hero-points-text');
+            // Always display the loading modal while the true score is fetched
+            showQuestLoadingModal();
 
-            // 1. INSTANT LOCAL CACHE RENDER (0ms delay)
-            let hasCachedData = false;
-            let cachedFlags = {};
-            try {
-                const fStr = localStorage.getItem('wavumbuzi_user_flags');
-                if (fStr) cachedFlags = JSON.parse(fStr);
-            } catch (e) { }
-
-            if (savedData) {
-                try {
-                    const parsed = JSON.parse(savedData);
-                    if (parsed && parsed.points !== undefined) {
-                        hasCachedData = true;
-                        pointsVal.innerText = parsed.points + " points";
-                        const hasCompletedLocal = parsed.reflectCompleted || cachedFlags.hasCompletedReflect || false;
-                        applyQuestState(parsed.points, cachedFlags, hasCompletedLocal);
-                    }
-                } catch (e) { }
-            }
-
-            // Only display loading modal if local cache was completely empty
-            if (!hasCachedData) {
-                showQuestLoadingModal();
-            }
-
-            // 2. SINGLE SILENT BACKGROUND SERVER REVALIDATION (Zero getReflections collision!)
-            fetchWithTimeout(APP_SCRIPT_URL + '?action=getUserData&user=' + encodeURIComponent(userName || ""), {}, 12000)
+            // SINGLE SILENT BACKGROUND SERVER REVALIDATION (Zero getReflections collision!)
+            fetchWithTimeout(APP_SCRIPT_URL + '?action=getUserData&user=' + encodeURIComponent(userName || ""), {}, 30000)
                 .then(res => res.json())
                 .then(userData => {
-                    hideQuestLoadingModal();
-
                     if (userData.success) {
+                        hideQuestLoadingModal();
+
                         const points = userData.points || 0;
-                        if (pointsVal) pointsVal.innerText = points + " points";
 
                         let flags = {};
                         try { flags = JSON.parse(userData.flags || "{}"); } catch (e) { }
@@ -1734,11 +1736,13 @@
                             localStorage.setItem('wavumbuzi_user_data_complete', JSON.stringify(localObj));
                             localStorage.setItem('wavumbuzi_user_flags', JSON.stringify(flags));
                         } catch (e) { }
+                    } else {
+                        handleQuestLoadError();
                     }
                 })
                 .catch(e => {
-                    console.warn('Background quest sync slow/unreachable. Retaining local state.', e);
-                    hideQuestLoadingModal();
+                    console.warn('Quest sync failed or timed out:', e);
+                    handleQuestLoadError(e);
                 });
         });
 
