@@ -843,7 +843,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     action: 'updateAvatar',
-                    user: userName,
+                    fullName: userName,
                     avatar: selectedAvatar
                 })
             }).catch(e => console.error("Background avatar save error:", e));
