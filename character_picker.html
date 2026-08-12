@@ -823,11 +823,12 @@
             });
         }
 
-        // Save & Proceed
+        // --- TRUE FIRE-AND-FORGET SAVE LOGIC ---
         function selectAndSave() {
             document.getElementById('loadingOverlay').style.display = 'flex';
             const selectedAvatar = avatarFiles[currentIndex];
 
+            // 1. Optimistic Local Save
             if (savedData) {
                 savedData.avatar = selectedAvatar;
                 localStorage.setItem('wavumbuzi_user_data_complete', JSON.stringify(savedData));
@@ -835,23 +836,22 @@
                 localStorage.setItem('wavumbuzi_user_data_complete', JSON.stringify({ fullName: userName, avatar: selectedAvatar }));
             }
 
-            const payload = { action: 'updateAvatar', fullName: userName, avatar: selectedAvatar };
-
+            // 2. Background Server Save (No waiting for completion)
             fetch(GOOGLE_SHEET_WEB_APP_URL, {
                 method: 'POST',
-                mode: 'no-cors',
+                mode: 'no-cors', // Tells browser not to wait for readable response or handle CORS negotiation
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }).then(() => {
-                finishSave();
-            }).catch(() => {
-                finishSave();
-            });
-        }
+                body: JSON.stringify({
+                    action: 'saveUserAvatar',
+                    user: userName,
+                    avatar: selectedAvatar
+                })
+            }).catch(e => console.error("Background avatar save error:", e));
 
-        function finishSave() {
+            // 3. Guaranteed Visual Delay & Instant Redirect
             setTimeout(() => {
-                window.location.href = "profile.html";
+                const param = userName ? "?user=" + encodeURIComponent(userName) : "";
+                window.location.href = "profile.html" + param;
             }, 800);
         }
 
